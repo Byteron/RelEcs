@@ -4,6 +4,11 @@ namespace Bitron.Ecs
     {
         private World _world;
 
+        internal Commands(World world)
+        {
+            _world = world;
+        }
+
         public EntityCommands Spawn()
         {
             return Entity(_world.Spawn());

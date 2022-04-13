@@ -4,15 +4,15 @@ namespace Bitron.Ecs
 {
     public sealed class World
     {
-        private EntityMeta[] _entityMetas;
-        private int _entityCount;
+        private EntityMeta[] _entityMetas = new EntityMeta[512];
+        private int _entityCount = 0;
         
-        private int _despawnedEntityCount;
-        private int[] _despawnedEntities;
+        private int[] _despawnedEntities = new int[512];
+        private int _despawnedEntityCount = 0;
 
-        private IStorage[] _pools;
-        private int _poolCount;
-
+        private IStorage[] _pools = new IStorage[512];
+        private int _poolCount = 0;
+    
         public Entity Spawn()
         {
             int id;
@@ -75,9 +75,8 @@ namespace Bitron.Ecs
 
             if (typeId == _poolCount)
             {
-                Array.Resize(ref _pools, _poolCount << 1);
+                Array.Resize(ref _pools, (++_poolCount << 1));
                 _pools[typeId] = new Storage<Component>();
-                _poolCount++;
             }
 
             return _pools[typeId] as Storage<Component>;

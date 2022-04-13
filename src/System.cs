@@ -12,16 +12,11 @@ namespace Bitron.Ecs
             return this;
         }
 
-        // public EcsSystemGroup OneFrame<Component>() where Component : struct
-        // {
-        //     return Add(new RemoveAllComponentsOfType<Component>());
-        // }
-
-        public void Run(Commands commands)
+        public void Run(World world)
         {
             for(var i = 0; i < _systems.Count; i++)
             {
-                _systems[i].Run(commands);
+                _systems[i].Run(new Commands(world));
             }
         }
     }
@@ -30,18 +25,4 @@ namespace Bitron.Ecs
     {
         void Run(Commands commands);
     }
-
-    // public class RemoveAllComponentsOfType<Component> : ISystem where Component : struct
-    // {
-    //     public void Run(World world)
-    //     {
-    //         var query = world.Query<Component>().End();
-    //         var pool = world.GetPool<Component>();
-
-    //         foreach (var entity in query)
-    //         {
-    //             pool.Remove(entity);
-    //         }
-    //     }
-    // }
 }

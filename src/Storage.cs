@@ -10,9 +10,9 @@ namespace Bitron.Ecs
 
     public sealed class Storage<Component> : IStorage where Component : struct
     {
-        private int[] _indicies;
-        private Component[] _components;
-        private int _componentCount;
+        private int[] _indicies = new int[512];
+        private Component[] _components = new Component[512];
+        private int _componentCount = 0;
 
         public ref Component Add(Entity entity)
         {
