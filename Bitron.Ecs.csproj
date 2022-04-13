@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefineConstants>NET_STANDARD_2_0</DefineConstants>
+  </PropertyGroup>
+</Project>
