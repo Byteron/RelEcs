@@ -36,9 +36,27 @@ namespace Bitron.Ecs
 
         public void Despawn(Entity entity)
         {
-            if (_entityMetas[entity.Id].Gen < 0)
+            ref var meta = ref _entityMetas[entity.Id];
+
+            if (meta.Gen < 0)
             {
                 return;
+            }
+
+            if (meta.ComponentCount > 0)
+            {
+                var index = 0;
+                while (meta.ComponentCount > 0 && index < _poolCount)
+                {
+                    for (; index < _poolCount; index++)
+                    {
+                        if (_pools[index].Has(entity))
+                        {
+                            _pools[index++].Remove(entity);
+                            break;
+                        }
+                    }
+                }
             }
 
             if (_despawnedEntityCount == _despawnedEntities.Length)
@@ -46,7 +64,6 @@ namespace Bitron.Ecs
                 Array.Resize(ref _despawnedEntities, _despawnedEntityCount << 1);
             }
 
-            ref var meta = ref _entityMetas[entity.Id];
             meta.Gen = -(meta.Gen + 1);
 
             _despawnedEntities[_despawnedEntityCount++] = entity.Id;
@@ -70,6 +87,7 @@ namespace Bitron.Ecs
     internal struct EntityMeta
     {
         public int Gen;
+        public int ComponentCount;
     }
 
     internal class ComponentType

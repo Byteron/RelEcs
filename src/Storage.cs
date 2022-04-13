@@ -2,7 +2,11 @@ using System;
 
 namespace Bitron.Ecs
 {
-    public interface IStorage { }
+    public interface IStorage
+    {
+        bool Has(Entity entity);
+        void Remove(Entity entity);
+    }
 
     public sealed class Storage<Component> : IStorage where Component : struct
     {
