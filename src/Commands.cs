@@ -19,16 +19,21 @@ namespace Bitron.Ecs
             return new EntityCommands(this, entity);
         }
 
-        public void AddComponent<Component>(Entity entity) where Component: struct
+        internal void Despawn(Entity entity)
         {
-            var storage = _world.GetStorage<Component>();
-            storage.Add(entity);
+            _world.Despawn(entity);
         }
 
-        public void AddComponent<Component>(Entity entity, Component component) where Component: struct
+        public ref Component AddComponent<Component>(Entity entity) where Component: struct
         {
-            var storage = _world.GetStorage<Component>();
-            storage.Add(entity) = component;
+            return ref _world.AddComponent<Component>(entity);
+        }
+
+        public ref Component AddComponent<Component>(Entity entity, Component component) where Component: struct
+        {
+            ref var newComponent = ref _world.AddComponent<Component>(entity);
+            newComponent = component;
+            return ref newComponent;
         }
 
         public void RemoveComponent<Component>(Entity entity) where Component: struct

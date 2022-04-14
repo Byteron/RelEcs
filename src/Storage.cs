@@ -10,9 +10,16 @@ namespace Bitron.Ecs
 
     public sealed class Storage<Component> : IStorage where Component : struct
     {
+        public int TypeId { get; private set; }
+
         private int[] _indicies = new int[512];
         private Component[] _components = new Component[512];
         private int _componentCount = 0;
+
+        internal Storage(int typeId)
+        {
+            TypeId = typeId;
+        }
 
         public ref Component Add(Entity entity)
         {
@@ -42,5 +49,17 @@ namespace Bitron.Ecs
         {
             return _indicies[entity.Id] > 0;
         }
+    }
+
+    internal class ComponentType
+    {
+        protected static int counter = 1;
+    }
+
+    internal class ComponentType<T> : ComponentType where T: struct
+    {
+        internal static readonly int Id;
+
+        static ComponentType() => Id = counter++;
     }
 }
