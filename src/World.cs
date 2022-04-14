@@ -119,5 +119,10 @@ namespace Bitron.Ecs
 
             return storage;
         }
+
+        public bool IsAlive(Entity entity)
+        {
+            return _entityMetas[entity.Id].Id > 0;
+        }
     }
 }

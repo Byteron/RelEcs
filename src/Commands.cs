@@ -41,6 +41,11 @@ namespace Bitron.Ecs
             var storage = _world.GetStorage<Component>();
             storage.Remove(entity);
         }
+
+        public bool IsAlive(Entity entity)
+        {
+            return _world.IsAlive(entity);
+        }
     }
 
     public sealed class EntityCommands
