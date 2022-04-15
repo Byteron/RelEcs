@@ -10,11 +10,11 @@ namespace Bitron.Ecs
 
     public sealed class Storage<Component> : IStorage where Component : struct
     {
-        public int TypeId { get; private set; }
+        public int TypeId { get; set; }
 
-        private int[] _indicies = new int[512];
-        private Component[] _components = new Component[512];
-        private int _componentCount = 0;
+        int[] _indices = new int[512];
+        Component[] _components = new Component[512];
+        int _componentCount = 0;
 
         internal Storage(int typeId)
         {
@@ -30,13 +30,18 @@ namespace Bitron.Ecs
                 Array.Resize(ref _components, _componentCount << 1);
             }
 
-            _indicies[entity.Id] = index;
+            _indices[entity.Id] = index;
             return ref _components[index];
+        }
+
+        public ref Component Get(Entity entity)
+        {
+            return ref _components[_indices[entity.Id]];
         }
 
         public void Remove(Entity entity)
         {
-            ref var index = ref _indicies[entity.Id];
+            ref var index = ref _indices[entity.Id];
 
             if (index > 0)
             {
@@ -47,7 +52,7 @@ namespace Bitron.Ecs
 
         public bool Has(Entity entity)
         {
-            return _indicies[entity.Id] > 0;
+            return _indices[entity.Id] > 0;
         }
     }
 
@@ -56,7 +61,7 @@ namespace Bitron.Ecs
         protected static int counter = 1;
     }
 
-    internal class ComponentType<T> : ComponentType where T: struct
+    internal class ComponentType<T> : ComponentType where T : struct
     {
         internal static readonly int Id;
 

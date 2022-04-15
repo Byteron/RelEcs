@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Bitron.Ecs
 {
@@ -8,50 +9,109 @@ namespace Bitron.Ecs
         const int ByteSize = 5;  // log_2(BitSize + 1)
 
         public int Count { get { return _count; } }
+        public int Capacity { get { return Bits.Length * (BitSize + 1); } }
 
-        private int _count = 0;
-        private uint[] _bits = new uint[1];
-        
+        internal uint[] Bits = new uint[1];
 
-        public bool IsSet(int index)
+        int _count = 0;
+
+        public bool Get(int index)
         {
             int b = index >> ByteSize;
-            if (b >= _bits.Length)
+            if (b >= Bits.Length)
             {
                 return false;
             }
 
-            return (_bits[b] & (1 << (index & BitSize))) != 0;
+            return (Bits[b] & (1 << (index & BitSize))) != 0;
         }
 
-        public void SetBit(int index)
+        public void Set(int index)
         {
             int b = index >> ByteSize;
-            if (b >= _bits.Length)
+            if (b >= Bits.Length)
             {
-                Array.Resize(ref _bits, b + 1);
+                Array.Resize(ref Bits, b + 1);
             }
 
-            _bits[b] |= 1u << (index & BitSize);
+            Bits[b] |= 1u << (index & BitSize);
             _count++;
         }
 
-        public void ClearBit(int index)
+        public void Clear(int index)
         {
             int b = index >> ByteSize;
-            if (b >= _bits.Length)
+            if (b >= Bits.Length)
             {
                 return;
             }
 
-            _bits[b] &= ~(1u << (index & BitSize));
+            Bits[b] &= ~(1u << (index & BitSize));
             _count--;
         }
 
         public void ClearAll()
         {
-            Array.Clear(_bits, 0, _bits.Length);
+            Array.Clear(Bits, 0, Bits.Length);
             _count = 0;
+        }
+
+        // public int[] GetSetIndices()
+        // {
+        //     List<int> indices = new List<int>();
+
+        //     for (int i = 0; i < Capacity; i++)
+        //     {
+        //         if (Get(i))
+        //         {
+        //             indices.Add(i);
+        //         }
+        //     }
+
+        //     return indices.ToArray();
+        // }
+
+        public bool HasAllBitsSet(BitSet mask)
+        {
+            var count = MathF.Min(Bits.Length, mask.Bits.Length);
+
+            for (int i = 0; i < count; i++)
+            {
+                if ((Bits[i] & mask.Bits[i]) != mask.Bits[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool HasAnyBitSet(BitSet mask)
+        {
+            var count = MathF.Min(Bits.Length, mask.Bits.Length);
+
+            for (int i = 0; i < count; i++)
+            {
+                if ((Bits[i] & mask.Bits[i]) != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsEmpty
+        {
+            get
+            {
+                uint k = 0;
+                for (int i = 0; i < Bits.Length; i++)
+                {
+                    k |= Bits[i];
+                }
+                return k == 0;
+            }
         }
     }
 }

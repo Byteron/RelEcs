@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace Bitron.Ecs
 {
-    public sealed class EcsSystemGroup
+    public sealed class SystemGroup
     {
-        private List<ISystem> _systems = new List<ISystem>();
+        List<ISystem> _systems = new List<ISystem>();
 
-        public EcsSystemGroup Add(ISystem system)
+        public SystemGroup Add(ISystem system)
         {
             _systems.Add(system);
             return this;
@@ -14,7 +14,7 @@ namespace Bitron.Ecs
 
         public void Run(World world)
         {
-            for(var i = 0; i < _systems.Count; i++)
+            for (var i = 0; i < _systems.Count; i++)
             {
                 _systems[i].Run(new Commands(world));
             }
@@ -24,5 +24,13 @@ namespace Bitron.Ecs
     public interface ISystem
     {
         void Run(Commands commands);
+    }
+
+    public static class SystemExtentions
+    {
+        public static void Run(this ISystem system, World world)
+        {
+            system.Run(new Commands(world));
+        }
     }
 }

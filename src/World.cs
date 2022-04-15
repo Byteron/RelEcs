@@ -1,22 +1,23 @@
 using System;
+using System.Collections.Generic;
 
 namespace Bitron.Ecs
 {
     public sealed class World
     {
-        private EntityMeta[] _entityMetas = new EntityMeta[512];
-        private int _entityCount = 0;
-        
-        private int[] _despawnedEntities = new int[512];
-        private int _despawnedEntityCount = 0;
+        EntityMeta[] _entityMetas = new EntityMeta[512];
+        int _entityCount = 1;
 
-        private int[] _storageIndices = new int[512];
-        private IStorage[] _storages = new IStorage[512];
-        private int _storageCount = 0;
-    
+        int[] _despawnedEntities = new int[512];
+        int _despawnedEntityCount = 0;
+
+        int[] _storageIndices = new int[512];
+        IStorage[] _storages = new IStorage[512];
+        int _storageCount = 0;
+
         public Entity Spawn()
         {
-            
+
             int id = 0;
 
             if (_despawnedEntityCount > 0)
@@ -25,7 +26,7 @@ namespace Bitron.Ecs
             }
             else
             {
-                id = ++_entityCount;
+                id = _entityCount++;
             }
 
             ref var meta = ref _entityMetas[id];
@@ -53,7 +54,7 @@ namespace Bitron.Ecs
             if (meta.BitSet.Count > 0)
             {
                 for (int i = 1; i < _storageCount; i++)
-                {   
+                {
                     if (_storages[i].Has(entity))
                     {
                         _storages[i].Remove(entity);
@@ -72,24 +73,41 @@ namespace Bitron.Ecs
             _despawnedEntities[_despawnedEntityCount++] = entity.Id;
         }
 
-        public ref Component AddComponent<Component>(Entity entity) where Component: struct
+        public ref Component AddComponent<Component>(Entity entity) where Component : struct
         {
             var storage = GetStorage<Component>();
 
             ref var meta = ref _entityMetas[entity.Id];
-            meta.BitSet.SetBit(storage.TypeId);
+            meta.BitSet.Set(storage.TypeId);
 
             return ref storage.Add(entity);
         }
 
-        public void RemoveComponent<Component>(Entity entity) where Component: struct
+        public void RemoveComponent<Component>(Entity entity) where Component : struct
         {
             var storage = GetStorage<Component>();
 
             ref var meta = ref _entityMetas[entity.Id];
-            meta.BitSet.ClearBit(storage.TypeId);
+            meta.BitSet.Clear(storage.TypeId);
 
             storage.Remove(entity);
+        }
+
+        public Entity[] Query(Mask mask)
+        {
+            List<Entity> entities = new List<Entity>();
+
+            for (var i = 1; i < _entityCount; i++)
+            {
+                ref var meta = ref _entityMetas[i];
+
+                if (mask.IsCompatibleWith(meta.BitSet))
+                {
+                    entities.Add(new Entity { Id = meta.Id, Gen = meta.Gen });
+                }
+            }
+
+            return entities.ToArray();
         }
 
         public Storage<Component> GetStorage<Component>() where Component : struct
