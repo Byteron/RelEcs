@@ -8,12 +8,12 @@ namespace Bitron.Ecs
         const int BitSize = (sizeof(uint) * 8) - 1;
         const int ByteSize = 5;  // log_2(BitSize + 1)
 
-        public int Count { get { return _count; } }
+        public int Count { get { return count; } }
         public int Capacity { get { return Bits.Length * (BitSize + 1); } }
 
         internal uint[] Bits = new uint[1];
 
-        int _count = 0;
+        int count = 0;
 
         public bool Get(int index)
         {
@@ -35,7 +35,7 @@ namespace Bitron.Ecs
             }
 
             Bits[b] |= 1u << (index & BitSize);
-            _count++;
+            count++;
         }
 
         public void Clear(int index)
@@ -47,13 +47,13 @@ namespace Bitron.Ecs
             }
 
             Bits[b] &= ~(1u << (index & BitSize));
-            _count--;
+            count--;
         }
 
         public void ClearAll()
         {
             Array.Clear(Bits, 0, Bits.Length);
-            _count = 0;
+            count = 0;
         }
 
         // public int[] GetSetIndices()

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Bitron.Ecs
 {
     public struct Entity
@@ -8,8 +10,7 @@ namespace Bitron.Ecs
 
     internal struct EntityMeta
     {
-        internal int Id;
-        internal int Gen;
+        internal Entity Entity;
         internal BitSet BitSet;
     }
 }

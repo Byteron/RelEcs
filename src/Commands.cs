@@ -4,16 +4,16 @@ namespace Bitron.Ecs
 {
     public sealed class Commands
     {
-        World _world;
+        World world;
 
         internal Commands(World world)
         {
-            _world = world;
+            this.world = world;
         }
 
         public EntityCommands Spawn()
         {
-            return Entity(_world.Spawn());
+            return Entity(world.Spawn());
         }
 
         public EntityCommands Entity(Entity entity)
@@ -23,156 +23,164 @@ namespace Bitron.Ecs
 
         internal void Despawn(Entity entity)
         {
-            _world.Despawn(entity);
+            world.Despawn(entity);
         }
 
         public QueryCommands Query()
         {
-            return new QueryCommands(_world);
+            return new QueryCommands(world);
         }
 
-        public ref Component AddComponent<Component>(Entity entity) where Component : struct
+        public ref T AddComponent<T>(Entity entity) where T : struct, IComponent
         {
-            return ref _world.AddComponent<Component>(entity);
+            return ref world.AddComponent<T>(entity);
         }
 
-        public ref Component AddComponent<Component>(Entity entity, Component component) where Component : struct
+        public ref T AddComponent<T>(Entity entity, T component) where T : struct, IComponent
         {
-            ref var newComponent = ref _world.AddComponent<Component>(entity);
+            ref var newComponent = ref world.AddComponent<T>(entity);
             newComponent = component;
             return ref newComponent;
         }
 
-        public delegate void RefAction<C>(ref C c);
-        public void ForEach<C>(RefAction<C> action)
-            where C : struct
+        public ref T GetComponent<T>(Entity entity) where T: struct, IComponent
         {
-            var mask = new Mask();
-            mask.Include<C>();
-
-            var entities = _world.Query(mask);
-
-            var storage = _world.GetStorage<C>();
-
-            foreach (Entity entity in entities)
-            {
-                action(ref storage.Get(entity));
-            }
+            return ref world.GetComponent<T>(entity);
         }
 
-        public delegate void RefAction<C1, C2>(ref C1 c1, ref C2 c2);
-        public void ForEach<C1, C2>(RefAction<C1, C2> action)
-            where C1 : struct
-            where C2 : struct
+        public void RemoveComponent<T>(Entity entity) where T : struct, IComponent
         {
-            var mask = new Mask();
-            mask.Include<C1>();
-            mask.Include<C2>();
-
-            var entities = _world.Query(mask);
-
-            var storage1 = _world.GetStorage<C1>();
-            var storage2 = _world.GetStorage<C2>();
-
-            foreach (Entity entity in entities)
-            {
-                action(ref storage1.Get(entity), ref storage2.Get(entity));
-            }
+            world.RemoveComponent<T>(entity);
         }
 
-        public void RemoveComponent<Component>(Entity entity) where Component : struct
+        public void AddRelation<T>(Entity entity, Entity target) where T: struct, IRelation
         {
-            var storage = _world.GetStorage<Component>();
-            storage.Remove(entity);
+            world.AddRelation<T>(entity, target);
+        }
+
+        public Relation<T> GetRelation<T>(Entity entity) where T: struct, IRelation
+        {
+            return world.GetRelation<T>(entity);
+        }
+
+        public void RemoveRelation<T>(Entity entity) where T: struct, IRelation
+        {
+            world.RemoveRelation<T>(entity);
+        }
+
+        public Entity[] FindRelated<T>(Entity target) where T: struct, IRelation
+        {
+            return world.FindRelated<T>(target);
         }
 
         public bool IsAlive(Entity entity)
         {
-            return _world.IsAlive(entity);
+            return world.IsAlive(entity);
         }
     }
 
     public sealed class EntityCommands
     {
-        Commands _commands;
-        Entity _entity;
+        Commands commands;
+        Entity entity;
 
         internal EntityCommands(Commands commands, Entity entity)
         {
-            _commands = commands;
-            _entity = entity;
+            this.commands = commands;
+            this.entity = entity;
         }
 
-        public EntityCommands Add<Component>() where Component : struct
+        public EntityCommands Add<T>() where T : struct, IComponent
         {
-
-            _commands.AddComponent<Component>(_entity);
+            commands.AddComponent<T>(entity);
             return this;
         }
 
-        public EntityCommands Add<Component>(Component component) where Component : struct
+        public EntityCommands Add<T>(T data) where T : struct, IComponent
         {
-            _commands.AddComponent<Component>(_entity, component);
+            commands.AddComponent<T>(entity, data);
             return this;
         }
 
-        public EntityCommands Remove<Component>() where Component : struct
+        public EntityCommands Add<T>(Entity target) where T: struct, IRelation
         {
-            _commands.RemoveComponent<Component>(_entity);
+            commands.AddRelation<T>(entity, target);
+            return this;
+        }
+
+        public EntityCommands Remove<T>() where T : struct, IComponent, IRelation
+        {
+            if (typeof(IComponent).IsAssignableFrom(typeof(T)))
+            {
+                commands.RemoveComponent<T>(entity);
+            }
+            else if (typeof(IRelation).IsAssignableFrom(typeof(T)))
+            {
+                commands.RemoveRelation<T>(entity);
+            }
             return this;
         }
 
         public Entity Id()
         {
-            return _entity;
+            return entity;
         }
     }
 
     public sealed class QueryCommands
     {
-        Entity[] _entities;
+        Entity[] entities;
 
-        Mask _mask = new Mask();
+        Mask mask = new Mask();
 
-        World _world;
+        World world;
 
         internal QueryCommands(World world)
         {
-            _world = world;
+            this.world = world;
         }
 
-        public QueryCommands Include<T>() where T : struct
+        public QueryCommands With<T>() where T : struct, IComponent
         {
-            _mask.Include<T>();
+            mask.With<T>();
             return this;
         }
 
-        public QueryCommands Exclude<T>() where T : struct
+        public QueryCommands Without<T>() where T : struct, IComponent
         {
-            _mask.Exclude<T>();
+            mask.Without<T>();
             return this;
         }
 
-        public QueryCommands Added<T>() where T : struct
+        public QueryCommands IsA<T>() where T : struct, IRelation
         {
-            _mask.Added<T>();
+            // TODO: make it filter for specific relatitions
+            mask.IsA<T>();
             return this;
         }
 
-        public QueryCommands Removed<T>() where T : struct
+        public QueryCommands IsA<T>(Entity target) where T : struct, IRelation
         {
-            _mask.Removed<T>();
+            // TODO: make it filter for specific relatitions
+            mask.IsA<T>(target);
             return this;
         }
 
-        public void Run(Action action)
+        public Entity[] Apply()
         {
-            _entities = _world.Query(_mask);
-
-            foreach (Entity entity in _entities)
-            {
-                // ???
-            }
+            return world.Query(mask);
         }
+
+        // public QueryCommands Added<T>() where T : struct, IComponent
+        // {
+        //     mask.Added<T>();
+        //     return this;
+        // }
+
+        // public QueryCommands Removed<T>() where T : struct, IComponent
+        // {
+        //     mask.Removed<T>();
+        //     return this;
+        // }
     }
 }

@@ -5,134 +5,301 @@ namespace Bitron.Ecs
 {
     public sealed class World
     {
-        EntityMeta[] _entityMetas = new EntityMeta[512];
-        int _entityCount = 1;
+        EntityMeta[] entities = new EntityMeta[512];
+        int entityCount = 0;
 
-        int[] _despawnedEntities = new int[512];
-        int _despawnedEntityCount = 0;
+        List<Entity>[,] targetRelations = new List<Entity>[512, 512];
 
-        int[] _storageIndices = new int[512];
-        IStorage[] _storages = new IStorage[512];
-        int _storageCount = 0;
+        int[] despawnedEntities = new int[512];
+        int despawnedEntityCount = 0;
+
+        int[] componentStorageIndices = new int[512];
+        IComponentStorage[] componentStorages = new IComponentStorage[512];
+        int componentStorageCount = 0;
+
+        int[] relationStorageIndices = new int[512];
+        IRelationStorage[] relationStorages = new IRelationStorage[512];
+        int relationStorageCount = 0;
 
         public Entity Spawn()
         {
 
             int id = 0;
 
-            if (_despawnedEntityCount > 0)
+            if (despawnedEntityCount > 0)
             {
-                id = _despawnedEntities[--_despawnedEntityCount];
+                id = despawnedEntities[--despawnedEntityCount];
             }
             else
             {
-                id = _entityCount++;
+                id = ++entityCount;
+                Array.Resize(ref entities, entityCount << 1);
+                // TODO: figure out how to resize relationMetas
             }
 
-            ref var meta = ref _entityMetas[id];
+            ref var meta = ref entities[id];
 
-            meta.Id = id;
-            meta.Gen += 1;
+            meta.Entity.Id = id;
+            meta.Entity.Gen += 1;
 
             if (meta.BitSet == null)
             {
                 meta.BitSet = new BitSet();
             }
 
-            return new Entity() { Id = id, Gen = meta.Gen };
+            return new Entity() { Id = id, Gen = meta.Entity.Gen };
         }
 
         public void Despawn(Entity entity)
         {
-            ref var meta = ref _entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
 
-            if (meta.Id == 0)
+            if (meta.Entity.Id == 0)
             {
                 return;
             }
 
             if (meta.BitSet.Count > 0)
             {
-                for (int i = 1; i < _storageCount; i++)
+                for (int i = 1; i <= componentStorageCount; i++)
                 {
-                    if (_storages[i].Has(entity))
+                    if (meta.BitSet.Get(componentStorages[i].TypeId))
                     {
-                        _storages[i].Remove(entity);
+                        var componentStorage = componentStorages[i];
+                        componentStorage.Remove(entity.Id);
+                    }
+                }
+
+                for (int i = 1; i <= relationStorageCount; i++)
+                {
+                    var relationStorage = relationStorages[i];
+                    var typeId = relationStorage.TypeId;
+
+                    // remove child relations
+                    var children = targetRelations[entity.Id, typeId];
+                    
+                    if (children != null)
+                    {
+                        foreach(var child in children)
+                        {
+                            relationStorage.Remove(child.Id);
+                            entities[child.Id].BitSet.Clear(typeId);
+                        }
+                        
+                        children.Clear();
+                    }
+                    
+
+                    if (meta.BitSet.Get(typeId))
+                    {
+                        // remove parent relations
+                        var parent = relationStorage.GetEntity(entity.Id);
+                        var siblings = targetRelations[parent.Id, typeId];
+                        siblings.Remove(entity);
+                        relationStorage.Remove(entity.Id);
                     }
                 }
             }
 
-            meta.Id = 0;
+            meta.Entity.Id = 0;
             meta.BitSet.ClearAll();
 
-            if (_despawnedEntityCount == _despawnedEntities.Length)
+            if (despawnedEntityCount == despawnedEntities.Length)
             {
-                Array.Resize(ref _despawnedEntities, _despawnedEntityCount << 1);
+                Array.Resize(ref despawnedEntities, despawnedEntityCount << 1);
             }
 
-            _despawnedEntities[_despawnedEntityCount++] = entity.Id;
+            despawnedEntities[despawnedEntityCount++] = entity.Id;
         }
 
-        public ref Component AddComponent<Component>(Entity entity) where Component : struct
+        public ref T AddComponent<T>(Entity entity) where T : struct, IComponent
         {
-            var storage = GetStorage<Component>();
+            var storage = GetComponentStorage<T>();
 
-            ref var meta = ref _entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
             meta.BitSet.Set(storage.TypeId);
 
-            return ref storage.Add(entity);
+            return ref storage.Add(entity.Id);
         }
 
-        public void RemoveComponent<Component>(Entity entity) where Component : struct
+        public ref T GetComponent<T>(Entity entity) where T : struct, IComponent
         {
-            var storage = GetStorage<Component>();
+            var storage = GetComponentStorage<T>();
+            return ref storage.Get(entity.Id);
+        }
 
-            ref var meta = ref _entityMetas[entity.Id];
+        public void RemoveComponent<T>(Entity entity) where T : struct, IComponent
+        {
+            var storage = GetComponentStorage<T>();
+
+            ref var meta = ref entities[entity.Id];
             meta.BitSet.Clear(storage.TypeId);
 
-            storage.Remove(entity);
+            storage.Remove(entity.Id);
         }
 
-        public Entity[] Query(Mask mask)
+        public void AddRelation<T>(Entity entity, Entity target, T data = default) where T : struct, IRelation
+        {
+            var storage = GetRelationStorage<T>();
+
+            ref var meta = ref entities[entity.Id];
+            meta.BitSet.Set(storage.TypeId);
+
+            storage.Add(entity.Id) = new Relation<T>() { Entity = target, Data = data };
+
+            var targetId = target.Id;
+            var entityId = entity.Id;
+            var typeId = storage.TypeId;
+
+            if (targetRelations[targetId, typeId] == null)
+            {
+                targetRelations[targetId, typeId] = new List<Entity>();
+            }
+
+            targetRelations[targetId, typeId].Add(entity);
+        }
+
+        public Relation<T> GetRelation<T>(Entity entity) where T : struct, IRelation
+        {
+            var storage = GetRelationStorage<T>();
+            return storage.Get(entity.Id);
+        }
+
+        public void RemoveRelation<T>(Entity entity) where T : struct, IRelation
+        {
+            var storage = GetRelationStorage<T>();
+            var relation = storage.Get(entity.Id);
+
+            ref var meta = ref entities[entity.Id];
+            meta.BitSet.Clear(storage.TypeId);
+
+            storage.Remove(entity.Id);
+
+            var targetId = relation.Entity.Id;
+            var entityId = entity.Id;
+            var typeId = storage.TypeId;
+
+            targetRelations[targetId, typeId].Remove(entity);
+        }
+
+        public Entity[] FindRelated<T>(Entity target) where T : struct, IRelation
+        {
+            if (!IsAlive(target))
+            {
+                throw new Exception("target id not alive");
+            }
+
+            List<Entity> relatives = new List<Entity>();
+
+            var typeId = TypeIdAssigner<T>.Id;
+
+            if (targetRelations[target.Id, typeId] != null)
+            {
+                foreach (var entity in targetRelations[target.Id, typeId])
+                {
+                    relatives.Add(entity);
+                }
+            }
+
+            return relatives.ToArray();
+        }
+
+        internal Entity[] Query(Mask mask)
         {
             List<Entity> entities = new List<Entity>();
 
-            for (var i = 1; i < _entityCount; i++)
+            for (var i = 1; i <= entityCount; i++)
             {
-                ref var meta = ref _entityMetas[i];
+                ref var meta = ref this.entities[i];
 
-                if (mask.IsCompatibleWith(meta.BitSet))
+                if (meta.Entity.Id == 0)
                 {
-                    entities.Add(new Entity { Id = meta.Id, Gen = meta.Gen });
+                    continue;
                 }
+
+                if (!meta.BitSet.HasAllBitsSet(mask.IncludeBitSet))
+                {
+                    continue;
+                }
+
+                if (meta.BitSet.HasAnyBitSet(mask.ExcludeBitSet))
+                {
+                    continue;
+                }
+
+                var isRelatedToTarget = true;
+
+                foreach (var pair in mask.Relations)
+                {
+                    var target = pair.Item1;
+                    var typeId = pair.Item2;
+
+                    var relatedEntities = targetRelations[target.Id, typeId];
+                    isRelatedToTarget &= relatedEntities == null ? false : relatedEntities.Contains(meta.Entity);
+                }
+
+                if (!isRelatedToTarget)
+                {
+                    continue;
+                }
+
+                entities.Add(new Entity { Id = meta.Entity.Id, Gen = meta.Entity.Gen });
             }
 
             return entities.ToArray();
         }
 
-        public Storage<Component> GetStorage<Component>() where Component : struct
+        public ComponentStorage<T> GetComponentStorage<T>() where T : struct, IComponent
         {
-            Storage<Component> storage = null;
+            ComponentStorage<T> storage = null;
 
-            var typeId = ComponentType<Component>.Id;
+            var typeId = TypeIdAssigner<T>.Id;
 
-            if (typeId >= _storageIndices.Length)
+            if (typeId >= componentStorageIndices.Length)
             {
-                Array.Resize(ref _storageIndices, typeId << 1);
+                Array.Resize(ref componentStorageIndices, typeId << 1);
             }
 
-            ref var storageId = ref _storageIndices[typeId];
+            ref var storageId = ref componentStorageIndices[typeId];
 
             if (storageId > 0)
             {
-                storage = _storages[storageId] as Storage<Component>;
+                storage = componentStorages[storageId] as ComponentStorage<T>;
             }
             else
             {
-                storageId = ++_storageCount;
-                Array.Resize(ref _storages, (_storageCount << 1));
-                storage = new Storage<Component>(typeId);
-                _storages[storageId] = storage;
+                storageId = ++componentStorageCount;
+                Array.Resize(ref componentStorages, (componentStorageCount << 1));
+                storage = new ComponentStorage<T>(typeId);
+                componentStorages[storageId] = storage;
+            }
+
+            return storage;
+        }
+
+        public RelationStorage<T> GetRelationStorage<T>() where T : struct, IRelation
+        {
+            RelationStorage<T> storage = null;
+
+            var typeId = TypeIdAssigner<T>.Id;
+
+            if (typeId >= relationStorageIndices.Length)
+            {
+                Array.Resize(ref relationStorageIndices, typeId << 1);
+            }
+
+            ref var storageId = ref relationStorageIndices[typeId];
+
+            if (storageId > 0)
+            {
+                storage = relationStorages[storageId] as RelationStorage<T>;
+            }
+            else
+            {
+                storageId = ++relationStorageCount;
+                Array.Resize(ref relationStorages, (relationStorageCount << 1));
+                storage = new RelationStorage<T>(typeId);
+                relationStorages[storageId] = storage;
             }
 
             return storage;
@@ -140,7 +307,18 @@ namespace Bitron.Ecs
 
         public bool IsAlive(Entity entity)
         {
-            return _entityMetas[entity.Id].Id > 0;
+            return entities[entity.Id].Entity.Id > 0;
         }
+    }
+
+    internal class TypeIdAssigner
+    {
+        protected static int counter = 1;
+    }
+
+    internal class TypeIdAssigner<T> : TypeIdAssigner where T : struct
+    {
+        internal static readonly int Id;
+        static TypeIdAssigner() => Id = counter++;
     }
 }
