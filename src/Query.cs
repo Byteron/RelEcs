@@ -1,89 +1,105 @@
 using System;
+using System.Collections.Generic;
 
 namespace Bitron.Ecs
 {
     public sealed class Query
     {
-        World _world;
+        World world;
 
-        int[] _indices = new int[512];
-        Entity[] _entities = new Entity[512];
+        int[] indices = new int[512];
+        Entity[] entities = new Entity[512];
 
-        int _entityCount = 0;
+        int entityCount = 0;
 
         internal Query(World world)
         {
-            _world = world;
+            this.world = world;
         }
 
         public void AddEntity(Entity entity)
         {
 
-            if (_entityCount == _entities.Length)
+            if (entityCount == entities.Length)
             {
-                Array.Resize(ref _entities, _entityCount << 1);
+                Array.Resize(ref entities, entityCount << 1);
             }
-            int index = ++_entityCount;
+            int index = ++entityCount;
 
-            _entities[index] = entity;
-            _indices[entity.Id] = index;
+            entities[index] = entity;
+            indices[entity.Id] = index;
         }
 
         public void RemoveEntity(Entity entity)
         {
-            var index = _indices[entity.Id];
-            _indices[entity.Id] = 0;
+            var index = indices[entity.Id];
+            indices[entity.Id] = 0;
 
-            _entityCount--;
+            entityCount--;
 
-            if (index < _entityCount)
+            if (index < entityCount)
             {
-                _entities[index] = _entities[_entityCount];
-                _indices[_entities[index].Id] = index;
+                entities[index] = entities[entityCount];
+                indices[entities[index].Id] = index;
             }
         }
     }
 
-    public sealed class Mask
+    internal sealed class Mask
     {
-        BitSet _includeBitSet = new BitSet();
-        BitSet _excludeBitSet = new BitSet();
+        internal Dictionary<int, int> RelationMap { get; private set; } = new Dictionary<int, int>();
+        
+        BitSet includeBitSet = new BitSet();
+        BitSet excludeBitSet = new BitSet();
 
-        BitSet _addedBitSet = new BitSet();
-        BitSet _removedBitSet = new BitSet();
 
-        public void Include<Component>() where Component : struct
+        // BitSet addedBitSet = new BitSet();
+        // BitSet removedBitSet = new BitSet();
+
+        internal void With<T>() where T : struct, IComponent
         {
-            var typeId = ComponentType<Component>.Id;
-            _includeBitSet.Set(typeId);
+            var typeId = ComponentType<T>.Id;
+            includeBitSet.Set(typeId);
         }
 
-        public void Exclude<Component>() where Component : struct
+        internal void IsA<T>() where T : struct, IRelation
         {
-            var typeId = ComponentType<Component>.Id;
-            _excludeBitSet.Set(typeId);
+            var typeId = ComponentType<Relation<T>>.Id;
+            includeBitSet.Set(typeId);
         }
 
-        public void Added<Component>() where Component : struct
+        internal void IsA<T>(Entity target) where T : struct, IRelation
         {
-            var typeId = ComponentType<Component>.Id;
-            _addedBitSet.Set(typeId);
+            var typeId = ComponentType<Relation<T>>.Id;
+            RelationMap.Add(target.Id, typeId);
         }
 
-        public void Removed<Component>() where Component : struct
+        internal void Without<T>() where T : struct
         {
-            var typeId = ComponentType<Component>.Id;
-            _removedBitSet.Set(typeId);
+            var typeId = ComponentType<T>.Id;
+            excludeBitSet.Set(typeId);
         }
+
+        // internal void Added<T>() where T : struct
+        // {
+        //     var typeId = ComponentType<T>.Id;
+        //     addedBitSet.Set(typeId);
+        // }
+
+        // internal void Removed<T>() where T : struct
+        // {
+        //     var typeId = ComponentType<T>.Id;
+        //     removedBitSet.Set(typeId);
+        // }
 
         internal bool IsCompatibleWith(BitSet bitSet)
         {
-            if (!bitSet.HasAllBitsSet(_includeBitSet))
+            if (!bitSet.HasAllBitsSet(includeBitSet))
             {
                 return false;
             }
 
-            if (bitSet.HasAnyBitSet(_excludeBitSet))
+            if (bitSet.HasAnyBitSet(excludeBitSet))
             {
                 return false;
             }

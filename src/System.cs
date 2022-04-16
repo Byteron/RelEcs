@@ -4,19 +4,19 @@ namespace Bitron.Ecs
 {
     public sealed class SystemGroup
     {
-        List<ISystem> _systems = new List<ISystem>();
+        List<ISystem> systems = new List<ISystem>();
 
         public SystemGroup Add(ISystem system)
         {
-            _systems.Add(system);
+            systems.Add(system);
             return this;
         }
 
         public void Run(World world)
         {
-            for (var i = 0; i < _systems.Count; i++)
+            for (var i = 0; i < systems.Count; i++)
             {
-                _systems[i].Run(new Commands(world));
+                systems[i].Run(new Commands(world));
             }
         }
     }

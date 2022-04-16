@@ -2,8 +2,13 @@ using System;
 
 namespace Bitron.Ecs
 {
+    public interface IComponent { }
+    public interface IRelation { }
+
     public interface IStorage
     {
+        int TypeId { get; set; }
+        object GetRaw(Entity entity);
         bool Has(Entity entity);
         void Remove(Entity entity);
     }
@@ -12,9 +17,10 @@ namespace Bitron.Ecs
     {
         public int TypeId { get; set; }
 
-        int[] _indices = new int[512];
-        Component[] _components = new Component[512];
-        int _componentCount = 0;
+        int[] indices = new int[512];
+        Component[] components = new Component[512];
+        int componentCount = 0;
+
 
         internal Storage(int typeId)
         {
@@ -23,36 +29,41 @@ namespace Bitron.Ecs
 
         public ref Component Add(Entity entity)
         {
-            int index = _componentCount++;
+            int index = componentCount++;
 
-            if (_componentCount == _components.Length)
+            if (componentCount == components.Length)
             {
-                Array.Resize(ref _components, _componentCount << 1);
+                Array.Resize(ref components, componentCount << 1);
             }
 
-            _indices[entity.Id] = index;
-            return ref _components[index];
+            indices[entity.Id] = index;
+            return ref components[index];
         }
 
         public ref Component Get(Entity entity)
         {
-            return ref _components[_indices[entity.Id]];
+            return ref components[indices[entity.Id]];
+        }
+
+        public object GetRaw(Entity entity)
+        {
+            return components[indices[entity.Id]];
         }
 
         public void Remove(Entity entity)
         {
-            ref var index = ref _indices[entity.Id];
+            ref var index = ref indices[entity.Id];
 
             if (index > 0)
             {
-                _components[index] = default;
+                components[index] = default;
                 index = 0;
             }
         }
 
         public bool Has(Entity entity)
         {
-            return _indices[entity.Id] > 0;
+            return indices[entity.Id] > 0;
         }
     }
 
@@ -66,5 +77,11 @@ namespace Bitron.Ecs
         internal static readonly int Id;
 
         static ComponentType() => Id = counter++;
+    }
+
+    public struct Relation<T> where T : notnull, IRelation
+    {
+        public Entity Entity;
+        public T Data;
     }
 }
