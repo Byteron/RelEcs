@@ -5,10 +5,10 @@ namespace Bitron.Ecs
 {
     public sealed class World
     {
-        EntityMeta[] entityMetas = new EntityMeta[512];
-        RelationMeta[,] relationMetas = new RelationMeta[512, 512];
-
+        EntityMeta[] entities = new EntityMeta[512];
         int entityCount = 1;
+
+        List<int>[,] relations = new List<int>[512, 512];
 
         int[] despawnedEntities = new int[512];
         int despawnedEntityCount = 0;
@@ -29,11 +29,11 @@ namespace Bitron.Ecs
             else
             {
                 id = entityCount++;
-                Array.Resize(ref entityMetas, entityCount << 1);
+                Array.Resize(ref entities, entityCount << 1);
                 // TODO: figure out how to resize relationMetas
             }
 
-            ref var meta = ref entityMetas[id];
+            ref var meta = ref entities[id];
 
             meta.Id = id;
             meta.Gen += 1;
@@ -48,7 +48,7 @@ namespace Bitron.Ecs
 
         public void Despawn(Entity entity)
         {
-            ref var meta = ref entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
 
             if (meta.Id == 0)
             {
@@ -81,7 +81,7 @@ namespace Bitron.Ecs
         {
             var storage = GetStorage<T>();
 
-            ref var meta = ref entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
             meta.Bitset.Set(storage.TypeId);
 
             return ref storage.Add(entity);
@@ -97,7 +97,7 @@ namespace Bitron.Ecs
         {
             var storage = GetStorage<T>();
 
-            ref var meta = ref entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
             meta.Bitset.Clear(storage.TypeId);
 
             storage.Remove(entity);
@@ -107,7 +107,7 @@ namespace Bitron.Ecs
         {
             var storage = GetStorage<Relation<T>>();
 
-            ref var meta = ref entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
             meta.Bitset.Set(storage.TypeId);
 
             storage.Add(entity) = new Relation<T>() { Data = new T(), Entity = target };
@@ -116,7 +116,12 @@ namespace Bitron.Ecs
             var entityId = entity.Id;
             var typeId = storage.TypeId;
 
-            relationMetas[targetId, typeId].Add(entityId);
+            if (relations[targetId, typeId] == null)
+            {
+                relations[targetId, typeId] = new List<int>();
+            }
+
+            relations[targetId, typeId].Add(entityId);
         }
 
         public ref Relation<T> GetRelation<T>(Entity entity) where T : struct, IRelation
@@ -130,7 +135,7 @@ namespace Bitron.Ecs
             var storage = GetStorage<Relation<T>>();
             var relation = storage.Get(entity);
 
-            ref var meta = ref entityMetas[entity.Id];
+            ref var meta = ref entities[entity.Id];
             meta.Bitset.Clear(storage.TypeId);
 
             storage.Remove(entity);
@@ -139,7 +144,7 @@ namespace Bitron.Ecs
             var entityId = entity.Id;
             var typeId = storage.TypeId;
 
-            relationMetas[targetId, typeId].Remove(entityId);
+            relations[targetId, typeId]?.Remove(entityId);
         }
 
         public Entity[] FindRelated<T>(Entity target) where T : struct, IRelation
@@ -153,11 +158,11 @@ namespace Bitron.Ecs
 
             var typeId = ComponentType<Relation<T>>.Id;
 
-            if (relationMetas[target.Id, typeId].Entities != null)
+            if (relations[target.Id, typeId] != null)
             {
-                foreach (int entity in relationMetas[target.Id, typeId].Entities)
+                foreach (int entity in relations[target.Id, typeId])
                 {
-                    ref var meta = ref entityMetas[entity];
+                    ref var meta = ref this.entities[entity];
 
                     entities.Add(new Entity() { Id = entity, Gen = meta.Gen });
                 }
@@ -172,7 +177,7 @@ namespace Bitron.Ecs
 
             for (var i = 1; i <= entityCount; i++)
             {
-                ref var meta = ref entityMetas[i];
+                ref var meta = ref this.entities[i];
 
                 if (meta.Id == 0)
                 {
@@ -186,7 +191,7 @@ namespace Bitron.Ecs
                     var targetId = pair.Key;
                     var typeId = pair.Value;
 
-                    var relatedEntities = relationMetas[targetId, typeId].Entities;
+                    var relatedEntities = relations[targetId, typeId];
                     isRelatedToTarget &= relatedEntities == null ? false : relatedEntities.Contains(i);
                 }
 
@@ -234,7 +239,7 @@ namespace Bitron.Ecs
 
         public bool IsAlive(Entity entity)
         {
-            return entityMetas[entity.Id].Id > 0;
+            return entities[entity.Id].Id > 0;
         }
     }
 }
