@@ -47,10 +47,10 @@ namespace Bitron.Ecs
 
     internal sealed class Mask
     {
-        internal Dictionary<int, int> RelationMap { get; private set; } = new Dictionary<int, int>();
+        internal List<(Entity, int)> Relations { get; private set; } = new List<(Entity, int)>();
         
-        BitSet includeBitSet = new BitSet();
-        BitSet excludeBitSet = new BitSet();
+        internal BitSet IncludeBitSet = new BitSet();
+        internal BitSet ExcludeBitSet = new BitSet();
 
 
         // BitSet addedBitSet = new BitSet();
@@ -58,26 +58,26 @@ namespace Bitron.Ecs
 
         internal void With<T>() where T : struct, IComponent
         {
-            var typeId = ComponentType<T>.Id;
-            includeBitSet.Set(typeId);
-        }
-
-        internal void IsA<T>() where T : struct, IRelation
-        {
-            var typeId = ComponentType<Relation<T>>.Id;
-            includeBitSet.Set(typeId);
-        }
-
-        internal void IsA<T>(Entity target) where T : struct, IRelation
-        {
-            var typeId = ComponentType<Relation<T>>.Id;
-            RelationMap.Add(target.Id, typeId);
+            var typeId = TypeIdAssigner<T>.Id;
+            IncludeBitSet.Set(typeId);
         }
 
         internal void Without<T>() where T : struct
         {
-            var typeId = ComponentType<T>.Id;
-            excludeBitSet.Set(typeId);
+            var typeId = TypeIdAssigner<T>.Id;
+            ExcludeBitSet.Set(typeId);
+        }
+
+        internal void IsA<T>() where T : struct, IRelation
+        {
+            var typeId = TypeIdAssigner<T>.Id;
+            IncludeBitSet.Set(typeId);
+        }
+
+        internal void IsA<T>(Entity target) where T : struct, IRelation
+        {
+            var typeId = TypeIdAssigner<T>.Id;
+            Relations.Add((target, typeId));
         }
 
         // internal void Added<T>() where T : struct
@@ -91,20 +91,5 @@ namespace Bitron.Ecs
         //     var typeId = ComponentType<T>.Id;
         //     removedBitSet.Set(typeId);
         // }
-
-        internal bool IsCompatibleWith(BitSet bitSet)
-        {
-            if (!bitSet.HasAllBitsSet(includeBitSet))
-            {
-                return false;
-            }
-
-            if (bitSet.HasAnyBitSet(excludeBitSet))
-            {
-                return false;
-            }
-
-            return true;
-        }
     }
 }

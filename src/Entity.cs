@@ -10,8 +10,7 @@ namespace Bitron.Ecs
 
     internal struct EntityMeta
     {
-        internal int Id;
-        internal int Gen;
-        internal BitSet Bitset;
+        internal Entity Entity;
+        internal BitSet BitSet;
     }
 }

@@ -58,9 +58,9 @@ namespace Bitron.Ecs
             world.AddRelation<T>(entity, target);
         }
 
-        public ref Relation<T> GetRelation<T>(Entity entity) where T: struct, IRelation
+        public Relation<T> GetRelation<T>(Entity entity) where T: struct, IRelation
         {
-            return ref world.GetRelation<T>(entity);
+            return world.GetRelation<T>(entity);
         }
 
         public void RemoveRelation<T>(Entity entity) where T: struct, IRelation
