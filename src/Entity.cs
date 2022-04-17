@@ -2,51 +2,20 @@ using System;
 
 namespace Bitron.Ecs
 {
-    // public struct TypeId
-    // {
-    //     internal Id TargetId;
-    //     internal int Id;
-    //     internal bool IsPair;
-
-    //     // override object.Equals
-    //     public override bool Equals(object obj)
-    //     {
-    //         if (!(obj is TypeId other) || IsPair != other.IsPair)
-    //         {
-    //             return false;
-    //         }
-            
-    //         return IsPair ? Id == other.Id && TargetId == other.TargetId : Id == other.Id;
-    //     }
-
-    //     public override int GetHashCode()
-    //     {
-    //         return HashCode.Combine(TargetId, Id);
-    //     }
-
-    //     public override string ToString()
-    //     {
-    //         return base.ToString();
-    //     }
-
-    //     public static bool operator ==(TypeId left, TypeId right) => left.Equals(right);
-	// 	public static bool operator !=(TypeId left, TypeId right) => !left.Equals(right);
-    // }
-
     public struct Id
     {
-        public bool IsNone { get => Number == 0; }
+        public static Id None = default;
+        public static Id Any = new Id(int.MaxValue, 0);
 
         internal int Number;
-        internal ushort Generation;
+        internal int Generation;
 
-        public Id(int id, ushort gen)
+        public Id(int id, int gen)
         {
             Number = id;
             Generation = gen;
         }
 
-        // override object.Equals
         public override bool Equals(object obj)
         {
             return (obj is Id other) && Number == other.Number && Generation == other.Generation;
@@ -63,13 +32,26 @@ namespace Bitron.Ecs
         }
 
         public static bool operator ==(Id left, Id right) => left.Equals(right);
-		public static bool operator !=(Id left, Id right) => !left.Equals(right);
+        public static bool operator !=(Id left, Id right) => !left.Equals(right);
     }
 
     public struct Entity
     {
+        public static Entity None = default;
+        public static Entity Any = new Entity(Id.Any);
+
+        public bool IsAny { get => Id == Id.Any; }
+        public bool IsNone { get => Id == Id.None; }
+        public bool IsAlive { get => world.IsAlive(Id); }
+
         internal Id Id { get; }
         private World world;
+
+        public Entity(Id id)
+        {
+            this.world = null;
+            Id = id;
+        }
 
         public Entity(World world, Id id)
         {
@@ -77,48 +59,53 @@ namespace Bitron.Ecs
             Id = id;
         }
 
-        public Entity(World world, int id, ushort gen)
+        public Entity(World world, int id, int gen)
         {
             this.world = world;
             Id = new Id(id, gen);
         }
 
-        public Entity Add<T>() where T : struct
+        public Entity Add<T>(T data = default) where T : struct
         {
-            world.AddComponent<T>(Id);
+            world.AddComponent<T>(Id, Entity.None) = data;
             return this;
         }
 
-        public Entity Add<T>(T data) where T : struct
+        public Entity Add<T>(Entity target, T data = default) where T : struct
         {
-            world.AddComponent<T>(Id) = data;
-            return this;
-        }
-
-        public Entity Add<T>(Entity target) where T : struct
-        {
-            world.AddRelation<T>(Id, target);
+            world.AddComponent<T>(Id, target) = data;
             return this;
         }
 
         public ref T Get<T>() where T : struct
         {
-            return ref world.GetComponent<T>(Id);
+            return ref world.GetComponent<T>(Id, Entity.None);
         }
 
         public ref T Get<T>(Entity target) where T : struct
         {
-            return ref world.GetComponent<T>(Id);
+            return ref world.GetComponent<T>(Id, target);
         }
 
         public bool Has<T>() where T : struct
         {
-            return world.HasComponent<T>(Id);
+            return world.HasComponent<T>(Id, Entity.None);
+        }
+
+        public bool Has<T>(Entity target) where T : struct
+        {
+            return world.HasComponent<T>(Id, target);
         }
 
         public Entity Remove<T>() where T : struct
         {
-            world.RemoveComponent<T>(Id);
+            world.RemoveComponent<T>(Id, Entity.None);
+            return this;
+        }
+
+        public Entity Remove<T>(Entity target) where T : struct
+        {
+            world.RemoveComponent<T>(Id, target);
             return this;
         }
 
@@ -127,12 +114,6 @@ namespace Bitron.Ecs
             world.Despawn(Id);
         }
 
-        public bool IsAlive(Entity entity)
-        {
-            return world.IsAlive(Id);
-        }
-
-        // override object.Equals
         public override bool Equals(object obj)
         {
             return (obj is Entity entity) && Id.Equals(entity.Id);
@@ -147,5 +128,8 @@ namespace Bitron.Ecs
         {
             return Id.ToString();
         }
+
+        public static bool operator ==(Entity left, Entity right) => left.Equals(right);
+        public static bool operator !=(Entity left, Entity right) => !left.Equals(right);
     }
 }
