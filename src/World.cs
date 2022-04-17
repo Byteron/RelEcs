@@ -182,28 +182,6 @@ namespace Bitron.Ecs
             targetRelations[targetId, typeId].Remove(entity);
         }
 
-        public Entity[] FindRelated<T>(Entity target) where T : struct, IRelation
-        {
-            if (!IsAlive(target))
-            {
-                throw new Exception("target id not alive");
-            }
-
-            List<Entity> relatives = new List<Entity>();
-
-            var typeId = TypeIdAssigner<T>.Id;
-
-            if (targetRelations[target.Id, typeId] != null)
-            {
-                foreach (var entity in targetRelations[target.Id, typeId])
-                {
-                    relatives.Add(entity);
-                }
-            }
-
-            return relatives.ToArray();
-        }
-
         internal Entity[] Query(Mask mask)
         {
             List<Entity> entities = new List<Entity>();

@@ -68,11 +68,6 @@ namespace Bitron.Ecs
             world.RemoveRelation<T>(entity);
         }
 
-        public Entity[] FindRelated<T>(Entity target) where T: struct, IRelation
-        {
-            return world.FindRelated<T>(target);
-        }
-
         public bool IsAlive(Entity entity)
         {
             return world.IsAlive(entity);
