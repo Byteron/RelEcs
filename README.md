@@ -52,7 +52,6 @@ world.RemoveResource<MyResource>();
 struct Likes { }
 struct Owes { int Value; }
 
-// relations always target another entity
 var apples = world.Spawn();
 
 var bob = world.Spawn();
@@ -61,7 +60,9 @@ var frank = world.Spawn();
 // relations basically are just components, but also
 // associated with an entity
 bob.Add<Likes>(apples);
+^^^     ^^^^^  ^^^^^^
 frank.Add(new Owes { Value = 100 }, bob);
+^^^^^         ^^^^                  ^^^
 
 // we can ask if an entity has a component or relation
 bool doesBobLikeApples = bob.Has<Likes>(apples);
