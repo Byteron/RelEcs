@@ -5,8 +5,10 @@ namespace Bitron.Ecs
 {
     internal sealed class Mask
     {
-        internal List<(Entity, int)> Relations { get; private set; } = new List<(Entity, int)>();
-        
+        internal List<TypeId> TargetRelations { get; private set; } = new List<TypeId>();
+        internal List<TypeId> SourceRelations { get; private set; } = new List<TypeId>();
+        internal List<int> AnyRelations { get; private set; } = new List<int>();
+
         internal BitSet IncludeBitSet = new BitSet();
         internal BitSet ExcludeBitSet = new BitSet();
 
@@ -14,29 +16,23 @@ namespace Bitron.Ecs
         // BitSet addedBitSet = new BitSet();
         // BitSet removedBitSet = new BitSet();
 
-        internal void With<T>() where T : struct
+        internal void With<T>(Entity target) where T : struct
         {
-            var typeId = TypeIdAssigner<T>.Id;
-            IncludeBitSet.Set(typeId);
+            var typeId = TypeId.Get<T>(target.Id);
+            IncludeBitSet.Set(typeId.Index);
         }
 
-        internal void Without<T>() where T : struct
+        internal void Without<T>(Entity target) where T : struct
         {
-            var typeId = TypeIdAssigner<T>.Id;
-            ExcludeBitSet.Set(typeId);
+            var typeId = TypeId.Get<T>(target.Id);
+            ExcludeBitSet.Set(typeId.Index);
         }
 
-        internal void IsA<T>() where T : struct
-        {
-            var typeId = TypeIdAssigner<T>.Id;
-            IncludeBitSet.Set(typeId);
-        }
-
-        internal void IsA<T>(Entity target) where T : struct
-        {
-            var typeId = TypeIdAssigner<T>.Id;
-            Relations.Add((target, typeId));
-        }
+        // internal void Without<T>(Entity source, Entity target) where T : struct
+        // {
+        //     var typeId = TypeId.Get<T>(target.Id);
+        //     ExcludeBitSet.Set(typeId.Index);
+        // }
 
         // internal void Added<T>() where T : struct
         // {
