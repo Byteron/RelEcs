@@ -1,6 +1,6 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
-
 namespace Bitron.Ecs
 {
     internal struct Resource<T> where T : class
@@ -174,33 +174,12 @@ namespace Bitron.Ecs
 
         internal Entity[] Query(Mask mask)
         {
-            List<Entity> filteredEntities = new List<Entity>();
-
-            for (var i = 1; i <= entityCount; i++)
-            {
-                Id id = entities[i];
-
-                if (!IsAlive(id))
-                {
-                    continue;
-                }
-
-                var bitset = bitsets[i];
-
-                if (!bitset.HasAllBitsSet(mask.IncludeBitSet))
-                {
-                    continue;
-                }
-
-                if (bitset.HasAnyBitSet(mask.ExcludeBitSet))
-                {
-                    continue;
-                }
-
-                filteredEntities.Add(new Entity(this, id));
-            }
-
-            return filteredEntities.ToArray();
+            return entities
+                .Where(id => IsAlive(id))
+                .Where(id => bitsets[id.Number].HasAllBitsSet(mask.IncludeBitSet))
+                .Where(id => !bitsets[id.Number].HasAnyBitSet(mask.ExcludeBitSet))
+                .Select(id => new Entity(this, id))
+                .ToArray();
         }
 
         public Storage<T> GetStorage<T>(Id target) where T : struct
