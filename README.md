@@ -58,11 +58,11 @@ var bob = world.Spawn();
 var frank = world.Spawn();
 
 // relations basically are just components, but also
-// associated with an entity
+// associated with a second "target" entity
 bob.Add<Likes>(apples);
-^^^     ^^^^^  ^^^^^^
+//             ^^^^^^
 frank.Add(new Owes { Value = 100 }, bob);
-^^^^^         ^^^^                  ^^^
+//                                  ^^^
 
 // we can ask if an entity has a component or relation
 bool doesBobLikeApples = bob.Has<Likes>(apples);
