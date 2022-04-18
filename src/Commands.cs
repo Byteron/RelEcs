@@ -14,6 +14,21 @@ namespace Bitron.Ecs
             return world.Spawn();
         }
 
+        public void AddResource<T>(T resource) where T : class
+        {
+            world.AddResource<T>(resource);
+        }
+
+        public T GetResource<T>() where T : class
+        {
+            return world.GetResource<T>();
+        }
+
+        public void RemoveResource<T>() where T : class
+        {
+            world.RemoveResource<T>();
+        }
+
         public QueryCommands Query()
         {
             return new QueryCommands(world);

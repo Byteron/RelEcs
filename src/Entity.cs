@@ -67,45 +67,45 @@ namespace Bitron.Ecs
 
         public Entity Add<T>(T data = default) where T : struct
         {
-            world.AddComponent<T>(Id, Entity.None) = data;
+            world.AddComponent<T>(Id) = data;
             return this;
         }
 
         public Entity Add<T>(Entity target, T data = default) where T : struct
         {
-            world.AddComponent<T>(Id, target) = data;
+            world.AddComponent<T>(Id, target.Id) = data;
             return this;
         }
 
         public ref T Get<T>() where T : struct
         {
-            return ref world.GetComponent<T>(Id, Entity.None);
+            return ref world.GetComponent<T>(Id);
         }
 
         public ref T Get<T>(Entity target) where T : struct
         {
-            return ref world.GetComponent<T>(Id, target);
+            return ref world.GetComponent<T>(Id, target.Id);
         }
 
         public bool Has<T>() where T : struct
         {
-            return world.HasComponent<T>(Id, Entity.None);
+            return world.HasComponent<T>(Id);
         }
 
         public bool Has<T>(Entity target) where T : struct
         {
-            return world.HasComponent<T>(Id, target);
+            return world.HasComponent<T>(Id, target.Id);
         }
 
         public Entity Remove<T>() where T : struct
         {
-            world.RemoveComponent<T>(Id, Entity.None);
+            world.RemoveComponent<T>(Id);
             return this;
         }
 
         public Entity Remove<T>(Entity target) where T : struct
         {
-            world.RemoveComponent<T>(Id, target);
+            world.RemoveComponent<T>(Id, target.Id);
             return this;
         }
 

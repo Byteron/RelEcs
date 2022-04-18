@@ -3,8 +3,16 @@ using System.Collections.Generic;
 
 namespace Bitron.Ecs
 {
+    internal struct Resource<T> where T : class
+    {
+        internal T Value;
+        internal Resource(T value) => Value = value;
+    }
+
     public sealed class World
     {
+        Entity world;
+
         Id[] entities = new Id[512];
         BitSet[] bitsets = new BitSet[512];
 
@@ -14,6 +22,11 @@ namespace Bitron.Ecs
         int unusedIdCount = 0;
 
         IStorage[] storages = new IStorage[512];
+
+        public World()
+        {
+            world = Spawn();
+        }
 
         public Entity Spawn()
         {
@@ -108,9 +121,24 @@ namespace Bitron.Ecs
             entities[id.Number] = Id.None;
         }
 
-        public ref T AddComponent<T>(Id id, Entity target) where T : struct
+        public void AddResource<T>(T resource) where T : class
         {
-            var storage = GetStorage<T>(target.Id);
+            AddComponent<Resource<T>>(world.Id);
+        }
+
+        public T GetResource<T>() where T : class
+        {
+            return GetComponent<Resource<T>>(world.Id).Value;
+        }
+
+        public void RemoveResource<T>() where T : class
+        {
+            RemoveComponent<Resource<T>>(world.Id);
+        }
+
+        public ref T AddComponent<T>(Id id, Id target = default) where T : struct
+        {
+            var storage = GetStorage<T>(target);
             var targetIndex = storage.TypeId.Index;
             var sourceIndex = TypeId.Get<T>(id).Index;
 
@@ -120,24 +148,24 @@ namespace Bitron.Ecs
             return ref storage.Add(id.Number);
         }
 
-        public ref T GetComponent<T>(Id id, Entity target) where T : struct
+        public ref T GetComponent<T>(Id id, Id target = default) where T : struct
         {
-            var storage = GetStorage<T>(target.Id);
+            var storage = GetStorage<T>(target);
             var index = storage.TypeId.Index;
 
             return ref storage.Get(id.Number);
         }
 
-        public bool HasComponent<T>(Id id, Entity target) where T : struct
+        public bool HasComponent<T>(Id id, Id target = default) where T : struct
         {
-            var typeId = TypeId.Get<T>(target.Id);
+            var typeId = TypeId.Get<T>(target);
             var bitset = bitsets[id.Number];
             return bitset.Get(typeId.Index);
         }
 
-        public void RemoveComponent<T>(Id id, Entity target) where T : struct
+        public void RemoveComponent<T>(Id id, Id target = default) where T : struct
         {
-            var storage = GetStorage<T>(target.Id);
+            var storage = GetStorage<T>(target);
             storage.Remove(id.Number);
 
             var bitset = bitsets[id.Number];
