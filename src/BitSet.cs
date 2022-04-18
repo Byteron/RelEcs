@@ -55,21 +55,6 @@ namespace Bitron.Ecs
             count = 0;
         }
 
-        // public int[] GetSetIndices()
-        // {
-        //     List<int> indices = new List<int>();
-
-        //     for (int i = 0; i < Capacity; i++)
-        //     {
-        //         if (Get(i))
-        //         {
-        //             indices.Add(i);
-        //         }
-        //     }
-
-        //     return indices.ToArray();
-        // }
-
         public bool HasAllBitsSet(BitSet mask)
         {
             var count = MathF.Min(Bits.Length, mask.Bits.Length);

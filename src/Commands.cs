@@ -49,17 +49,5 @@ namespace Bitron.Ecs
         {
             return world.Query(mask);
         }
-
-        // public QueryCommands Added<T>() where T : struct
-        // {
-        //     mask.Added<T>();
-        //     return this;
-        // }
-
-        // public QueryCommands Removed<T>() where T : struct
-        // {
-        //     mask.Removed<T>();
-        //     return this;
-        // }
     }
 }
