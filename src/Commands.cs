@@ -43,7 +43,7 @@ namespace Bitron.Ecs
 
         World world;
 
-        internal QueryCommands(World world)
+        public QueryCommands(World world)
         {
             this.world = world;
         }

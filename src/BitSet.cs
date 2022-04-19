@@ -2,7 +2,7 @@ using System;
 
 namespace Bitron.Ecs
 {
-    internal sealed class BitSet
+    public sealed class BitSet
     {
         const int BitSize = (sizeof(uint) * 8) - 1;
         const int ByteSize = 5;  // log_2(BitSize + 1)
@@ -10,7 +10,7 @@ namespace Bitron.Ecs
         public int Count { get { return count; } }
         public int Capacity { get { return Bits.Length * (BitSize + 1); } }
 
-        internal uint[] Bits = new uint[1];
+        public uint[] Bits = new uint[1];
 
         int count = 0;
 

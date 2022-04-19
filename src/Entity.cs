@@ -11,7 +11,7 @@ namespace Bitron.Ecs
         public bool IsNone { get => Id == EntityId.None; }
         public bool IsAlive { get => world.IsAlive(Id); }
 
-        internal EntityId Id { get; }
+        public EntityId Id { get; }
         private World world;
 
         public Entity(EntityId id)
@@ -105,8 +105,8 @@ namespace Bitron.Ecs
         public static EntityId None = default;
         public static EntityId Any = new EntityId(int.MaxValue, 0);
 
-        internal int Number;
-        internal int Generation;
+        public int Number;
+        public int Generation;
 
         public EntityId(int id, int gen)
         {

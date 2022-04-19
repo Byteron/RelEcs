@@ -3,10 +3,10 @@ using System.Linq;
 using System.Collections.Generic;
 namespace Bitron.Ecs
 {
-    internal struct Resource<T> where T : class
+    public struct Resource<T> where T : class
     {
-        internal T Value;
-        internal Resource(T value) => Value = value;
+        public T Value;
+        public Resource(T value) => Value = value;
     }
 
     public sealed class World
@@ -189,7 +189,7 @@ namespace Bitron.Ecs
             removedBitsets[id.Number].Set(storage.TypeId.Index);
         }
 
-        internal Entity[] Query(Mask mask)
+        public Entity[] Query(Mask mask)
         {
             return entities
                 .Where(id => IsAlive(id) && id != world.Id)

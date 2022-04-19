@@ -10,24 +10,24 @@ namespace Bitron.Ecs
         private static int count = 0;
 
         // Id<32Bit> Type<32Bit>
-        internal long Value;
+        public long Value;
 
         // continuous id;
-        internal int Index;
+        public int Index;
 
-        internal int Entity { get { return (int)(Value >> 32); } }
-        internal ushort Type { get { return (ushort)(Value); } }
+        public int Entity { get { return (int)(Value >> 32); } }
+        public ushort Type { get { return (ushort)(Value); } }
 
-        internal bool IsPair { get { return Entity != 0; } }
+        public bool IsPair { get { return Entity != 0; } }
 
-        internal static TypeId Get<T>(EntityId id = default) where T : struct
+        public static TypeId Get<T>(EntityId id = default) where T : struct
         {
             return new TypeId(TypeIdAssigner<T>.Id, id);
         }
 
-        internal TypeId(ushort typeId) : this(typeId, EntityId.None) { }
+        public TypeId(ushort typeId) : this(typeId, EntityId.None) { }
 
-        internal TypeId(ushort typeId, EntityId id = default)
+        public TypeId(ushort typeId, EntityId id = default)
         {
             Value = 0;
             Value |= typeId;
@@ -66,7 +66,7 @@ namespace Bitron.Ecs
 
         private class TypeIdAssigner<T> : TypeIdAssigner where T : struct
         {
-            internal static readonly ushort Id;
+            public static readonly ushort Id;
             static TypeIdAssigner() => Id = counter++;
         }
     }
@@ -87,7 +87,7 @@ namespace Bitron.Ecs
         T[] items = null;
         int count = 0;
 
-        internal Storage(World.Config config, TypeId typeId)
+        public Storage(World.Config config, TypeId typeId)
         {
             indices = new int[config.EntitySize];
             items = new T[config.StorageSize];
