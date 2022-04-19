@@ -20,14 +20,14 @@ namespace Bitron.Ecs
 
         internal bool IsPair { get { return Entity != 0; } }
 
-        internal static TypeId Get<T>(Id id = default) where T : struct
+        internal static TypeId Get<T>(EntityId id = default) where T : struct
         {
             return new TypeId(TypeIdAssigner<T>.Id, id);
         }
 
-        internal TypeId(ushort typeId) : this(typeId, Id.None) { }
+        internal TypeId(ushort typeId) : this(typeId, EntityId.None) { }
 
-        internal TypeId(ushort typeId, Id id = default)
+        internal TypeId(ushort typeId, EntityId id = default)
         {
             Value = 0;
             Value |= typeId;

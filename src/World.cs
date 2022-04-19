@@ -11,16 +11,20 @@ namespace Bitron.Ecs
 
     public sealed class World
     {
+        private static int counter = 0;
+
+        public int Number;
+
         Entity world;
 
-        Id[] entities = null;
+        EntityId[] entities = null;
         BitSet[] bitsets = null;
         BitSet[] addedBitsets = null;
         BitSet[] removedBitsets = null;
 
         int entityCount = 0;
 
-        Id[] unusedIds = null;
+        EntityId[] unusedIds = null;
         int unusedIdCount = 0;
 
         IStorage[] storages = null;
@@ -31,19 +35,23 @@ namespace Bitron.Ecs
 
         public World(Config config)
         {
-            entities = new Id[config.EntitySize];
+            Number = counter++;
+    
+            entities = new EntityId[config.EntitySize];
             bitsets = new BitSet[config.EntitySize];
             addedBitsets = new BitSet[config.EntitySize];
             removedBitsets = new BitSet[config.EntitySize];
-            unusedIds = new Id[config.EntitySize];
+            unusedIds = new EntityId[config.EntitySize];
             storages = new IStorage[config.ComponentSize];
+    
             this.config = config;
+    
             world = Spawn();
         }
 
         public Entity Spawn()
         {
-            Id id = default;
+            EntityId id = default;
 
             if (unusedIdCount > 0)
             {
@@ -51,7 +59,7 @@ namespace Bitron.Ecs
             }
             else
             {
-                id = new Id(++entityCount, 1);
+                id = new EntityId(++entityCount, 1);
 
                 if (entities.Length == entityCount)
                 {
@@ -71,7 +79,7 @@ namespace Bitron.Ecs
             return new Entity(this, id);
         }
 
-        public void Despawn(Id id)
+        public void Despawn(EntityId id)
         {
             if (!IsAlive(entities[id.Number]))
             {
@@ -130,12 +138,12 @@ namespace Bitron.Ecs
 
             id.Generation++;
             unusedIds[unusedIdCount++] = id;
-            entities[id.Number] = Id.None;
+            entities[id.Number] = EntityId.None;
         }
 
         public void AddResource<T>(T resource) where T : class
         {
-            AddComponent<Resource<T>>(world.Id);
+            AddComponent<Resource<T>>(world.Id) = new Resource<T>(resource);
         }
 
         public T GetResource<T>() where T : class
@@ -148,7 +156,7 @@ namespace Bitron.Ecs
             RemoveComponent<Resource<T>>(world.Id);
         }
 
-        public ref T AddComponent<T>(Id id, Id target = default) where T : struct
+        public ref T AddComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
 
@@ -159,19 +167,19 @@ namespace Bitron.Ecs
             return ref storage.Add(id.Number);
         }
 
-        public ref T GetComponent<T>(Id id, Id target = default) where T : struct
+        public ref T GetComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
             return ref storage.Get(id.Number);
         }
 
-        public bool HasComponent<T>(Id id, Id target = default) where T : struct
+        public bool HasComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var typeId = TypeId.Get<T>(target);
             return bitsets[id.Number].Get(typeId.Index);
         }
 
-        public void RemoveComponent<T>(Id id, Id target = default) where T : struct
+        public void RemoveComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
             storage.Remove(id.Number);
@@ -193,7 +201,7 @@ namespace Bitron.Ecs
                 .ToArray();
         }
 
-        public Storage<T> GetStorage<T>(Id target) where T : struct
+        public Storage<T> GetStorage<T>(EntityId target) where T : struct
         {
             Storage<T> storage = null;
 
@@ -233,9 +241,9 @@ namespace Bitron.Ecs
             }
         }
 
-        public bool IsAlive(Id id)
+        public bool IsAlive(EntityId id)
         {
-            return entities[id.Number] != Id.None;
+            return entities[id.Number] != EntityId.None;
         }
 
         public sealed class Config

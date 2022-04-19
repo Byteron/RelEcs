@@ -4,7 +4,7 @@ namespace Bitron.Ecs
     {
         World world;
 
-        internal Commands(World world)
+        public Commands(World world)
         {
             this.world = world;
         }

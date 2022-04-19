@@ -2,58 +2,25 @@ using System;
 
 namespace Bitron.Ecs
 {
-    public struct Id
-    {
-        public static Id None = default;
-        public static Id Any = new Id(int.MaxValue, 0);
-
-        internal int Number;
-        internal int Generation;
-
-        public Id(int id, int gen)
-        {
-            Number = id;
-            Generation = gen;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return (obj is Id other) && Number == other.Number && Generation == other.Generation;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Number, Generation);
-        }
-
-        public override string ToString()
-        {
-            return "" + Number;
-        }
-
-        public static bool operator ==(Id left, Id right) => left.Equals(right);
-        public static bool operator !=(Id left, Id right) => !left.Equals(right);
-    }
-
     public struct Entity
     {
         public static Entity None = default;
-        public static Entity Any = new Entity(Id.Any);
+        public static Entity Any = new Entity(EntityId.Any);
 
-        public bool IsAny { get => Id == Id.Any; }
-        public bool IsNone { get => Id == Id.None; }
+        public bool IsAny { get => Id == EntityId.Any; }
+        public bool IsNone { get => Id == EntityId.None; }
         public bool IsAlive { get => world.IsAlive(Id); }
 
-        internal Id Id { get; }
+        internal EntityId Id { get; }
         private World world;
 
-        public Entity(Id id)
+        public Entity(EntityId id)
         {
             this.world = null;
             Id = id;
         }
 
-        public Entity(World world, Id id)
+        public Entity(World world, EntityId id)
         {
             this.world = world;
             Id = id;
@@ -62,7 +29,7 @@ namespace Bitron.Ecs
         public Entity(World world, int id, int gen)
         {
             this.world = world;
-            Id = new Id(id, gen);
+            Id = new EntityId(id, gen);
         }
 
         public Entity Add<T>(T data = default) where T : struct
@@ -131,5 +98,38 @@ namespace Bitron.Ecs
 
         public static bool operator ==(Entity left, Entity right) => left.Equals(right);
         public static bool operator !=(Entity left, Entity right) => !left.Equals(right);
+    }
+
+    public struct EntityId
+    {
+        public static EntityId None = default;
+        public static EntityId Any = new EntityId(int.MaxValue, 0);
+
+        internal int Number;
+        internal int Generation;
+
+        public EntityId(int id, int gen)
+        {
+            Number = id;
+            Generation = gen;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj is EntityId other) && Number == other.Number && Generation == other.Generation;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Number, Generation);
+        }
+
+        public override string ToString()
+        {
+            return "" + Number;
+        }
+
+        public static bool operator ==(EntityId left, EntityId right) => left.Equals(right);
+        public static bool operator !=(EntityId left, EntityId right) => !left.Equals(right);
     }
 }
