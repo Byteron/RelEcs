@@ -14,9 +14,11 @@ namespace Bitron.Ecs
 
         public void Run(World world)
         {
+            var commands = new Commands(world);
+
             for (var i = 0; i < systems.Count; i++)
             {
-                systems[i].Run(new Commands(world));
+                systems[i].Run(commands);
             }
         }
     }

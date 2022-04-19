@@ -82,20 +82,26 @@ namespace Bitron.Ecs
     {
         public TypeId TypeId { get; set; }
 
-        int[] indices = new int[512];
+        int[] indices = null;
 
-        T[] items = new T[512];
+        T[] items = null;
         int count = 0;
 
-
-        internal Storage(TypeId typeId)
+        internal Storage(World.Config config, TypeId typeId)
         {
+            indices = new int[config.EntitySize];
+            items = new T[config.StorageSize];
             TypeId = typeId;
         }
 
         public ref T Add(int entityId)
         {
             int index = count++;
+
+            if (entityId >= indices.Length)
+            {
+                Array.Resize(ref indices, entityId << 1);
+            }
 
             if (count == items.Length)
             {

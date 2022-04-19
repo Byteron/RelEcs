@@ -60,6 +60,18 @@ namespace Bitron.Ecs
             return this;
         }
 
+        public QueryCommands Added<T>(Entity target = default) where T : struct
+        {
+            mask.Added<T>(target);
+            return this;
+        }
+
+        public QueryCommands Removed<T>(Entity target = default) where T : struct
+        {
+            mask.Removed<T>(target);
+            return this;
+        }
+
         public Entity[] Apply()
         {
             return world.Query(mask);

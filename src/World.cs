@@ -13,18 +13,31 @@ namespace Bitron.Ecs
     {
         Entity world;
 
-        Id[] entities = new Id[512];
-        BitSet[] bitsets = new BitSet[512];
+        Id[] entities = null;
+        BitSet[] bitsets = null;
+        BitSet[] addedBitsets = null;
+        BitSet[] removedBitsets = null;
 
         int entityCount = 0;
 
-        Id[] unusedIds = new Id[512];
+        Id[] unusedIds = null;
         int unusedIdCount = 0;
 
-        IStorage[] storages = new IStorage[512];
+        IStorage[] storages = null;
 
-        public World()
+        Config config;
+
+        public World() : this(new Config()) { }
+
+        public World(Config config)
         {
+            entities = new Id[config.EntitySize];
+            bitsets = new BitSet[config.EntitySize];
+            addedBitsets = new BitSet[config.EntitySize];
+            removedBitsets = new BitSet[config.EntitySize];
+            unusedIds = new Id[config.EntitySize];
+            storages = new IStorage[config.ComponentSize];
+            this.config = config;
             world = Spawn();
         }
 
@@ -44,17 +57,16 @@ namespace Bitron.Ecs
                 {
                     Array.Resize(ref entities, entityCount << 1);
                     Array.Resize(ref bitsets, entityCount << 1);
+                    Array.Resize(ref addedBitsets, entityCount << 1);
+                    Array.Resize(ref removedBitsets, entityCount << 1);
                 }
 
                 entities[id.Number] = id;
             }
 
-            ref var bitset = ref bitsets[id.Number];
-
-            if (bitset == null)
-            {
-                bitset = new BitSet();
-            }
+            bitsets[id.Number] ??= new BitSet();
+            addedBitsets[id.Number] ??= new BitSet();
+            removedBitsets[id.Number] ??= new BitSet();
 
             return new Entity(this, id);
         }
@@ -139,11 +151,10 @@ namespace Bitron.Ecs
         public ref T AddComponent<T>(Id id, Id target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
-            var targetIndex = storage.TypeId.Index;
-            var sourceIndex = TypeId.Get<T>(id).Index;
 
-            var bitset = bitsets[id.Number];
-            bitset.Set(targetIndex);
+            bitsets[id.Number].Set(storage.TypeId.Index);
+            addedBitsets[id.Number].Set(storage.TypeId.Index);
+            removedBitsets[id.Number].Clear(storage.TypeId.Index);
 
             return ref storage.Add(id.Number);
         }
@@ -151,16 +162,13 @@ namespace Bitron.Ecs
         public ref T GetComponent<T>(Id id, Id target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
-            var index = storage.TypeId.Index;
-
             return ref storage.Get(id.Number);
         }
 
         public bool HasComponent<T>(Id id, Id target = default) where T : struct
         {
             var typeId = TypeId.Get<T>(target);
-            var bitset = bitsets[id.Number];
-            return bitset.Get(typeId.Index);
+            return bitsets[id.Number].Get(typeId.Index);
         }
 
         public void RemoveComponent<T>(Id id, Id target = default) where T : struct
@@ -168,16 +176,19 @@ namespace Bitron.Ecs
             var storage = GetStorage<T>(target);
             storage.Remove(id.Number);
 
-            var bitset = bitsets[id.Number];
-            bitset.Clear(storage.TypeId.Index);
+            bitsets[id.Number].Clear(storage.TypeId.Index);
+            addedBitsets[id.Number].Clear(storage.TypeId.Index);
+            removedBitsets[id.Number].Set(storage.TypeId.Index);
         }
 
         internal Entity[] Query(Mask mask)
         {
             return entities
-                .Where(id => IsAlive(id))
-                .Where(id => bitsets[id.Number].HasAllBitsSet(mask.IncludeBitSet))
+                .Where(id => IsAlive(id) && id != world.Id)
+                .Where(id => addedBitsets[id.Number].HasAllBitsSet(mask.AddedBitSet))
+                .Where(id => removedBitsets[id.Number].HasAllBitsSet(mask.RemovedBitSet))
                 .Where(id => !bitsets[id.Number].HasAnyBitSet(mask.ExcludeBitSet))
+                .Where(id => bitsets[id.Number].HasAllBitsSet(mask.IncludeBitSet))
                 .Select(id => new Entity(this, id))
                 .ToArray();
         }
@@ -195,7 +206,7 @@ namespace Bitron.Ecs
 
             if (storages[typeId.Index] == null)
             {
-                storages[typeId.Index] = new Storage<T>(typeId);
+                storages[typeId.Index] = new Storage<T>(config, typeId);
             }
 
             storage = storages[typeId.Index] as Storage<T>;
@@ -208,9 +219,30 @@ namespace Bitron.Ecs
             return storages[typeId.Index];
         }
 
+        public void Cleanup()
+        {
+            foreach (var entity in entities)
+            {
+                if (!IsAlive(entity))
+                {
+                    continue;
+                }
+
+                addedBitsets[entity.Number].ClearAll();
+                removedBitsets[entity.Number].ClearAll();
+            }
+        }
+
         public bool IsAlive(Id id)
         {
             return entities[id.Number] != Id.None;
+        }
+
+        public sealed class Config
+        {
+            public int EntitySize = 32;
+            public int StorageSize = 32;
+            public int ComponentSize = 32;
         }
     }
 }
