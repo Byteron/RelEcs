@@ -1,96 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Bitron.Ecs
 {
-    public struct TypeId
-    {
-        private static Dictionary<long, int> indices = new Dictionary<long, int>();
-
-        private static int count = 0;
-
-        // Id<32Bit> Type<32Bit>
-        public long Value;
-
-        // continuous id;
-        public int Index;
-
-        public int Entity { get { return (int)(Value >> 32); } }
-        public ushort Type { get { return (ushort)(Value); } }
-
-        public bool IsPair { get { return Entity != 0; } }
-
-        public static TypeId Get<T>(EntityId id = default) where T : struct
-        {
-            return new TypeId(TypeIdAssigner<T>.Id, id);
-        }
-
-        public TypeId(ushort typeId) : this(typeId, EntityId.None) { }
-
-        public TypeId(ushort typeId, EntityId id = default)
-        {
-            Value = 0;
-            Value |= typeId;
-            Value |= ((long)id.Number) << 32;
-
-            if (!indices.TryGetValue(Value, out Index))
-            {
-                Index = count++;
-                indices[Value] = Index;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            return (obj is TypeId other) && Value == other.Value;
-        }
-
-        public static bool operator ==(TypeId left, TypeId right) => left.Equals(right);
-        public static bool operator !=(TypeId left, TypeId right) => !left.Equals(right);
-
-
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return $"(Index: {Index}, Type: {Type}, Entity: {Entity}, Value: {Value})";
-        }
-
-        private class TypeIdAssigner
-        {
-            protected static ushort counter = 1;
-        }
-
-        private class TypeIdAssigner<T> : TypeIdAssigner where T : struct
-        {
-            public static readonly ushort Id;
-            static TypeIdAssigner() => Id = counter++;
-        }
-    }
-
     public interface IStorage
     {
-        TypeId TypeId { get; set; }
+        int Index { get; set; }
+        long TypeId { get; set; }
         bool Has(int entityId);
         void Remove(int entityId);
     }
 
     public sealed class Storage<T> : IStorage where T : struct
     {
-        public TypeId TypeId { get; set; }
+        public int Index { get; set; }
+        public long TypeId { get; set; }
 
         int[] indices = null;
 
         T[] items = null;
         int count = 0;
 
-        public Storage(World.Config config, TypeId typeId)
+        public Storage(World.Config config, int index, long typeId)
         {
             indices = new int[config.EntitySize];
             items = new T[config.StorageSize];
+
+            Index = index;
             TypeId = typeId;
         }
 
@@ -136,6 +73,38 @@ namespace Bitron.Ecs
         public bool Has(int entityId)
         {
             return indices[entityId] > 0;
+        }
+    }
+
+    public static class TypeId
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Value<T>(int entityId) where T : struct
+        {
+            return (long)TypeIdAssigner<T>.Id | (long)entityId << 32;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Entity(long value)
+        {
+            return (int)(value >> 32);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort Type(long value)
+        {
+            return (ushort)value;
+        }
+
+        private class TypeIdAssigner
+        {
+            protected static ushort counter = 1;
+        }
+
+        private class TypeIdAssigner<T> : TypeIdAssigner where T : struct
+        {
+            public static readonly ushort Id;
+            static TypeIdAssigner() => Id = counter++;
         }
     }
 }

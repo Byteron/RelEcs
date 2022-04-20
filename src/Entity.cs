@@ -26,7 +26,7 @@ namespace Bitron.Ecs
             Id = id;
         }
 
-        public Entity(World world, int id, int gen)
+        public Entity(World world, int id, ushort gen)
         {
             this.world = world;
             Id = new EntityId(id, gen);
@@ -106,9 +106,9 @@ namespace Bitron.Ecs
         public static EntityId Any = new EntityId(int.MaxValue, 0);
 
         public int Number;
-        public int Generation;
+        public ushort Generation;
 
-        public EntityId(int id, int gen)
+        public EntityId(int id, ushort gen)
         {
             Number = id;
             Generation = gen;

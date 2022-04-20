@@ -38,14 +38,13 @@ namespace Bitron.Ecs
     public sealed class QueryCommands
     {
         Entity[] entities;
-
-        Mask mask = new Mask();
-
         World world;
+        Mask mask;
 
         public QueryCommands(World world)
         {
             this.world = world;
+            mask = new Mask(world);
         }
 
         public QueryCommands With<T>(Entity target = default) where T : struct

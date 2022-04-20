@@ -27,7 +27,9 @@ namespace Bitron.Ecs
         EntityId[] unusedIds = null;
         int unusedIdCount = 0;
 
+        Dictionary<long, int> storageIndices = null;
         IStorage[] storages = null;
+        int storageCount = 0;
 
         Config config;
 
@@ -36,16 +38,17 @@ namespace Bitron.Ecs
         public World(Config config)
         {
             Number = counter++;
-    
+
             entities = new EntityId[config.EntitySize];
             bitsets = new BitSet[config.EntitySize];
             addedBitsets = new BitSet[config.EntitySize];
             removedBitsets = new BitSet[config.EntitySize];
             unusedIds = new EntityId[config.EntitySize];
+            storageIndices = new Dictionary<long, int>(config.ComponentSize);
             storages = new IStorage[config.ComponentSize];
-    
+
             this.config = config;
-    
+
             world = Spawn();
         }
 
@@ -88,25 +91,20 @@ namespace Bitron.Ecs
 
             var bitset = bitsets[id.Number];
 
-            List<TypeId> targetTypes = new List<TypeId>();
+            List<int> targetTypeIndices = new List<int>();
 
-            for (int i = 0; i < storages.Length; i++)
+            for (int i = 1; i < storages.Length; i++)
             {
-                if (storages[i] == null)
-                {
-                    continue;
-                }
-
                 var typeId = storages[i].TypeId;
 
-                if (bitset.Get(typeId.Index))
+                if (bitset.Get(i))
                 {
                     storages[i].Remove(id.Number);
                 }
 
-                if (typeId.Entity == id.Number)
+                if (TypeId.Entity(typeId) == id.Number)
                 {
-                    targetTypes.Add(typeId);
+                    targetTypeIndices.Add(i);
                 }
             }
 
@@ -119,14 +117,14 @@ namespace Bitron.Ecs
                     continue;
                 }
 
-                foreach (var typeId in targetTypes)
+                foreach (var index in targetTypeIndices)
                 {
-                    var storage = GetStorage(typeId);
+                    var storage = GetStorage(index);
 
                     if (storage.Has(entity.Number))
                     {
                         storage.Remove(entity.Number);
-                        bitsets[entity.Number].Clear(typeId.Index);
+                        bitsets[entity.Number].Clear(index);
                     }
                 }
             }
@@ -160,9 +158,9 @@ namespace Bitron.Ecs
         {
             var storage = GetStorage<T>(target);
 
-            bitsets[id.Number].Set(storage.TypeId.Index);
-            addedBitsets[id.Number].Set(storage.TypeId.Index);
-            removedBitsets[id.Number].Clear(storage.TypeId.Index);
+            bitsets[id.Number].Set(storage.Index);
+            addedBitsets[id.Number].Set(storage.Index);
+            removedBitsets[id.Number].Clear(storage.Index);
 
             return ref storage.Add(id.Number);
         }
@@ -175,18 +173,25 @@ namespace Bitron.Ecs
 
         public bool HasComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
-            var typeId = TypeId.Get<T>(target);
-            return bitsets[id.Number].Get(typeId.Index);
+            var typeId = TypeId.Value<T>(target.Number);
+
+            if (storageIndices.TryGetValue(typeId, out var index))
+            {
+                return bitsets[id.Number].Get(index);
+            }
+
+            return false;
         }
 
         public void RemoveComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
+
             storage.Remove(id.Number);
 
-            bitsets[id.Number].Clear(storage.TypeId.Index);
-            addedBitsets[id.Number].Clear(storage.TypeId.Index);
-            removedBitsets[id.Number].Set(storage.TypeId.Index);
+            bitsets[id.Number].Clear(storage.Index);
+            addedBitsets[id.Number].Clear(storage.Index);
+            removedBitsets[id.Number].Set(storage.Index);
         }
 
         public Entity[] Query(Mask mask)
@@ -203,28 +208,31 @@ namespace Bitron.Ecs
 
         public Storage<T> GetStorage<T>(EntityId target) where T : struct
         {
-            Storage<T> storage = null;
+            var typeId = TypeId.Value<T>(target.Number);
 
-            var typeId = TypeId.Get<T>(target);
-
-            if (typeId.Index >= storages.Length)
+            if (storageIndices.TryGetValue(typeId, out var index))
             {
-                Array.Resize(ref storages, (typeId.Index << 1));
+                return storages[index] as Storage<T>;
             }
 
-            if (storages[typeId.Index] == null)
+            index = ++storageCount;
+            storageIndices[typeId] = index;
+
+            if (index >= storages.Length)
             {
-                storages[typeId.Index] = new Storage<T>(config, typeId);
+                Array.Resize(ref storages, (index << 1));
             }
 
-            storage = storages[typeId.Index] as Storage<T>;
+            var storage = new Storage<T>(config, index, typeId);
+
+            storages[index] = storage;
 
             return storage;
         }
 
-        public IStorage GetStorage(TypeId typeId)
+        public IStorage GetStorage(int index)
         {
-            return storages[typeId.Index];
+            return storages[index];
         }
 
         public void Cleanup()
@@ -239,6 +247,11 @@ namespace Bitron.Ecs
                 addedBitsets[entity.Number].ClearAll();
                 removedBitsets[entity.Number].ClearAll();
             }
+        }
+
+        public int GetStorageIndex(long typeId)
+        {
+            return storageIndices.TryGetValue(typeId, out var index) ? index : 0;
         }
 
         public bool IsAlive(EntityId id)
