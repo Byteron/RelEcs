@@ -92,7 +92,7 @@ Commands commands = new Commands(world);
 
 ```csharp
 // every entity that has a Name component and owes bob money.
-Entity{} appleLovers = commands.Query()
+var appleLovers = commands.Query()
     .With<Name>()
     .With<Owes>(bob)
     .Apply();
