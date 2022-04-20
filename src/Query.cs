@@ -1,14 +1,24 @@
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Bitron.Ecs
 {
+    public sealed class Query
+    {
+        public World World;
+        public Entity[] Entities;
+        Mask mask;
+
+        public Query(World world, Mask mask, Entity[] entities)
+        {
+            World = world;
+            Entities = entities;
+            this.mask = mask;
+        }
+    }
+
     public sealed class Mask
     {
         private World world;
-
-        public List<long> TargetRelations { get; private set; } = new List<long>();
-        public List<long> SourceRelations { get; private set; } = new List<long>();
-        public List<int> AnyRelations { get; private set; } = new List<int>();
 
         public BitSet IncludeBitSet = new BitSet();
         public BitSet ExcludeBitSet = new BitSet();

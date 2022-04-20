@@ -37,7 +37,6 @@ namespace Bitron.Ecs
 
     public sealed class QueryCommands
     {
-        Entity[] entities;
         World world;
         Mask mask;
 
@@ -71,9 +70,9 @@ namespace Bitron.Ecs
             return this;
         }
 
-        public Entity[] Apply()
+        public Query Apply()
         {
-            return world.Query(mask);
+            return world.GetQuery(mask);
         }
     }
 }

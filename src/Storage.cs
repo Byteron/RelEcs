@@ -98,13 +98,13 @@ namespace Bitron.Ecs
 
         private class TypeIdAssigner
         {
-            protected static ushort counter = 1;
+            protected static ushort counter = 0;
         }
 
         private class TypeIdAssigner<T> : TypeIdAssigner where T : struct
         {
             public static readonly ushort Id;
-            static TypeIdAssigner() => Id = counter++;
+            static TypeIdAssigner() => Id = ++counter;
         }
     }
 }

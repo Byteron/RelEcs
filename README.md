@@ -1,12 +1,15 @@
 # BitEcs
+## An easy to use entity component system with and effective feature set for making games.
 
-### World
+## World
+
 ```csharp
 // create a new world
 World world = new World();
 ```
 
-### Entity
+## Entity
+
 ```csharp
 // spawn a new entity
 Entity entity = world.Spawn();
@@ -15,7 +18,8 @@ Entity entity = world.Spawn();
 entity.Despawn();
 ```
 
-### Component
+## Component
+
 ```csharp
 // components are plain ol data structs
 struct Position { int X, Y; }
@@ -30,7 +34,9 @@ ref var vel = ref entity.Get<Velocity>();
 // remove a component from an entity;
 entity.Remove<Position>();
 ```
-### Resource
+
+## Resource
+
 ```csharp
 // resources are classes
 class SavePath { string Value; }
@@ -46,7 +52,9 @@ Console.WriteLine(savePath.Value);
 // remove a resource from the world
 world.RemoveResource<MyResource>();
 ```
-### Relation
+
+## Relation
+
 ```csharp
 // like components, relations are structs
 struct Likes { }
@@ -71,13 +79,17 @@ bool doesBobLikeApples = bob.Has<Likes>(apples);
 ref var owes = ref frank.Get<Owes>(bob);
 Console.WriteLine($"Frank owes Bob {owes.Value} dollars");
 ```
-### Commands
+
+## Commands
+
 ```csharp
 // Commands is a Wrapper around World that provides
 // additional helpful functions
 Commands commands = new Commands(world);
 ```
-### Query
+
+## Query
+
 ```csharp
 // every entity that has a Name component and owes bob money.
 Entity{} appleLovers = commands.Query()
@@ -85,29 +97,39 @@ Entity{} appleLovers = commands.Query()
     .With<Owes>(bob)
     .Apply();
 ```
-### System
+
+## System
+
 ```csharp
 public class MoveSystem : ISystem
 {
     public void Run(Commands commands)
     {
         // every entity that has a Position and Velocity component
-        Entity[] movers = commands.Query()
+        Query movers = commands.Query()
             .With<Position>()
             .With<Velocity>()
             .Apply();
         
-        foreach (var mover in movers)
+        // iterate using ForEach.
+        // currently only works with Components *not* with relations
+        movers.ForEach((ref Position pos, ref Velocity vel) =>
         {
-            ref var pos = ref mover.Get<Position>();
-            ref var vel = ref mover.Ger<Velocity>();
-
             pos.Value += vel.Value;
-        }
+        });
+
+        // iterate using ForEach, also gets Entity
+        movers.ForEach((Entity entity, ref Position pos, ref Velocity vel) =>
+        {
+            pos.Value += vel.Value;
+            // entity.Add<Moved>(); // tag component to mark that it has moved or something
+        });
     }
 }
 ```
+
 Running a System
+
 ```csharp
 // create an instance of our system
 var moveSystem = new MoveSystem();

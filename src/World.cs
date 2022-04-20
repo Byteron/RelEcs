@@ -195,9 +195,9 @@ namespace Bitron.Ecs
             removedBitsets[id.Number].Set(storage.Index);
         }
 
-        public Entity[] Query(Mask mask)
+        public Query GetQuery(Mask mask)
         {
-            return entities
+            var entities = this.entities
                 .Where(id => IsAlive(id) && id != world.Id)
                 .Where(id => addedBitsets[id.Number].HasAllBitsSet(mask.AddedBitSet))
                 .Where(id => removedBitsets[id.Number].HasAllBitsSet(mask.RemovedBitSet))
@@ -205,6 +205,8 @@ namespace Bitron.Ecs
                 .Where(id => bitsets[id.Number].HasAllBitsSet(mask.IncludeBitSet))
                 .Select(id => new Entity(this, id))
                 .ToArray();
+
+            return new Query(this, mask, entities);
         }
 
         public Storage<T> GetStorage<T>(EntityId target) where T : struct
