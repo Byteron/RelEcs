@@ -162,6 +162,7 @@ commands.Receive((MyEvent e) =>
 {
     Console.WriteLine("An Event!");
 })
+// note that events only live for 2 frames and can only be received ONCE per SYSTEM.
 
 // Output:
 // "An Event!"
