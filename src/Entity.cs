@@ -32,15 +32,21 @@ namespace Bitron.Ecs
             Id = new EntityId(id, gen);
         }
 
-        public Entity Add<T>(T data = default) where T : struct
+        public Entity Add<T>(bool triggerEvent = false) where T : struct
         {
-            world.AddComponent<T>(Id) = data;
+            world.AddComponent<T>(Id, EntityId.None, triggerEvent);
             return this;
         }
 
-        public Entity Add<T>(Entity target, T data = default) where T : struct
+        public Entity Add<T>(T data, bool triggerEvent = false) where T : struct
         {
-            world.AddComponent<T>(Id, target.Id) = data;
+            world.AddComponent<T>(Id, EntityId.None, triggerEvent) = data;
+            return this;
+        }
+
+        public Entity Add<T>(Entity target, T data = default, bool triggerEvent = false) where T : struct
+        {
+            world.AddComponent<T>(Id, target.Id, triggerEvent) = data;
             return this;
         }
 
@@ -64,15 +70,15 @@ namespace Bitron.Ecs
             return world.HasComponent<T>(Id, target.Id);
         }
 
-        public Entity Remove<T>() where T : struct
+        public Entity Remove<T>(bool triggerEvent = false) where T : struct
         {
-            world.RemoveComponent<T>(Id);
+            world.RemoveComponent<T>(Id, EntityId.None, triggerEvent);
             return this;
         }
 
-        public Entity Remove<T>(Entity target) where T : struct
+        public Entity Remove<T>(Entity target, bool triggerEvent = false) where T : struct
         {
-            world.RemoveComponent<T>(Id, target.Id);
+            world.RemoveComponent<T>(Id, target.Id, triggerEvent);
             return this;
         }
 

@@ -144,3 +144,55 @@ moveSystem.Run(world);
 moveSystem.Run(world);
 moveSystem.Run(world);
 ```
+
+## Events
+
+```csharp
+// events are again just structs. They are basically components internally
+struct MyEvent { }
+
+// send a bunch of events
+commands.Send<MyEvent>();
+commands.Send<MyEvent>();
+commands.Send<MyEvent>();
+
+
+// in any system, you can now receive events
+commands.Receive((MyEvent e) =>
+{
+    Console.WriteLine("An Event!");
+})
+
+// Output:
+// "An Event!"
+// "An Event!"
+// "An Event!"
+```
+
+## Build-in Events
+
+```csharp
+var entity = commands.Spawn();
+
+// normally you add components like this. No events are spawned by default.
+entity.Add<Name>(new Name("Walter"));
+entity.Remove<Name>();
+
+// you can pass in an optional parameter 'triggerEvent' 
+// to spawn an Added<T> or Removed<T> event.
+entity.Add<Old>(true);
+entity.Remove<Young>(true);
+
+
+// you can receive those build-in events like your custom events as well
+commands.Receive((Added<Old> addedEvent) =>
+{
+    Console.WriteLine("Old component added to " + addedEvent.Entity);
+})
+
+// same for the removed component
+commands.Receive((Removed<Young> removedEvent) =>
+{
+    Console.WriteLine("Young component removed from " + removedEvent.Entity);
+})
+```

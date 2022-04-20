@@ -14,11 +14,9 @@ namespace Bitron.Ecs
 
         public void Run(World world)
         {
-            var commands = new Commands(world);
-
             for (var i = 0; i < systems.Count; i++)
             {
-                systems[i].Run(commands);
+                systems[i].Run(new Commands(world, systems[i]));
             }
         }
     }
@@ -32,7 +30,7 @@ namespace Bitron.Ecs
     {
         public static void Run(this ISystem system, World world)
         {
-            system.Run(new Commands(world));
+            system.Run(new Commands(world, system));
         }
     }
 }

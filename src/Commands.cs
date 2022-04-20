@@ -1,17 +1,36 @@
+using System;
+
 namespace Bitron.Ecs
 {
     public sealed class Commands
     {
         World world;
+        ISystem system;
 
-        public Commands(World world)
+        internal Commands(World world, ISystem system)
         {
             this.world = world;
+            this.system = system;
         }
 
         public Entity Spawn()
         {
             return world.Spawn();
+        }
+
+        public void Send<T>() where T : struct
+        {
+            world.Send<T>();
+        }
+
+        public void Send<T>(T eventStruct) where T : struct
+        {
+            world.Send<T>(eventStruct);
+        }
+
+        public void Receive<T>(Action<T> action) where T : struct
+        {
+            world.Receive<T>(system, action);
         }
 
         public void AddResource<T>(T resource) where T : class
@@ -55,18 +74,6 @@ namespace Bitron.Ecs
         public QueryCommands Without<T>(Entity target = default) where T : struct
         {
             mask.Without<T>(target);
-            return this;
-        }
-
-        public QueryCommands Added<T>(Entity target = default) where T : struct
-        {
-            mask.Added<T>(target);
-            return this;
-        }
-
-        public QueryCommands Removed<T>(Entity target = default) where T : struct
-        {
-            mask.Removed<T>(target);
             return this;
         }
 

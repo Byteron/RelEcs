@@ -23,9 +23,6 @@ namespace Bitron.Ecs
         public BitSet IncludeBitSet = new BitSet();
         public BitSet ExcludeBitSet = new BitSet();
 
-        public BitSet AddedBitSet = new BitSet();
-        public BitSet RemovedBitSet = new BitSet();
-
         public Mask(World world)
         {
             this.world = world;
@@ -42,20 +39,6 @@ namespace Bitron.Ecs
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
             ExcludeBitSet.Set(index);
-        }
-
-        public void Added<T>(Entity target) where T : struct
-        {
-            var typeId = TypeId.Value<T>(target.Id.Number);
-            var index = world.GetStorageIndex(typeId);
-            AddedBitSet.Set(index);
-        }
-
-        public void Removed<T>(Entity target) where T : struct
-        {
-            var typeId = TypeId.Value<T>(target.Id.Number);
-            var index = world.GetStorageIndex(typeId);
-            RemovedBitSet.Set(index);
         }
     }
 }

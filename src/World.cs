@@ -20,8 +20,6 @@ namespace Bitron.Ecs
 
         EntityId[] entities = null;
         BitSet[] bitsets = null;
-        BitSet[] addedBitsets = null;
-        BitSet[] removedBitsets = null;
 
         int entityCount = 0;
 
@@ -31,6 +29,9 @@ namespace Bitron.Ecs
         Dictionary<long, int> storageIndices = null;
         IStorage[] storages = null;
         int storageCount = 0;
+
+        int eventLifeTimeIndex;
+        EventLifeTimeSystem eventLifeTimeSystem;
 
         Config config;
 
@@ -42,8 +43,6 @@ namespace Bitron.Ecs
 
             entities = new EntityId[config.EntitySize];
             bitsets = new BitSet[config.EntitySize];
-            addedBitsets = new BitSet[config.EntitySize];
-            removedBitsets = new BitSet[config.EntitySize];
             unusedIds = new EntityId[config.EntitySize];
             storageIndices = new Dictionary<long, int>(config.ComponentSize);
             storages = new IStorage[config.ComponentSize];
@@ -51,6 +50,9 @@ namespace Bitron.Ecs
             this.config = config;
 
             world = Spawn();
+
+            eventLifeTimeIndex = GetStorage<EventLifeTime>(EntityId.None).Index;
+            eventLifeTimeSystem = new EventLifeTimeSystem();
         }
 
         public Entity Spawn()
@@ -69,16 +71,12 @@ namespace Bitron.Ecs
                 {
                     Array.Resize(ref entities, entityCount << 1);
                     Array.Resize(ref bitsets, entityCount << 1);
-                    Array.Resize(ref addedBitsets, entityCount << 1);
-                    Array.Resize(ref removedBitsets, entityCount << 1);
                 }
 
                 entities[id.Number] = id;
             }
 
             bitsets[id.Number] ??= new BitSet();
-            addedBitsets[id.Number] ??= new BitSet();
-            removedBitsets[id.Number] ??= new BitSet();
 
             return new Entity(this, id);
         }
@@ -94,8 +92,13 @@ namespace Bitron.Ecs
 
             List<int> targetTypeIndices = new List<int>();
 
-            for (int i = 1; i < storages.Length; i++)
+            for (int i = 0; i < storages.Length; i++)
             {
+                if (storages[i] == null)
+                {
+                    continue;
+                }
+
                 var typeId = storages[i].TypeId;
 
                 if (bitset.Get(i))
@@ -111,21 +114,24 @@ namespace Bitron.Ecs
 
             bitset.ClearAll();
 
-            foreach (var entity in entities)
+            if (targetTypeIndices.Count > 0)
             {
-                if (!IsAlive(entity))
+                foreach (var entity in entities)
                 {
-                    continue;
-                }
-
-                foreach (var index in targetTypeIndices)
-                {
-                    var storage = GetStorage(index);
-
-                    if (storage.Has(entity.Number))
+                    if (!IsAlive(entity))
                     {
-                        storage.Remove(entity.Number);
-                        bitsets[entity.Number].Clear(index);
+                        continue;
+                    }
+
+                    foreach (var index in targetTypeIndices)
+                    {
+                        var storage = GetStorage(index);
+
+                        if (storage.Has(entity.Number))
+                        {
+                            storage.Remove(entity.Number);
+                            bitsets[entity.Number].Clear(index);
+                        }
                     }
                 }
             }
@@ -138,6 +144,55 @@ namespace Bitron.Ecs
             id.Generation++;
             unusedIds[unusedIdCount++] = id;
             entities[id.Number] = EntityId.None;
+        }
+
+        public void Send<T>(T eventStruct) where T : struct
+        {
+            Send<T>() = eventStruct;
+        }
+
+        public ref T Send<T>() where T : struct
+        {
+            var typeId = TypeId.Value<T>(0);
+
+            var entity = Spawn();
+
+            AddComponent<EventSystemList>(entity.Id);
+            AddComponent<EventLifeTime>(entity.Id);
+
+            return ref AddComponent<T>(entity.Id);
+        }
+
+        public void Receive<T>(ISystem system, Action<T> action) where T : struct
+        {
+            var systemType = system.GetType();
+            
+            var mask = new Mask(this);
+            mask.With<T>(Entity.None);
+
+            var query = GetQuery(mask);
+
+            var eventStorage = GetStorage<T>(EntityId.None);
+            var systemStorage = GetStorage<EventSystemList>(EntityId.None);
+
+            foreach (var entity in query.Entities)
+            {
+                ref var systemList = ref systemStorage.Get(entity.Id.Number);
+
+                if (systemList.List == null)
+                {
+                    systemList.List = new List<Type>();
+                    systemList.List.Add(systemType);
+
+                    action(eventStorage.Get(entity.Id.Number));
+                }
+                else if (!systemList.List.Contains(systemType))
+                {
+                    systemList.List.Add(systemType);
+
+                    action(eventStorage.Get(entity.Id.Number));
+                }
+            }
         }
 
         public void AddResource<T>(T resource) where T : class
@@ -155,13 +210,16 @@ namespace Bitron.Ecs
             RemoveComponent<Resource<T>>(world.Id);
         }
 
-        public ref T AddComponent<T>(EntityId id, EntityId target = default) where T : struct
+        public ref T AddComponent<T>(EntityId id, EntityId target = default, bool triggerEvent = false) where T : struct
         {
             var storage = GetStorage<T>(target);
 
             bitsets[id.Number].Set(storage.Index);
-            addedBitsets[id.Number].Set(storage.Index);
-            removedBitsets[id.Number].Clear(storage.Index);
+
+            if (triggerEvent)
+            {
+                Send(new Added<T>(new Entity(this, target)));
+            }
 
             return ref storage.Add(id.Number);
         }
@@ -184,23 +242,24 @@ namespace Bitron.Ecs
             return false;
         }
 
-        public void RemoveComponent<T>(EntityId id, EntityId target = default) where T : struct
+        public void RemoveComponent<T>(EntityId id, EntityId target = default, bool triggerEvent = false) where T : struct
         {
             var storage = GetStorage<T>(target);
 
             storage.Remove(id.Number);
 
+            if (triggerEvent)
+            {
+                Send(new Removed<T>(new Entity(this, target)));
+            }
+
             bitsets[id.Number].Clear(storage.Index);
-            addedBitsets[id.Number].Clear(storage.Index);
-            removedBitsets[id.Number].Set(storage.Index);
         }
 
         public Query GetQuery(Mask mask)
         {
             var entities = this.entities
                 .Where(id => IsAlive(id) && id != world.Id)
-                .Where(id => addedBitsets[id.Number].HasAllBitsSet(mask.AddedBitSet))
-                .Where(id => removedBitsets[id.Number].HasAllBitsSet(mask.RemovedBitSet))
                 .Where(id => !bitsets[id.Number].HasAnyBitSet(mask.ExcludeBitSet))
                 .Where(id => bitsets[id.Number].HasAllBitsSet(mask.IncludeBitSet))
                 .Select(id => new Entity(this, id))
@@ -218,7 +277,7 @@ namespace Bitron.Ecs
                 return storages[index] as Storage<T>;
             }
 
-            index = ++storageCount;
+            index = storageCount++;
             storageIndices[typeId] = index;
 
             if (index >= storages.Length)
@@ -238,18 +297,9 @@ namespace Bitron.Ecs
             return storages[index];
         }
 
-        public void Cleanup()
+        public void Tick()
         {
-            foreach (var entity in entities)
-            {
-                if (!IsAlive(entity))
-                {
-                    continue;
-                }
-
-                addedBitsets[entity.Number].ClearAll();
-                removedBitsets[entity.Number].ClearAll();
-            }
+            eventLifeTimeSystem.Run(this);
         }
 
         public int GetStorageIndex(long typeId)
