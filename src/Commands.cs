@@ -61,6 +61,12 @@ namespace Bitron.Ecs
         {
             return new QueryCommands(world);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public WorldInfo GetInfo()
+        {
+            return world.GetInfo();
+        }
     }
 
     public sealed class QueryCommands

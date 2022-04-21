@@ -22,7 +22,7 @@ namespace Bitron.Ecs
         T[] items = null;
         int count = 0;
 
-        public Storage(World.Config config, int index, long typeId)
+        public Storage(WorldConfig config, int index, long typeId)
         {
             indices = new int[config.EntitySize];
             items = new T[config.StorageSize];

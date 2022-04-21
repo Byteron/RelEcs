@@ -12,7 +12,10 @@ namespace Bitron.Ecs
 
     public sealed class World
     {
+        static int worldCounter = 0;
+
         Entity world;
+        int number;
 
         EntityId[] entities = null;
         BitSet[] bitsets = null;
@@ -32,11 +35,11 @@ namespace Bitron.Ecs
         int eventLifeTimeIndex;
         EventLifeTimeSystem eventLifeTimeSystem;
 
-        Config config;
+        WorldConfig config;
 
-        public World() : this(new Config()) { }
+        public World() : this(new WorldConfig()) { }
 
-        public World(Config config)
+        public World(WorldConfig config)
         {
             entities = new EntityId[config.EntitySize];
             bitsets = new BitSet[config.EntitySize];
@@ -51,6 +54,7 @@ namespace Bitron.Ecs
             this.config = config;
 
             world = Spawn();
+            number = ++worldCounter;
 
             eventLifeTimeIndex = GetStorage<EventLifeTime>(EntityId.None).Index;
             eventLifeTimeSystem = new EventLifeTimeSystem();
@@ -401,11 +405,37 @@ namespace Bitron.Ecs
             return entities[id.Number] != EntityId.None;
         }
 
-        public sealed class Config
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public WorldInfo GetInfo()
         {
-            public int EntitySize = 32;
-            public int StorageSize = 32;
-            public int ComponentSize = 32;
+            return new WorldInfo
+            {
+                WorldId = number,
+                EntityCount = entityCount,
+                UnusedEntityCount = unusedIdCount,
+                AllocatedEntityCount = entities.Length,
+                ComponentCount = storageCount,
+                ResourceCount = bitsets[world.Id.Number].Count,
+                CachedQueryCount = hashedQueries.Count,
+            };
         }
+    }
+
+    public sealed class WorldConfig
+    {
+        public int EntitySize = 32;
+        public int StorageSize = 32;
+        public int ComponentSize = 32;
+    }
+
+    public sealed class WorldInfo
+    {
+        public int WorldId;
+        public int EntityCount;
+        public int UnusedEntityCount;
+        public int AllocatedEntityCount;
+        public int ComponentCount;
+        public int ResourceCount;
+        public int CachedQueryCount;
     }
 }
