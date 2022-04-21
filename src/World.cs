@@ -94,49 +94,52 @@ namespace Bitron.Ecs
 
             var bitset = bitsets[id.Number];
 
-            List<int> targetTypeIndices = new List<int>();
-
-            for (int i = 0; i < storages.Length; i++)
+            if (bitset.Count > 0)
             {
-                if (storages[i] == null)
+                List<int> targetTypeIndices = new List<int>();
+
+                for (int i = 0; i < storages.Length; i++)
                 {
-                    continue;
-                }
-
-                var typeId = storages[i].TypeId;
-
-                if (bitset.Get(i))
-                {
-                    storages[i].Remove(id.Number);
-                    OnEntityChanged(id, i);
-                }
-
-                if (TypeId.Entity(typeId) == id.Number)
-                {
-                    targetTypeIndices.Add(i);
-                }
-            }
-
-            bitset.ClearAll();
-
-            if (targetTypeIndices.Count > 0)
-            {
-                foreach (var entity in entities)
-                {
-                    if (!IsAlive(entity))
+                    if (storages[i] == null)
                     {
                         continue;
                     }
 
-                    foreach (var index in targetTypeIndices)
-                    {
-                        var storage = GetStorage(index);
+                    var typeId = storages[i].TypeId;
 
-                        if (storage.Has(entity.Number))
+                    if (bitset.Get(i))
+                    {
+                        storages[i].Remove(id.Number);
+                        OnEntityChanged(id, i);
+                    }
+
+                    if (TypeId.Entity(typeId) == id.Number)
+                    {
+                        targetTypeIndices.Add(i);
+                    }
+                }
+
+                bitset.ClearAll();
+
+                if (targetTypeIndices.Count > 0)
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (!IsAlive(entity))
                         {
-                            storage.Remove(entity.Number);
-                            bitsets[entity.Number].Clear(index);
-                            OnEntityChanged(entity, index);
+                            continue;
+                        }
+
+                        foreach (var index in targetTypeIndices)
+                        {
+                            var storage = GetStorage(index);
+
+                            if (storage.Has(entity.Number))
+                            {
+                                storage.Remove(entity.Number);
+                                bitsets[entity.Number].Clear(index);
+                                OnEntityChanged(entity, index);
+                            }
                         }
                     }
                 }
