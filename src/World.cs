@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Bitron.Ecs
 {
@@ -76,7 +77,10 @@ namespace Bitron.Ecs
                 entities[id.Number] = id;
             }
 
-            bitsets[id.Number] ??= new BitSet();
+            if (bitsets[id.Number] == null)
+            {
+                bitsets[id.Number] = new BitSet();
+            }
 
             return new Entity(this, id);
         }
@@ -146,11 +150,13 @@ namespace Bitron.Ecs
             entities[id.Number] = EntityId.None;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<T>(T eventStruct) where T : struct
         {
             Send<T>() = eventStruct;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Send<T>() where T : struct
         {
             var typeId = TypeId.Value<T>(0);
@@ -163,6 +169,7 @@ namespace Bitron.Ecs
             return ref AddComponent<T>(entity.Id);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Receive<T>(ISystem system, Action<T> action) where T : struct
         {
             var systemType = system.GetType();
@@ -195,21 +202,25 @@ namespace Bitron.Ecs
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddResource<T>(T resource) where T : class
         {
             AddComponent<Resource<T>>(world.Id) = new Resource<T>(resource);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetResource<T>() where T : class
         {
             return GetComponent<Resource<T>>(world.Id).Value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveResource<T>() where T : class
         {
             RemoveComponent<Resource<T>>(world.Id);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T AddComponent<T>(EntityId id, EntityId target = default, bool triggerEvent = false) where T : struct
         {
             var storage = GetStorage<T>(target);
@@ -224,12 +235,14 @@ namespace Bitron.Ecs
             return ref storage.Add(id.Number);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T GetComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
             return ref storage.Get(id.Number);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Number);
@@ -242,6 +255,7 @@ namespace Bitron.Ecs
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveComponent<T>(EntityId id, EntityId target = default, bool triggerEvent = false) where T : struct
         {
             var storage = GetStorage<T>(target);
@@ -256,6 +270,7 @@ namespace Bitron.Ecs
             bitsets[id.Number].Clear(storage.Index);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Query GetQuery(Mask mask)
         {
             var entities = this.entities
@@ -268,6 +283,7 @@ namespace Bitron.Ecs
             return new Query(this, mask, entities);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Storage<T> GetStorage<T>(EntityId target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Number);
@@ -292,21 +308,25 @@ namespace Bitron.Ecs
             return storage;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IStorage GetStorage(int index)
         {
             return storages[index];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Tick()
         {
             eventLifeTimeSystem.Run(this);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetStorageIndex(long typeId)
         {
             return storageIndices.TryGetValue(typeId, out var index) ? index : 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsAlive(EntityId id)
         {
             return entities[id.Number] != EntityId.None;

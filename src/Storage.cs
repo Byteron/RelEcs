@@ -31,6 +31,7 @@ namespace Bitron.Ecs
             TypeId = typeId;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add(int entityId)
         {
             int index = count++;
@@ -49,16 +50,19 @@ namespace Bitron.Ecs
             return ref items[index];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get(int entityId)
         {
             return ref items[indices[entityId]];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object GetRaw(int entityId)
         {
             return items[indices[entityId]];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(int entityId)
         {
             ref var index = ref indices[entityId];
@@ -70,6 +74,7 @@ namespace Bitron.Ecs
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has(int entityId)
         {
             return indices[entityId] > 0;
@@ -104,6 +109,8 @@ namespace Bitron.Ecs
         private class TypeIdAssigner<T> : TypeIdAssigner where T : struct
         {
             public static readonly ushort Id;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static TypeIdAssigner() => Id = ++counter;
         }
     }

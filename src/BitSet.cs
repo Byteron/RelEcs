@@ -57,7 +57,7 @@ namespace Bitron.Ecs
 
         public bool HasAllBitsSet(BitSet mask)
         {
-            var count = MathF.Min(Bits.Length, mask.Bits.Length);
+            var count = Math.Min(Bits.Length, mask.Bits.Length);
 
             for (int i = 0; i < count; i++)
             {
@@ -72,7 +72,7 @@ namespace Bitron.Ecs
 
         public bool HasAnyBitSet(BitSet mask)
         {
-            var count = MathF.Min(Bits.Length, mask.Bits.Length);
+            var count = Math.Min(Bits.Length, mask.Bits.Length);
 
             for (int i = 0; i < count; i++)
             {

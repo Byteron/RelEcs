@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Bitron.Ecs
 {
@@ -13,41 +14,49 @@ namespace Bitron.Ecs
             this.system = system;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Spawn()
         {
             return world.Spawn();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<T>() where T : struct
         {
             world.Send<T>();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<T>(T eventStruct) where T : struct
         {
             world.Send<T>(eventStruct);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Receive<T>(Action<T> action) where T : struct
         {
             world.Receive<T>(system, action);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddResource<T>(T resource) where T : class
         {
             world.AddResource<T>(resource);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetResource<T>() where T : class
         {
             return world.GetResource<T>();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveResource<T>() where T : class
         {
             world.RemoveResource<T>();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Query()
         {
             return new QueryCommands(world);
@@ -65,18 +74,21 @@ namespace Bitron.Ecs
             mask = new Mask(world);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands With<T>(Entity target = default) where T : struct
         {
             mask.With<T>(target);
             return this;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Without<T>(Entity target = default) where T : struct
         {
             mask.Without<T>(target);
             return this;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Query Apply()
         {
             return world.GetQuery(mask);
