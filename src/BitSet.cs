@@ -97,5 +97,15 @@ namespace Bitron.Ecs
                 return k == 0;
             }
         }
+
+        public override int GetHashCode()
+        {
+            int h = 1234;
+            for (int i = Bits.Length; --i >= 0;)
+            {
+                h ^= (int)Bits[i] * (i + 1);
+            }
+            return (int)((h >> 32) ^ h);
+        }
     }
 }

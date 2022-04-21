@@ -31,6 +31,8 @@ namespace Bitron.Ecs
         IStorage[] storages = null;
         int storageCount = 0;
 
+        Dictionary<int, Query> queries;
+
         int eventLifeTimeIndex;
         EventLifeTimeSystem eventLifeTimeSystem;
 
@@ -47,6 +49,7 @@ namespace Bitron.Ecs
             unusedIds = new EntityId[config.EntitySize];
             storageIndices = new Dictionary<long, int>(config.ComponentSize);
             storages = new IStorage[config.ComponentSize];
+            queries = new Dictionary<int, Query>();
 
             this.config = config;
 
@@ -182,7 +185,7 @@ namespace Bitron.Ecs
             var eventStorage = GetStorage<T>(EntityId.None);
             var systemStorage = GetStorage<EventSystemList>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 ref var systemList = ref systemStorage.Get(entity.Id.Number);
 
@@ -273,14 +276,36 @@ namespace Bitron.Ecs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Query GetQuery(Mask mask)
         {
-            var entities = this.entities
-                .Where(id => IsAlive(id) && id != world.Id)
-                .Where(id => !bitsets[id.Number].HasAnyBitSet(mask.ExcludeBitSet))
-                .Where(id => bitsets[id.Number].HasAllBitsSet(mask.IncludeBitSet))
-                .Select(id => new Entity(this, id))
-                .ToArray();
+            if (queries.TryGetValue(mask.GetHashCode(), out var query))
+            {
+                return query;
+            }
 
-            return new Query(this, mask, entities);
+            query = new Query(this, mask, entityCount);
+            
+            for (int i = 0; i <= entityCount; i++)
+            {
+                var entityId = this.entities[i];
+
+                if (!IsAlive(entityId) || entityId == world.Id)
+                {
+                    continue;
+                }
+
+                if (bitsets[entityId.Number].HasAnyBitSet(mask.ExcludeBitSet))
+                {
+                    continue;
+                }
+                
+                if (!bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet))
+                {
+                    continue;
+                }
+
+                query.AddEntity(new Entity(this, entityId));
+            }
+
+            return query;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

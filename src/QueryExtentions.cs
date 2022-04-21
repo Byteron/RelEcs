@@ -9,7 +9,7 @@ namespace Bitron.Ecs
 
             var storage = query.World.GetStorage<C>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage.Get(entity.Id.Number));
             }
@@ -24,7 +24,7 @@ namespace Bitron.Ecs
             var storage1 = query.World.GetStorage<C1>(EntityId.None);
             var storage2 = query.World.GetStorage<C2>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number));
             }
@@ -40,7 +40,7 @@ namespace Bitron.Ecs
             var storage2 = query.World.GetStorage<C2>(EntityId.None);
             var storage3 = query.World.GetStorage<C3>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number));
             }
@@ -58,7 +58,7 @@ namespace Bitron.Ecs
             var storage3 = query.World.GetStorage<C3>(EntityId.None);
             var storage4 = query.World.GetStorage<C4>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number));
             }
@@ -78,7 +78,7 @@ namespace Bitron.Ecs
             var storage4 = query.World.GetStorage<C4>(EntityId.None);
             var storage5 = query.World.GetStorage<C5>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number));
             }
@@ -100,7 +100,7 @@ namespace Bitron.Ecs
             var storage5 = query.World.GetStorage<C5>(EntityId.None);
             var storage6 = query.World.GetStorage<C6>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number));
             }
@@ -124,7 +124,7 @@ namespace Bitron.Ecs
             var storage6 = query.World.GetStorage<C6>(EntityId.None);
             var storage7 = query.World.GetStorage<C7>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number));
             }
@@ -150,7 +150,7 @@ namespace Bitron.Ecs
             var storage7 = query.World.GetStorage<C7>(EntityId.None);
             var storage8 = query.World.GetStorage<C8>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number), ref storage8.Get(entity.Id.Number));
             }
@@ -162,7 +162,7 @@ namespace Bitron.Ecs
         {
             var storage = query.World.GetStorage<C>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage.Get(entity.Id.Number));
             }
@@ -176,7 +176,7 @@ namespace Bitron.Ecs
             var storage1 = query.World.GetStorage<C1>(EntityId.None);
             var storage2 = query.World.GetStorage<C2>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number));
             }
@@ -192,7 +192,7 @@ namespace Bitron.Ecs
             var storage2 = query.World.GetStorage<C2>(EntityId.None);
             var storage3 = query.World.GetStorage<C3>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number));
             }
@@ -210,7 +210,7 @@ namespace Bitron.Ecs
             var storage3 = query.World.GetStorage<C3>(EntityId.None);
             var storage4 = query.World.GetStorage<C4>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number));
             }
@@ -230,7 +230,7 @@ namespace Bitron.Ecs
             var storage4 = query.World.GetStorage<C4>(EntityId.None);
             var storage5 = query.World.GetStorage<C5>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number));
             }
@@ -252,7 +252,7 @@ namespace Bitron.Ecs
             var storage5 = query.World.GetStorage<C5>(EntityId.None);
             var storage6 = query.World.GetStorage<C6>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number));
             }
@@ -276,7 +276,7 @@ namespace Bitron.Ecs
             var storage6 = query.World.GetStorage<C6>(EntityId.None);
             var storage7 = query.World.GetStorage<C7>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number));
             }
@@ -302,7 +302,7 @@ namespace Bitron.Ecs
             var storage7 = query.World.GetStorage<C7>(EntityId.None);
             var storage8 = query.World.GetStorage<C8>(EntityId.None);
 
-            foreach (var entity in query.Entities)
+            foreach (var entity in query)
             {
                 action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number), ref storage8.Get(entity.Id.Number));
             }
