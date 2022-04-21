@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -13,10 +12,6 @@ namespace Bitron.Ecs
 
     public sealed class World
     {
-        private static int counter = 0;
-
-        public int Number;
-
         Entity world;
 
         EntityId[] entities = null;
@@ -31,7 +26,8 @@ namespace Bitron.Ecs
         IStorage[] storages = null;
         int storageCount = 0;
 
-        Dictionary<int, Query> queries;
+        Dictionary<int, Query> hashedQueries;
+        List<Query>[] queriesByTypeId;
 
         int eventLifeTimeIndex;
         EventLifeTimeSystem eventLifeTimeSystem;
@@ -42,14 +38,15 @@ namespace Bitron.Ecs
 
         public World(Config config)
         {
-            Number = counter++;
-
             entities = new EntityId[config.EntitySize];
             bitsets = new BitSet[config.EntitySize];
             unusedIds = new EntityId[config.EntitySize];
+
             storageIndices = new Dictionary<long, int>(config.ComponentSize);
             storages = new IStorage[config.ComponentSize];
-            queries = new Dictionary<int, Query>();
+
+            hashedQueries = new Dictionary<int, Query>();
+            queriesByTypeId = new List<Query>[config.ComponentSize];
 
             this.config = config;
 
@@ -162,12 +159,12 @@ namespace Bitron.Ecs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Send<T>() where T : struct
         {
-            var typeId = TypeId.Value<T>(0);
-
             var entity = Spawn();
 
             AddComponent<EventSystemList>(entity.Id);
             AddComponent<EventLifeTime>(entity.Id);
+
+            Console.WriteLine($"Event: {entity.Id.Number} was sent.");
 
             return ref AddComponent<T>(entity.Id);
         }
@@ -176,11 +173,10 @@ namespace Bitron.Ecs
         public void Receive<T>(ISystem system, Action<T> action) where T : struct
         {
             var systemType = system.GetType();
-            
-            var mask = new Mask(this);
-            mask.With<T>(Entity.None);
 
-            var query = GetQuery(mask);
+            var mask = Mask.New(this);
+            mask.With<T>(Entity.None);
+            var query = mask.Apply();
 
             var eventStorage = GetStorage<T>(EntityId.None);
             var systemStorage = GetStorage<EventSystemList>(EntityId.None);
@@ -235,6 +231,8 @@ namespace Bitron.Ecs
                 Send(new Added<T>(new Entity(this, target)));
             }
 
+            OnEntityChanged(id, storage.Index);
+
             return ref storage.Add(id.Number);
         }
 
@@ -271,18 +269,59 @@ namespace Bitron.Ecs
             }
 
             bitsets[id.Number].Clear(storage.Index);
+
+            OnEntityChanged(id, storage.Index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Query GetQuery(Mask mask)
+        public void OnEntityChanged(EntityId entityId, int typeId)
         {
-            if (queries.TryGetValue(mask.GetHashCode(), out var query))
+            var list = queriesByTypeId[typeId];
+
+            if (list != null)
             {
-                return query;
+                foreach (var query in list)
+                {
+                    var isCompatible = IsEntityCompatibleWithMask(query.Mask, entityId);
+                    var isInQuery = query.HasEntity(entityId);
+
+                    if (isCompatible && !isInQuery)
+                    {
+                        query.AddEntity(entityId);
+                    }
+                    else if (!isCompatible && isInQuery)
+                    {
+                        query.RemoveEntity(entityId);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public (Query, bool) GetQuery(Mask mask, int capacity)
+        {
+            var hash = mask.GetHashCode();
+
+            if (hashedQueries.TryGetValue(hash, out var query))
+            {
+                return (query, false);
             }
 
             query = new Query(this, mask, entityCount);
-            
+            hashedQueries[hash] = query;
+
+            foreach (var typeId in mask.Types)
+            {
+                ref var list = ref queriesByTypeId[typeId];
+
+                if (list == null)
+                {
+                    list = new List<Query>(10);
+                }
+
+                list.Add(query);
+            }
+
             for (int i = 0; i <= entityCount; i++)
             {
                 var entityId = this.entities[i];
@@ -292,20 +331,22 @@ namespace Bitron.Ecs
                     continue;
                 }
 
-                if (bitsets[entityId.Number].HasAnyBitSet(mask.ExcludeBitSet))
-                {
-                    continue;
-                }
-                
-                if (!bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet))
+                if (!IsEntityCompatibleWithMask(mask, entityId))
                 {
                     continue;
                 }
 
-                query.AddEntity(new Entity(this, entityId));
+                query.AddEntity(entityId);
             }
 
-            return query;
+            return (query, true);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEntityCompatibleWithMask(Mask mask, EntityId entityId)
+        {
+            return !bitsets[entityId.Number].HasAnyBitSet(mask.ExcludeBitSet)
+            && bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

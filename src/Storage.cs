@@ -101,12 +101,12 @@ namespace Bitron.Ecs
             return (ushort)value;
         }
 
-        private class TypeIdAssigner
+        class TypeIdAssigner
         {
             protected static ushort counter = 0;
         }
 
-        private class TypeIdAssigner<T> : TypeIdAssigner where T : struct
+        class TypeIdAssigner<T> : TypeIdAssigner where T : struct
         {
             public static readonly ushort Id;
 

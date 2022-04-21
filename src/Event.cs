@@ -22,11 +22,13 @@ namespace Bitron.Ecs
     {
         public void Run(Commands commands)
         {
-            var query = commands.Query().With<EventLifeTime>().Apply();
+            var query = commands.Query().With<EventLifeTime>();
 
             query.ForEach((Entity entity, ref EventLifeTime lifeTime) =>
             {
                 lifeTime.Value++;
+
+                Console.WriteLine($"Event: {entity.Id.Number} has age {lifeTime.Value}.");
 
                 if (lifeTime.Value == 2)
                 {

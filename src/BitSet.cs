@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Bitron.Ecs
 {
@@ -14,6 +15,7 @@ namespace Bitron.Ecs
 
         int count = 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int index)
         {
             int b = index >> ByteSize;
@@ -25,6 +27,7 @@ namespace Bitron.Ecs
             return (Bits[b] & (1 << (index & BitSize))) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int index)
         {
             int b = index >> ByteSize;
@@ -37,6 +40,7 @@ namespace Bitron.Ecs
             count++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear(int index)
         {
             int b = index >> ByteSize;
@@ -49,12 +53,14 @@ namespace Bitron.Ecs
             count--;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAll()
         {
             Array.Clear(Bits, 0, Bits.Length);
             count = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAllBitsSet(BitSet mask)
         {
             var count = Math.Min(Bits.Length, mask.Bits.Length);
@@ -70,6 +76,7 @@ namespace Bitron.Ecs
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAnyBitSet(BitSet mask)
         {
             var count = Math.Min(Bits.Length, mask.Bits.Length);
@@ -87,6 +94,7 @@ namespace Bitron.Ecs
 
         public bool IsEmpty
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 uint k = 0;

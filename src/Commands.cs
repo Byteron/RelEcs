@@ -65,13 +65,15 @@ namespace Bitron.Ecs
 
     public sealed class QueryCommands
     {
-        World world;
+        internal World World;
+
+        Query query;
         Mask mask;
 
         public QueryCommands(World world)
         {
-            this.world = world;
-            mask = new Mask(world);
+            World = world;
+            mask = Mask.New(world);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -89,9 +91,14 @@ namespace Bitron.Ecs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Query Apply()
+        public Query.Enumerator GetEnumerator()
         {
-            return world.GetQuery(mask);
+            if (query == null)
+            {
+                query = mask.Apply();
+            }
+
+            return query.GetEnumerator();
         }
     }
 }

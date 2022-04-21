@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Bitron.Ecs
@@ -8,37 +9,63 @@ namespace Bitron.Ecs
     {
         public World World;
 
-        private int[] indices;
-        private Entity[] entities;
-        public int entityCount;
+        public Mask Mask;
 
-        Mask mask;
+        int[] indices;
+        Entity[] entities;
+        int entityCount;
+
+        int lockCount;
+        DelayedOperation[] delayedOperations;
+        int delayedOperationCount;
 
         public Query(World world, Mask mask, int entitySize)
         {
             World = world;
+            Mask = mask;
+
             indices = new int[entitySize];
             entities = new Entity[entitySize];
-            this.mask = mask;
+            delayedOperations = new DelayedOperation[512];
+
+            entityCount = 0;
+            delayedOperationCount = 0;
+            lockCount = 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddEntity(Entity entity)
+        public void AddEntity(EntityId entityId)
         {
+            if (AddDelayedOperation(entityId, true)) { return; }
+
             var index = entityCount++;
-            indices[entityCount] = index;
+
+            if (entityId.Number >= indices.Length)
+            {
+                Array.Resize(ref indices, entityId.Number << 1);
+            }
+
+            indices[entityId.Number] = index;
 
             if (entityCount == entities.Length)
             {
                 Array.Resize(ref entities, entityCount << 1);
             }
 
-            entities[index] = entity;
+            entities[index] = new Entity(World, entityId);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasEntity(EntityId entityId)
+        {
+            return indices.Length > entityId.Number && indices[entityId.Number] > 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveEntity(EntityId entityId)
         {
+            if (AddDelayedOperation(entityId, false)) { return; }
+
             var index = indices[entityId.Number];
             indices[entityId.Number] = 0;
 
@@ -51,83 +78,238 @@ namespace Bitron.Ecs
             }
         }
 
-        public override int GetHashCode()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        bool AddDelayedOperation(EntityId entityId, bool added)
         {
-            return mask.GetHashCode();
+            if (lockCount <= 0) { return false; }
+
+            if (delayedOperationCount == delayedOperations.Length)
+            {
+                Array.Resize(ref delayedOperations, delayedOperationCount << 1);
+            }
+
+            ref var op = ref delayedOperations[delayedOperationCount++];
+
+            op.Added = added;
+            op.EntityId = entityId;
+
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void Unlock()
+        {
+#if DEBUG
+            if (lockCount <= 0)
+            {
+                throw new Exception($"Invalid lock-unlock balance for \"{GetType().Name}\".");
+            }
+#endif
+            lockCount--;
+
+            if (lockCount == 0 && delayedOperationCount > 0)
+            {
+                for (int i = 0; i < delayedOperationCount; i++)
+                {
+                    ref var op = ref delayedOperations[i];
+
+                    if (op.Added)
+                    {
+                        AddEntity(op.EntityId);
+                    }
+                    else
+                    {
+                        RemoveEntity(op.EntityId);
+                    }
+                }
+
+                delayedOperationCount = 0;
+            }
         }
 
         public Enumerator GetEnumerator()
         {
-            return new Enumerator(entities, entityCount);
+            lockCount++;
+            return new Enumerator(this);
         }
 
         public struct Enumerator : IDisposable
         {
-            private readonly Entity[] entities;
-            private readonly int count;
-            private int index;
+            Query query;
+            int index;
 
-            public Enumerator(Entity[] entities, int count)
+            public Enumerator(Query query)
             {
-                this.entities = entities;
-                this.count = count;
+                this.query = query;
                 index = -1;
             }
 
-            public int Count {  get { return count; } }
+            public int Count { get { return query.entityCount; } }
 
             public Entity Current
             {
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => entities[index];
+                get => query.entities[index];
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool MoveNext()
             {
-                return ++index < count;
+                return ++index < query.entityCount;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Dispose() { }
+            public void Dispose()
+            {
+                query.Unlock();
+            }
+        }
+
+        struct DelayedOperation
+        {
+            public bool Added;
+            public EntityId EntityId;
         }
     }
 
     public sealed class Mask
     {
-        private World world;
+        static readonly object syncObject = new object();
+        static Mask[] maskPool = new Mask[32];
+        static int maskPoolCount;
 
-        public BitSet IncludeBitSet = new BitSet();
-        public BitSet ExcludeBitSet = new BitSet();
+        internal static Mask New(World world)
+        {
+            lock (syncObject)
+            {
+                var mask = maskPoolCount > 0 ? maskPool[--maskPoolCount] : new Mask(world);
+                mask.world = world;
+
+                return mask;
+            }
+        }
+
+        World world;
+
+        internal BitSet IncludeBitSet;
+        internal BitSet ExcludeBitSet;
+
+        internal List<int> Types;
+
+#if DEBUG
+        bool isBuilt;
+#endif
 
         public Mask(World world)
         {
             this.world = world;
+
+            Types = new List<int>();
+
+            IncludeBitSet = new BitSet();
+            ExcludeBitSet = new BitSet();
+
+            Reset();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Reset()
+        {
+            IncludeBitSet.ClearAll();
+            ExcludeBitSet.ClearAll();
+
+            Types.Clear();
+
+#if DEBUG
+            isBuilt = false;
+#endif
         }
 
         public void With<T>(Entity target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
+
+#if DEBUG
+            if (isBuilt)
+            {
+                throw new Exception("Cant change built mask.");
+            }
+
+            if (Types.IndexOf(index) != -1)
+            {
+                throw new Exception($"{typeof(T).Name} already in constraints list.");
+            }
+#endif
+
             IncludeBitSet.Set(index);
+            Types.Add(index);
         }
 
         public void Without<T>(Entity target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
+
+#if DEBUG
+            if (isBuilt)
+            {
+                throw new Exception("Cant change built mask.");
+            }
+
+            if (Types.IndexOf(index) != -1)
+            {
+                throw new Exception($"{typeof(T).Name} already in constraints list.");
+            }
+#endif
+
             ExcludeBitSet.Set(index);
+            Types.Add(index);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Query Apply(int capacity = 512)
+        {
+#if DEBUG
+            if (isBuilt)
+            {
+                throw new Exception("Cant change built mask.");
+            }
+
+            isBuilt = true;
+#endif      
+            Types.Sort();
+
+            var (query, isNew) = world.GetQuery(this, capacity);
+            if (!isNew) { Recycle(); }
+            return query;
+        }
+
+        private void Recycle()
+        {
+            Reset();
+
+            lock (syncObject)
+            {
+                if (maskPoolCount == maskPool.Length)
+                {
+                    Array.Resize(ref maskPool, maskPoolCount << 1);
+                }
+
+                maskPool[maskPoolCount++] = this;
+            }
         }
 
         public override int GetHashCode()
         {
-            unchecked // Allow arithmetic overflow, numbers will just "wrap around"
+            int hash = Types.Count;
+
+            foreach (var index in Types)
             {
-                int hashcode = 1430287;
-                hashcode = hashcode * 7302013 ^ IncludeBitSet.GetHashCode();
-                hashcode = hashcode * 7302013 ^ ExcludeBitSet.GetHashCode();
-                return hashcode;
+                hash = unchecked(hash * 314159 + index);
             }
+
+            return hash;
         }
     }
 }
