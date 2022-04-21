@@ -156,6 +156,15 @@ namespace Bitron.Ecs
             }
         }
 
+        public delegate void EntityRefAction(Entity entity);
+        public static void ForEach<C>(this QueryCommands query, EntityRefAction action)
+        {
+            foreach (var entity in query)
+            {
+                action(entity);
+            }
+        }
+
         public delegate void EntityRefAction<C>(Entity entity, ref C c);
         public static void ForEach<C>(this QueryCommands query, EntityRefAction<C> action)
             where C : struct
