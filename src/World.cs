@@ -108,6 +108,7 @@ namespace Bitron.Ecs
                 if (bitset.Get(i))
                 {
                     storages[i].Remove(id.Number);
+                    OnEntityChanged(id, i);
                 }
 
                 if (TypeId.Entity(typeId) == id.Number)
@@ -135,6 +136,7 @@ namespace Bitron.Ecs
                         {
                             storage.Remove(entity.Number);
                             bitsets[entity.Number].Clear(index);
+                            OnEntityChanged(entity, index);
                         }
                     }
                 }

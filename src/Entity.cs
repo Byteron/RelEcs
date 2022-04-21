@@ -13,6 +13,7 @@ namespace Bitron.Ecs
         public bool IsAlive { get => world.IsAlive(Id); }
 
         public EntityId Id { get; }
+
         World world;
 
         public Entity(EntityId id)
