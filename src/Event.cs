@@ -28,8 +28,6 @@ namespace Bitron.Ecs
             {
                 lifeTime.Value++;
 
-                Console.WriteLine($"Event: {entity.Id.Number} has age {lifeTime.Value}.");
-
                 if (lifeTime.Value == 2)
                 {
                     entity.Despawn();

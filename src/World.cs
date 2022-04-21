@@ -166,8 +166,6 @@ namespace Bitron.Ecs
             AddComponent<EventSystemList>(entity.Id);
             AddComponent<EventLifeTime>(entity.Id);
 
-            Console.WriteLine($"Event: {entity.Id.Number} was sent.");
-
             return ref AddComponent<T>(entity.Id);
         }
 
