@@ -22,7 +22,7 @@ namespace RelEcs
     {
         public void Run(Commands commands)
         {
-            var query = commands.Query().With<EventLifeTime>();
+            var query = commands.Query().Has<EventLifeTime>();
 
             query.ForEach((Entity entity, ref EventLifeTime lifeTime) =>
             {

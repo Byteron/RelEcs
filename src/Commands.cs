@@ -94,23 +94,23 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands With<T>(Entity target = default) where T : struct
+        public QueryCommands Has<T>(Entity target = default) where T : struct
         {
-            mask.With<T>(target);
+            mask.Has<T>(target);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Optional<T>(Entity target = default) where T : struct
+        public QueryCommands Any<T>(Entity target = default) where T : struct
         {
-            mask.Optional<T>(target);
+            mask.Any<T>(target);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Without<T>(Entity target = default) where T : struct
+        public QueryCommands Not<T>(Entity target = default) where T : struct
         {
-            mask.Without<T>(target);
+            mask.Not<T>(target);
             return this;
         }
 

@@ -228,7 +228,7 @@ namespace RelEcs
 #endif
         }
 
-        public void With<T>(Entity target) where T : struct
+        public void Has<T>(Entity target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
@@ -249,7 +249,7 @@ namespace RelEcs
             Types.Add(index);
         }
 
-        public void Optional<T>(Entity target) where T : struct
+        public void Any<T>(Entity target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
@@ -270,7 +270,7 @@ namespace RelEcs
             Types.Add(index);
         }
 
-        public void Without<T>(Entity target) where T : struct
+        public void Not<T>(Entity target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);

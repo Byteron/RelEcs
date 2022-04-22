@@ -196,7 +196,7 @@ namespace RelEcs
             var systemType = system.GetType();
 
             var mask = Mask.New(this);
-            mask.With<T>(Entity.None);
+            mask.Has<T>(Entity.None);
             var query = mask.Apply();
 
             var eventStorage = GetStorage<T>(EntityId.None);

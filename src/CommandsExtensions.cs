@@ -6,7 +6,7 @@ namespace RelEcs
         public static void ForEach<C>(this Commands commands, RefAction<C> action)
             where C : struct
         {
-            var query = commands.Query().With<C>();
+            var query = commands.Query().Has<C>();
 
             var storage = commands.GetStorage<C>(EntityId.None);
 
@@ -21,7 +21,7 @@ namespace RelEcs
             where C1 : struct
             where C2 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>();
+            var query = commands.Query().Has<C1>().Has<C2>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -38,7 +38,7 @@ namespace RelEcs
             where C2 : struct
             where C3 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -57,7 +57,7 @@ namespace RelEcs
             where C3 : struct
             where C4 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -78,7 +78,7 @@ namespace RelEcs
             where C4 : struct
             where C5 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -101,7 +101,7 @@ namespace RelEcs
             where C5 : struct
             where C6 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>().With<C6>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -126,7 +126,7 @@ namespace RelEcs
             where C6 : struct
             where C7 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>().With<C6>().With<C7>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -153,7 +153,7 @@ namespace RelEcs
             where C7 : struct
             where C8 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>().With<C6>().With<C7>().With<C8>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -185,7 +185,7 @@ namespace RelEcs
         public static void ForEach<C>(this Commands commands, EntityRefAction<C> action)
             where C : struct
         {
-            var query = commands.Query().With<C>();
+            var query = commands.Query().Has<C>();
 
             var storage = commands.GetStorage<C>(EntityId.None);
 
@@ -200,7 +200,7 @@ namespace RelEcs
             where C1 : struct
             where C2 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>();
+            var query = commands.Query().Has<C1>().Has<C2>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -217,7 +217,7 @@ namespace RelEcs
             where C2 : struct
             where C3 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -236,7 +236,7 @@ namespace RelEcs
             where C3 : struct
             where C4 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -257,7 +257,7 @@ namespace RelEcs
             where C4 : struct
             where C5 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -280,7 +280,7 @@ namespace RelEcs
             where C5 : struct
             where C6 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>().With<C6>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -305,7 +305,7 @@ namespace RelEcs
             where C6 : struct
             where C7 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>().With<C6>().With<C7>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);
@@ -332,7 +332,7 @@ namespace RelEcs
             where C7 : struct
             where C8 : struct
         {
-            var query = commands.Query().With<C1>().With<C2>().With<C3>().With<C4>().With<C5>().With<C6>().With<C7>().With<C8>();
+            var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
 
             var storage1 = commands.GetStorage<C1>(EntityId.None);
             var storage2 = commands.GetStorage<C2>(EntityId.None);

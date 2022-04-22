@@ -93,8 +93,8 @@ Commands commands = new Commands(world);
 ```csharp
 // every entity that has a Name component and owes bob money.
 var appleLovers = commands.Query()
-    .With<Name>()
-    .With<Owes>(bob);
+    .Has<Name>()
+    .Has<Owes>(bob);
 ```
 
 ## System
@@ -106,8 +106,8 @@ public class MoveSystem : ISystem
     {
         // every entity that has a Position and Velocity component
         Query movers = commands.Query()
-            .With<Position>()
-            .With<Velocity>();
+            .Has<Position>()
+            .Has<Velocity>();
         
         // iterate using ForEach.
         // currently only works with Components *not* with relations
