@@ -216,12 +216,12 @@ group.Run(world)
 ```csharp
 // using Godot as an Example
 using Godot;
-using Bitron.Ecs;
+using RelEcs;
 
 public class GameLoopNode : Node
 {
     // Godot has a World class
-    Bitron.Ecs.World world = new Bitron.Ecs.World();
+    RelEcs.World world = new RelEcs.World();
 
     SystemGroup initSystems = new SystemGroup();
     SystemGroup runSystems = new SystemGroup();
