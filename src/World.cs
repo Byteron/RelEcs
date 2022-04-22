@@ -34,6 +34,8 @@ namespace Bitron.Ecs
         Dictionary<int, Query> hashedQueries;
         List<Query>[] queriesByTypeId;
 
+        Dictionary<Type, ISystem> systems;
+
         int eventLifeTimeIndex;
         EventLifeTimeSystem eventLifeTimeSystem;
 
@@ -52,6 +54,8 @@ namespace Bitron.Ecs
 
             hashedQueries = new Dictionary<int, Query>();
             queriesByTypeId = new List<Query>[config.ComponentSize];
+
+            systems = new Dictionary<Type, ISystem>();
 
             this.config = config;
 
@@ -183,7 +187,7 @@ namespace Bitron.Ecs
         {
             var systemType = system.GetType();
 
-            var mask = Mask.New(this);
+            var mask = Mask.New(this, system);
             mask.With<T>(Entity.None);
             var query = mask.Apply();
 
@@ -312,13 +316,19 @@ namespace Bitron.Ecs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public (Query, bool) GetQuery(Mask mask, int capacity)
+        public (Query, bool) GetQuery(Mask mask, ISystem system, int capacity)
         {
             var hash = mask.GetHashCode();
 
             if (hashedQueries.TryGetValue(hash, out var query))
             {
                 return (query, false);
+            }
+            
+            var systemType = typeof(ISystem);
+            if (systems.ContainsKey(systemType))
+            {
+                systems[systemType] = system;
             }
 
             query = new Query(this, mask, entityCount);
@@ -424,6 +434,7 @@ namespace Bitron.Ecs
                 ComponentCount = storageCount,
                 RelationCount = relationCount,
                 ResourceCount = bitsets[world.Id.Number].Count,
+                SystemCount = systems.Count,
                 CachedQueryCount = hashedQueries.Count,
             };
         }
@@ -445,6 +456,7 @@ namespace Bitron.Ecs
         public int ComponentCount;
         public int RelationCount;
         public int ResourceCount;
+        public int SystemCount;
         public int CachedQueryCount;
     }
 }

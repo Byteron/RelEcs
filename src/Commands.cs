@@ -59,7 +59,7 @@ namespace Bitron.Ecs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Query()
         {
-            return new QueryCommands(world);
+            return new QueryCommands(world, system);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -76,10 +76,10 @@ namespace Bitron.Ecs
         Query query;
         Mask mask;
 
-        public QueryCommands(World world)
+        public QueryCommands(World world, ISystem system)
         {
             World = world;
-            mask = Mask.New(world);
+            mask = Mask.New(world, system);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
