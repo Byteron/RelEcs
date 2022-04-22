@@ -163,18 +163,18 @@ namespace RelEcs
         {
             return (ushort)value;
         }
+    }
 
-        class TypeIdAssigner
-        {
-            protected static ushort counter = 0;
-        }
+    public class TypeIdAssigner
+    {
+        protected static ushort counter = 0;
+    }
 
-        class TypeIdAssigner<T> : TypeIdAssigner where T : struct
-        {
-            public static readonly ushort Id;
+    public class TypeIdAssigner<T> : TypeIdAssigner where T : struct
+    {
+        public static readonly ushort Id;
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            static TypeIdAssigner() => Id = ++counter;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static TypeIdAssigner() => Id = ++counter;
     }
 }
