@@ -420,8 +420,16 @@ namespace Bitron.Ecs
             info.RelationCount = relationCount;
             info.ResourceCount = bitsets[world.Id.Number].Count;
             info.SystemCount = SystemExecutionTimes.Count;
-            info.SystemExecutionTimes = SystemExecutionTimes;
             info.CachedQueryCount = hashedQueries.Count;
+
+            info.SystemExecutionTimes.Clear();
+            
+            foreach(var pair in SystemExecutionTimes)
+            {
+                info.SystemExecutionTimes.Add(pair.Key, pair.Value);
+            }
+
+            SystemExecutionTimes.Clear();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
