@@ -355,9 +355,14 @@ namespace RelEcs
             query = new Query(this, mask, entityCount);
             hashedQueries[hash] = query;
 
-            foreach (var typeId in mask.Types)
+            foreach (var typeIndex in mask.Types)
             {
-                ref var list = ref queriesByTypeId[typeId];
+                if (typeIndex >= queriesByTypeId.Length)
+                {
+                    Array.Resize(ref queriesByTypeId, typeIndex << 1);
+                }
+
+                ref var list = ref queriesByTypeId[typeIndex];
 
                 if (list == null)
                 {
@@ -446,12 +451,6 @@ namespace RelEcs
             eventLifeTimeSystem.Run(this);
 
             SystemExecutionTimes.Clear();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetStorageIndex(long typeId)
-        {
-            return storageIndices.TryGetValue(typeId, out var index) ? index : 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
