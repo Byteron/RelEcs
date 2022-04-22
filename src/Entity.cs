@@ -49,7 +49,7 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Add<T>(Entity target, T data = default, bool triggerEvent = false) where T : struct
+        public Entity Add<T>(Entity target, T data, bool triggerEvent = false) where T : struct
         {
             world.AddComponent<T>(Id, target.Id, triggerEvent) = data;
             return this;
