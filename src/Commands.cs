@@ -117,13 +117,27 @@ namespace RelEcs
             return this;
         }
 
+        public int Count
+        {
+            get
+            {
+                if (query == null)
+                {
+                    mask.Lock();
+                    query = World.GetQuery(mask);
+                }
+
+                return query.Count;
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Query.Enumerator GetEnumerator()
         {
             if (query == null)
             {
                 mask.Lock();
-                query = World.GetQuery(mask, 512);
+                query = World.GetQuery(mask);
             }
 
             return query.GetEnumerator();

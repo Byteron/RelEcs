@@ -114,7 +114,7 @@ namespace RelEcs
             {
                 List<int> targetTypeIndices = new List<int>();
 
-                for (int i = 1; i <= storageCount; i++)
+                for (int i = 0; i <= storageCount; i++)
                 {
                     if (storages[i] == null)
                     {
@@ -124,6 +124,7 @@ namespace RelEcs
                     if (bitset.Get(i))
                     {
                         storages[i].Remove(id.Number);
+                        bitset.Clear(i);
                         OnEntityChanged(id, i);
                     }
 
@@ -133,7 +134,10 @@ namespace RelEcs
                     }
                 }
 
-                bitset.ClearAll();
+                if (bitset.Count != 0)
+                {
+                    throw new Exception("entity was despawned but still has components, something went wrong");
+                }
 
                 if (targetTypeIndices.Count > 0)
                 {
@@ -200,7 +204,7 @@ namespace RelEcs
             mask.Has(systemStorage.Index);
             mask.Lock();
 
-            var query = GetQuery(mask, 512);
+            var query = GetQuery(mask);
 
 
             foreach (var entity in query)
@@ -338,7 +342,7 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Query GetQuery(Mask mask, int capacity)
+        public Query GetQuery(Mask mask)
         {
             var hash = mask.GetHashCode();
 

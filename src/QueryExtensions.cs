@@ -1,3 +1,5 @@
+using System;
+
 namespace RelEcs
 {
     public static class QueryExtensions
@@ -6,7 +8,6 @@ namespace RelEcs
         public static void ForEach<C>(this QueryCommands query, RefAction<C> action)
             where C : struct
         {
-
             var storage = query.World.GetStorage<C>(EntityId.None);
 
             foreach (var entity in query)
@@ -20,7 +21,6 @@ namespace RelEcs
             where C1 : struct
             where C2 : struct
         {
-
             var storage1 = query.World.GetStorage<C1>(EntityId.None);
             var storage2 = query.World.GetStorage<C2>(EntityId.None);
 
@@ -156,8 +156,7 @@ namespace RelEcs
             }
         }
 
-        public delegate void EntityRefAction(Entity entity);
-        public static void ForEach<C>(this QueryCommands query, EntityRefAction action)
+        public static void ForEach(this QueryCommands query, Action<Entity> action)
         {
             foreach (var entity in query)
             {

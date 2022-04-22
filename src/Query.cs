@@ -38,7 +38,7 @@ namespace RelEcs
         {
             if (AddDelayedOperation(entityId, true)) { return; }
 
-            var index = entityCount++;
+            var index = ++entityCount;
 
             if (entityId.Number >= indices.Length)
             {
@@ -133,6 +133,8 @@ namespace RelEcs
             return new Enumerator(this);
         }
 
+        public int Count { get => entityCount; }
+
         public struct Enumerator : IDisposable
         {
             Query query;
@@ -141,10 +143,8 @@ namespace RelEcs
             public Enumerator(Query query)
             {
                 this.query = query;
-                index = -1;
+                index = 0;
             }
-
-            public int Count { get { return query.entityCount; } }
 
             public Entity Current
             {
@@ -155,7 +155,7 @@ namespace RelEcs
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool MoveNext()
             {
-                return ++index < query.entityCount;
+                return ++index <= query.entityCount;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
