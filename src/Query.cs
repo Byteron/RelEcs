@@ -233,7 +233,6 @@ namespace RelEcs
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
 
-            Godot.GD.Print(index);
 #if DEBUG
             if (isBuilt)
             {
