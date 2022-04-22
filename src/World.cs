@@ -64,6 +64,10 @@ namespace Bitron.Ecs
 
             eventLifeTimeIndex = GetStorage<EventLifeTime>(EntityId.None).Index;
             eventLifeTimeSystem = new EventLifeTimeSystem();
+
+            var info = new WorldInfo();
+            info.WorldId = number;
+            AddResource(info);
         }
 
         public Entity Spawn()
@@ -402,6 +406,18 @@ namespace Bitron.Ecs
         public void Tick()
         {
             eventLifeTimeSystem.Run(this);
+
+            var info = GetResource<WorldInfo>();
+
+            info.EntityCount = entityCount;
+            info.UnusedEntityCount = unusedIdCount;
+            info.AllocatedEntityCount = entities.Length;
+            info.ComponentCount = storageCount;
+            info.RelationCount = relationCount;
+            info.ResourceCount = bitsets[world.Id.Number].Count;
+            info.SystemCount = SystemExecutionTimes.Count;
+            info.SystemExecutionTimes = SystemExecutionTimes;
+            info.CachedQueryCount = hashedQueries.Count;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -414,24 +430,6 @@ namespace Bitron.Ecs
         public bool IsAlive(EntityId id)
         {
             return entities[id.Number] != EntityId.None;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public WorldInfo GetInfo()
-        {
-            return new WorldInfo
-            {
-                WorldId = number,
-                EntityCount = entityCount,
-                UnusedEntityCount = unusedIdCount,
-                AllocatedEntityCount = entities.Length,
-                ComponentCount = storageCount,
-                RelationCount = relationCount,
-                ResourceCount = bitsets[world.Id.Number].Count,
-                SystemCount = SystemExecutionTimes.Count,
-                SystemExecutionTimes = SystemExecutionTimes,
-                CachedQueryCount = hashedQueries.Count,
-            };
         }
     }
 
