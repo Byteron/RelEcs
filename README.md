@@ -160,7 +160,7 @@ commands.Receive((MyEvent e) =>
 {
     Console.WriteLine("An Event!");
 })
-// note that events only live for 2 frames and can only be received ONCE per SYSTEM.
+// note that events only live for 2 frames and can only be received ONCE per SYSTEM
 
 // Output:
 // "An Event!"
@@ -173,12 +173,12 @@ commands.Receive((MyEvent e) =>
 ```csharp
 var entity = commands.Spawn();
 
-// normally you add components like this. No events are spawned by default.
+// normally you add components like this. No events are spawned by default
 entity.Add<Name>(new Name("Walter"));
 entity.Remove<Name>();
 
 // you can pass in an optional parameter 'triggerEvent' 
-// to spawn an Added<T> or Removed<T> event.
+// to spawn an Added<T> or Removed<T> event
 entity.Add<Old>(true);
 entity.Remove<Young>(true);
 
@@ -194,4 +194,78 @@ commands.Receive((Removed<Young> removedEvent) =>
 {
     Console.WriteLine("Young component removed from " + removedEvent.Entity);
 })
+```
+
+## SystemGroup
+
+```csharp
+// create a new system group
+SystemGroup group = new SystemGroup();
+
+// add any amount of systems to a system group
+group.Add(new SomeSystem())
+    .Add(new SomeOtherSystem())
+    .Add(new AThirdSystem())
+
+// running a system group will run all added systems in the order you added them
+group.Run(world)
+```
+
+## Game Loop
+
+```csharp
+// using Godot as an Example
+using Godot;
+using Bitron.Ecs;
+
+public class GameLoopNode : Node
+{
+    // Godot has a World class
+    Bitron.Ecs.World world = new Bitron.Ecs.World();
+
+    SystemGroup initSystems = new SystemGroup();
+    SystemGroup runSystems = new SystemGroup();
+    SystemGroup cleanupSystems = new SystemGroup();
+
+    // called once when the node is being initialized
+    public override void _Init()
+    {
+        initSystem.Add(new SomeSpawnSystem());
+
+        // add systems that run every loop
+        runSystems.Add(new PhysicsSystem())
+            .Add(new AnimationSystem())
+            .Add(new PlayerControlSystem());
+        
+        // add systems that are called once in the end
+        cleanupSystems.Add(new DespawnSystem());
+    }
+
+    // is called once after the Node has been added to the SceneTree
+    public override void _Ready()
+    {
+        // add your init systems
+
+        // run init systems
+        initSystems.Run(world);   
+    }
+
+    // is called once every frame
+    public override void _Process(float delta)
+    {
+        // run systems 
+        runSystems.Run(world);
+
+        // IMPORTANT: For our ecs events to work properly, we need to tell the world
+        // when a frame is done. For that, we call Tick() on the world
+        world.Tick();
+    }
+
+    // called once when the node is removed from the SceneTree
+    public override void _ExitTree()
+    {
+        // run cleanup systems
+        cleanupSystems.Run(world);
+    }
+}
 ```
