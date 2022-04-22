@@ -233,6 +233,7 @@ namespace RelEcs
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
 
+            Godot.GD.Print(index);
 #if DEBUG
             if (isBuilt)
             {
@@ -244,8 +245,7 @@ namespace RelEcs
                 throw new Exception($"{typeof(T).Name} already in constraints list.");
             }
 #endif
-
-            OptionalBitSet.Set(index);
+            IncludeBitSet.Set(index);
             Types.Add(index);
         }
 
@@ -266,7 +266,7 @@ namespace RelEcs
             }
 #endif
 
-            IncludeBitSet.Set(index);
+            OptionalBitSet.Set(index);
             Types.Add(index);
         }
 
