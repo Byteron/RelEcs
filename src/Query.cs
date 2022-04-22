@@ -178,12 +178,11 @@ namespace Bitron.Ecs
         static Mask[] maskPool = new Mask[32];
         static int maskPoolCount;
 
-        internal static Mask New(World world, ISystem system)
+        internal static Mask New(World world)
         {
             lock (syncObject)
             {
-                var mask = maskPoolCount > 0 ? maskPool[--maskPoolCount] : new Mask(world, system);
-                mask.system = system;
+                var mask = maskPoolCount > 0 ? maskPool[--maskPoolCount] : new Mask(world);
                 mask.world = world;
 
                 return mask;
@@ -191,7 +190,6 @@ namespace Bitron.Ecs
         }
 
         World world;
-        ISystem system;
 
         internal BitSet IncludeBitSet;
         internal BitSet ExcludeBitSet;
@@ -202,10 +200,9 @@ namespace Bitron.Ecs
         bool isBuilt;
 #endif
 
-        public Mask(World world, ISystem system)
+        public Mask(World world)
         {
             this.world = world;
-            this.system = system;
 
             Types = new List<int>();
 
@@ -283,7 +280,7 @@ namespace Bitron.Ecs
 #endif      
             Types.Sort();
 
-            var (query, isNew) = world.GetQuery(this, system, capacity);
+            var (query, isNew) = world.GetQuery(this, capacity);
             if (!isNew) { Recycle(); }
             return query;
         }

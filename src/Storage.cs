@@ -1,9 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Bitron.Ecs
 {
+    public struct IsA { }
+    public struct ChildOf { }
+
     public interface IStorage
     {
         int Index { get; set; }

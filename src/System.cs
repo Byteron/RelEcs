@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Bitron.Ecs
 {
@@ -30,7 +31,13 @@ namespace Bitron.Ecs
     {
         public static void Run(this ISystem system, World world)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             system.Run(new Commands(world, system));
+
+            stopWatch.Stop();
+            world.SystemExecutionTimes[system.GetType()] = stopWatch.Elapsed;
         }
     }
 }
