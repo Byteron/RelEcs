@@ -29,6 +29,8 @@ namespace Bitron.Ecs
         IStorage[] storages = null;
         int storageCount = 0;
 
+        int relationCount = 0;
+
         Dictionary<int, Query> hashedQueries;
         List<Query>[] queriesByTypeId;
 
@@ -238,6 +240,11 @@ namespace Bitron.Ecs
                 Send(new Added<T>(new Entity(this, target)));
             }
 
+            if (target != default)
+            {
+                relationCount++;
+            }
+
             OnEntityChanged(id, storage.Index);
 
             return ref storage.Add(id.Number);
@@ -415,6 +422,7 @@ namespace Bitron.Ecs
                 UnusedEntityCount = unusedIdCount,
                 AllocatedEntityCount = entities.Length,
                 ComponentCount = storageCount,
+                RelationCount = relationCount,
                 ResourceCount = bitsets[world.Id.Number].Count,
                 CachedQueryCount = hashedQueries.Count,
             };
@@ -435,6 +443,7 @@ namespace Bitron.Ecs
         public int UnusedEntityCount;
         public int AllocatedEntityCount;
         public int ComponentCount;
+        public int RelationCount;
         public int ResourceCount;
         public int CachedQueryCount;
     }
