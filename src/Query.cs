@@ -230,8 +230,7 @@ namespace RelEcs
 
         public void Has<T>(Entity target) where T : struct
         {
-            var typeId = TypeId.Value<T>(target.Id.Number);
-            var index = world.GetStorageIndex(typeId);
+            var index = world.GetStorage<T>(target.Id).Index;
 
 #if DEBUG
             if (isBuilt)
@@ -250,8 +249,7 @@ namespace RelEcs
 
         public void Any<T>(Entity target) where T : struct
         {
-            var typeId = TypeId.Value<T>(target.Id.Number);
-            var index = world.GetStorageIndex(typeId);
+            var index = world.GetStorage<T>(target.Id).Index;
 
 #if DEBUG
             if (isBuilt)
@@ -271,8 +269,7 @@ namespace RelEcs
 
         public void Not<T>(Entity target) where T : struct
         {
-            var typeId = TypeId.Value<T>(target.Id.Number);
-            var index = world.GetStorageIndex(typeId);
+            var index = world.GetStorage<T>(target.Id).Index;
 
 #if DEBUG
             if (isBuilt)
