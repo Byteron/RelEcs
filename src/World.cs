@@ -409,8 +409,6 @@ namespace Bitron.Ecs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Tick()
         {
-            eventLifeTimeSystem.Run(this);
-
             var info = GetResource<WorldInfo>();
 
             info.EntityCount = entityCount;
@@ -428,6 +426,8 @@ namespace Bitron.Ecs
             {
                 info.SystemExecutionTimes.Add(pair.Key, pair.Value);
             }
+
+            eventLifeTimeSystem.Run(this);
 
             SystemExecutionTimes.Clear();
         }
