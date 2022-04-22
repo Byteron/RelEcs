@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Bitron.Ecs
+namespace RelEcs
 {
     public struct Entity
     {

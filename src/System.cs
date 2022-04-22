@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Bitron.Ecs
+namespace RelEcs
 {
     public sealed class SystemGroup
     {

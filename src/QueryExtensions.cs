@@ -1,4 +1,4 @@
-namespace Bitron.Ecs
+namespace RelEcs
 {
     public static class QueryExtensions
     {

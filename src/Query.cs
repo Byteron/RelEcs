@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Bitron.Ecs
+namespace RelEcs
 {
     public sealed class Query
     {
