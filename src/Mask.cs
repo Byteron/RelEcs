@@ -7,8 +7,6 @@ namespace RelEcs
 {
     public sealed class Mask
     {
-        World world;
-
         internal BitSet HasBitSet;
         internal BitSet NotBitSet;
         internal BitSet AnyBitSet;
@@ -21,92 +19,70 @@ namespace RelEcs
 
         public Mask(World world)
         {
-            this.world = world;
-
             Types = new List<int>();
 
             HasBitSet = new BitSet();
             NotBitSet = new BitSet();
             AnyBitSet = new BitSet();
 
-            Reset();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Reset()
-        {
-            HasBitSet.ClearAll();
-            NotBitSet.ClearAll();
-            AnyBitSet.ClearAll();
-
-            Types.Clear();
-
-#if DEBUG
             isBuilt = false;
-#endif
         }
 
-        public void Has<T>(Entity target) where T : struct
+        public void Has(int typeIndex)
         {
-            var index = world.GetStorage<T>(target.Id).Index;
-
 #if DEBUG
             if (isBuilt)
             {
                 throw new Exception("Cant change built mask.");
             }
 
-            if (Types.IndexOf(index) != -1)
+            if (Types.IndexOf(typeIndex) != -1)
             {
-                throw new Exception($"{typeof(T).Name} already in constraints list.");
+                throw new Exception($"duplicate type in constrains list");
             }
 #endif
-            HasBitSet.Set(index);
-            Types.Add(index);
+            HasBitSet.Set(typeIndex);
+            Types.Add(typeIndex);
         }
 
-        public void Any<T>(Entity target) where T : struct
+        public void Any(int typeIndex)
         {
-            var index = world.GetStorage<T>(target.Id).Index;
-
 #if DEBUG
             if (isBuilt)
             {
                 throw new Exception("Cant change built mask.");
             }
 
-            if (Types.IndexOf(index) != -1)
+            if (Types.IndexOf(typeIndex) != -1)
             {
-                throw new Exception($"{typeof(T).Name} already in constraints list.");
+                throw new Exception($"duplicate type in constrains list");
             }
 #endif
 
-            AnyBitSet.Set(index);
-            Types.Add(index);
+            AnyBitSet.Set(typeIndex);
+            Types.Add(typeIndex);
         }
 
-        public void Not<T>(Entity target) where T : struct
+        public void Not(int typeIndex)
         {
-            var index = world.GetStorage<T>(target.Id).Index;
-
 #if DEBUG
             if (isBuilt)
             {
                 throw new Exception("Cant change built mask.");
             }
 
-            if (Types.IndexOf(index) != -1)
+            if (Types.IndexOf(typeIndex) != -1)
             {
-                throw new Exception($"{typeof(T).Name} already in constraints list.");
+                throw new Exception($"duplicate type in constrains list");
             }
 #endif
 
-            NotBitSet.Set(index);
-            Types.Add(index);
+            NotBitSet.Set(typeIndex);
+            Types.Add(typeIndex);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Query Apply(int capacity = 512)
+        public void Lock(int capacity = 512)
         {
 #if DEBUG
             if (isBuilt)
@@ -117,8 +93,6 @@ namespace RelEcs
             isBuilt = true;
 #endif      
             Types.Sort();
-
-            return world.GetQuery(this, capacity);
         }
 
         public override int GetHashCode()

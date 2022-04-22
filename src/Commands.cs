@@ -96,21 +96,24 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Has<T>(Entity target = default) where T : struct
         {
-            mask.Has<T>(target);
-            return this;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Any<T>(Entity target = default) where T : struct
-        {
-            mask.Any<T>(target);
+            var typeIndex = World.GetStorage<T>(target.Id).Index;
+            mask.Has(typeIndex);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Not<T>(Entity target = default) where T : struct
         {
-            mask.Not<T>(target);
+            var typeIndex = World.GetStorage<T>(target.Id).Index;
+            mask.Not(typeIndex);
+            return this;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public QueryCommands Any<T>(Entity target = default) where T : struct
+        {
+            var typeIndex = World.GetStorage<T>(target.Id).Index;
+            mask.Any(typeIndex);
             return this;
         }
 
@@ -119,7 +122,8 @@ namespace RelEcs
         {
             if (query == null)
             {
-                query = mask.Apply();
+                mask.Lock();
+                query = World.GetQuery(mask, 512);
             }
 
             return query.GetEnumerator();
