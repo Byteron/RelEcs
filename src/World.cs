@@ -65,8 +65,12 @@ namespace Bitron.Ecs
             eventLifeTimeIndex = GetStorage<EventLifeTime>(EntityId.None).Index;
             eventLifeTimeSystem = new EventLifeTimeSystem();
 
-            var info = new WorldInfo();
-            info.WorldId = number;
+            var info = new WorldInfo()
+            {
+                WorldId = number,
+                SystemExecutionTimes = new Dictionary<Type, TimeSpan>(),
+            };
+
             AddResource(info);
         }
 
