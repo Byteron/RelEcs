@@ -73,6 +73,11 @@ namespace RelEcs
         {
             return new QueryCommands(world);
         }
+
+        internal Storage<T> GetStorage<T>(EntityId target) where T : struct
+        {
+            return world.GetStorage<T>(target);
+        }
     }
 
     public sealed class QueryCommands
