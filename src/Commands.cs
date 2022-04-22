@@ -90,7 +90,7 @@ namespace RelEcs
         public QueryCommands(World world)
         {
             World = world;
-            mask = Mask.New(world);
+            mask = new Mask(world);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

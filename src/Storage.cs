@@ -15,6 +15,7 @@ namespace RelEcs
     {
         int Index { get; set; }
         long TypeId { get; set; }
+
         bool Has(int entityId);
         void Remove(int entityId);
     }
@@ -72,7 +73,7 @@ namespace RelEcs
             }
 
 #if DEBUG
-            if (indices[entityId] > 0) { throw new Exception("Already attached."); }
+            if (indices[entityId] > 0) { throw new Exception($"{typeof(T).Name} ({Index}) is already attached to {entityId}"); }
 #endif
             int index;
 
@@ -99,7 +100,7 @@ namespace RelEcs
         public ref T Get(int entityId)
         {
 #if DEBUG
-            if (indices[entityId] == 0) { throw new Exception("Not attached."); }
+            if (indices[entityId] == 0) { throw new Exception($"{typeof(T).Name} ({Index}) is not attached to {entityId}"); }
 #endif
             return ref items[indices[entityId]];
         }
@@ -108,7 +109,7 @@ namespace RelEcs
         public object GetRaw(int entityId)
         {
 #if DEBUG
-            if (indices[entityId] == 0) { throw new Exception("Not attached."); }
+            if (indices[entityId] == 0) { throw new Exception($"{typeof(T).Name} ({Index}) is not attached to {entityId}"); }
 #endif
             return items[indices[entityId]];
         }

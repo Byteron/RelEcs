@@ -15,7 +15,16 @@ namespace RelEcs
         public Removed(Entity entity) => Entity = entity;
     }
 
-    internal struct EventSystemList { public List<Type> List; }
+    internal struct EventSystemList : IReset<EventSystemList>
+    {
+        public List<Type> List;
+
+        public void Reset(ref EventSystemList c)
+        {
+            c.List = new List<Type>();
+        }
+    }
+
     internal struct EventLifeTime { public int Value; }
 
     internal class EventLifeTimeSystem : ISystem

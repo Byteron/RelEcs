@@ -61,7 +61,6 @@ namespace RelEcs
             world = Spawn();
             number = ++worldCounter;
 
-            eventLifeTimeIndex = GetStorage<EventLifeTime>(EntityId.None).Index;
             eventLifeTimeSystem = new EventLifeTimeSystem();
 
             var info = new WorldInfo()
@@ -115,14 +114,12 @@ namespace RelEcs
             {
                 List<int> targetTypeIndices = new List<int>();
 
-                for (int i = 0; i < storages.Length; i++)
+                for (int i = 1; i <= storageCount; i++)
                 {
                     if (storages[i] == null)
                     {
                         continue;
                     }
-
-                    var typeId = storages[i].TypeId;
 
                     if (bitset.Get(i))
                     {
@@ -130,7 +127,7 @@ namespace RelEcs
                         OnEntityChanged(id, i);
                     }
 
-                    if (TypeId.Entity(typeId) == id.Number)
+                    if (TypeId.Entity(storages[i].TypeId) == id.Number)
                     {
                         targetTypeIndices.Add(i);
                     }
@@ -194,7 +191,7 @@ namespace RelEcs
         {
             var systemType = system.GetType();
 
-            var mask = Mask.New(this);
+            var mask = new Mask(this);
             mask.Has<T>(Entity.None);
             mask.Has<EventSystemList>(Entity.None);
             var query = mask.Apply();
@@ -206,17 +203,9 @@ namespace RelEcs
             {
                 ref var systemList = ref systemStorage.Get(entity.Id.Number);
 
-                if (systemList.List == null)
-                {
-                    systemList.List = new List<Type>();
-                    systemList.List.Add(systemType);
-
-                    action(eventStorage.Get(entity.Id.Number));
-                }
-                else if (!systemList.List.Contains(systemType))
+                if (!systemList.List.Contains(systemType))
                 {
                     systemList.List.Add(systemType);
-
                     action(eventStorage.Get(entity.Id.Number));
                 }
             }
@@ -266,9 +255,13 @@ namespace RelEcs
 
             bitsets[id.Number].Set(storage.Index);
 
+            ref var component = ref storage.Add(id.Number);
+
+            OnEntityChanged(id, storage.Index);
+            
             if (triggerEvent)
             {
-                Send(new Added<T>(new Entity(this, target)));
+                Send(new Added<T>(new Entity(this, id)));
             }
 
             if (target != default)
@@ -276,9 +269,7 @@ namespace RelEcs
                 relationCount++;
             }
 
-            OnEntityChanged(id, storage.Index);
-
-            return ref storage.Add(id.Number);
+            return ref component;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -308,14 +299,14 @@ namespace RelEcs
 
             storage.Remove(id.Number);
 
-            if (triggerEvent)
-            {
-                Send(new Removed<T>(new Entity(this, target)));
-            }
-
             bitsets[id.Number].Clear(storage.Index);
 
             OnEntityChanged(id, storage.Index);
+
+            if (triggerEvent)
+            {
+                Send(new Removed<T>(new Entity(this, id)));
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -343,13 +334,13 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public (Query, bool) GetQuery(Mask mask, int capacity)
+        public Query GetQuery(Mask mask, int capacity)
         {
             var hash = mask.GetHashCode();
 
             if (hashedQueries.TryGetValue(hash, out var query))
             {
-                return (query, false);
+                return query;
             }
 
             query = new Query(this, mask, entityCount);
@@ -374,7 +365,7 @@ namespace RelEcs
 
             for (int i = 0; i <= entityCount; i++)
             {
-                var entityId = this.entities[i];
+                var entityId = entities[i];
 
                 if (!IsAlive(entityId) || entityId == world.Id)
                 {
@@ -389,15 +380,15 @@ namespace RelEcs
                 query.AddEntity(entityId);
             }
 
-            return (query, true);
+            return query;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEntityCompatibleWithMask(Mask mask, EntityId entityId)
         {
-            return !bitsets[entityId.Number].HasAnyBitSet(mask.ExcludeBitSet)
-            && bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet)
-            && (mask.OptionalBitSet.Count == 0 || bitsets[entityId.Number].HasAnyBitSet(mask.OptionalBitSet));
+            return !bitsets[entityId.Number].HasAnyBitSet(mask.NotBitSet)
+            && bitsets[entityId.Number].HasAllBitsSet(mask.HasBitSet)
+            && (mask.AnyBitSet.Count == 0 || bitsets[entityId.Number].HasAnyBitSet(mask.AnyBitSet));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -410,7 +401,7 @@ namespace RelEcs
                 return storages[index] as Storage<T>;
             }
 
-            index = storageCount++;
+            index = ++storageCount;
             storageIndices[typeId] = index;
 
             if (index >= storages.Length)
