@@ -391,7 +391,8 @@ namespace RelEcs
         public bool IsEntityCompatibleWithMask(Mask mask, EntityId entityId)
         {
             return !bitsets[entityId.Number].HasAnyBitSet(mask.ExcludeBitSet)
-            && bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet);
+            && bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet)
+            && bitsets[entityId.Number].HasAnyBitSet(mask.OptionalBitSet);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

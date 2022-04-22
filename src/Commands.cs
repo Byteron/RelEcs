@@ -101,6 +101,13 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public QueryCommands Optional<T>(Entity target = default) where T : struct
+        {
+            mask.Optional<T>(target);
+            return this;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Without<T>(Entity target = default) where T : struct
         {
             mask.Without<T>(target);

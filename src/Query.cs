@@ -193,6 +193,7 @@ namespace RelEcs
 
         internal BitSet IncludeBitSet;
         internal BitSet ExcludeBitSet;
+        internal BitSet OptionalBitSet;
 
         internal List<int> Types;
 
@@ -208,6 +209,7 @@ namespace RelEcs
 
             IncludeBitSet = new BitSet();
             ExcludeBitSet = new BitSet();
+            OptionalBitSet = new BitSet();
 
             Reset();
         }
@@ -217,6 +219,7 @@ namespace RelEcs
         {
             IncludeBitSet.ClearAll();
             ExcludeBitSet.ClearAll();
+            OptionalBitSet.ClearAll();
 
             Types.Clear();
 
@@ -226,6 +229,27 @@ namespace RelEcs
         }
 
         public void With<T>(Entity target) where T : struct
+        {
+            var typeId = TypeId.Value<T>(target.Id.Number);
+            var index = world.GetStorageIndex(typeId);
+
+#if DEBUG
+            if (isBuilt)
+            {
+                throw new Exception("Cant change built mask.");
+            }
+
+            if (Types.IndexOf(index) != -1)
+            {
+                throw new Exception($"{typeof(T).Name} already in constraints list.");
+            }
+#endif
+
+            OptionalBitSet.Set(index);
+            Types.Add(index);
+        }
+
+        public void Optional<T>(Entity target) where T : struct
         {
             var typeId = TypeId.Value<T>(target.Id.Number);
             var index = world.GetStorageIndex(typeId);
