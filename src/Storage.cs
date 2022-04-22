@@ -66,6 +66,11 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add(int entityId)
         {
+            if (entityId >= indices.Length)
+            {
+                Array.Resize(ref indices, entityId << 1);
+            }
+
 #if DEBUG
             if (indices[entityId] > 0) { throw new Exception("Already attached."); }
 #endif

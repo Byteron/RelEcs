@@ -36,7 +36,6 @@ namespace RelEcs
 
         internal List<(Type, TimeSpan)> SystemExecutionTimes;
 
-        int eventLifeTimeIndex;
         EventLifeTimeSystem eventLifeTimeSystem;
 
         WorldConfig config;
@@ -197,6 +196,7 @@ namespace RelEcs
 
             var mask = Mask.New(this);
             mask.Has<T>(Entity.None);
+            mask.Has<EventSystemList>(Entity.None);
             var query = mask.Apply();
 
             var eventStorage = GetStorage<T>(EntityId.None);
@@ -319,9 +319,9 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void OnEntityChanged(EntityId entityId, int typeId)
+        public void OnEntityChanged(EntityId entityId, int typeIndex)
         {
-            var list = queriesByTypeId[typeId];
+            var list = queriesByTypeId[typeIndex];
 
             if (list != null)
             {
@@ -392,7 +392,7 @@ namespace RelEcs
         {
             return !bitsets[entityId.Number].HasAnyBitSet(mask.ExcludeBitSet)
             && bitsets[entityId.Number].HasAllBitsSet(mask.IncludeBitSet)
-            && bitsets[entityId.Number].HasAnyBitSet(mask.OptionalBitSet);
+            && (mask.OptionalBitSet.Count == 0 || bitsets[entityId.Number].HasAnyBitSet(mask.OptionalBitSet));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

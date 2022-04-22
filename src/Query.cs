@@ -58,7 +58,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasEntity(EntityId entityId)
         {
-            return indices.Length > entityId.Number && indices[entityId.Number] > 0;
+            return indices.Length >= entityId.Number && indices[entityId.Number] > 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
