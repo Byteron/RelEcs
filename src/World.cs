@@ -235,6 +235,25 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGetResource<T>(out T resource) where T : class
+        {
+            if (HasResource<T>())
+            {
+                resource = GetResource<T>();
+                return true;
+            }
+
+            resource = null;
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasResource<T>() where T : class
+        {
+            return HasComponent<Resource<T>>(world.Id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveResource<T>() where T : class
         {
             RemoveComponent<Resource<T>>(world.Id);
