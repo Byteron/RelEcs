@@ -77,13 +77,14 @@ namespace RelEcs
             }
             else
             {
-                index = count++;
+                index = ++count;
                 if (count == items.Length)
                 {
                     Array.Resize(ref items, count << 1);
                 }
                 resetDelegate?.Invoke(ref items[index]);
             }
+
             indices[entityId] = index;
 
             return ref items[index];
