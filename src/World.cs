@@ -34,7 +34,7 @@ namespace Bitron.Ecs
         Dictionary<int, Query> hashedQueries;
         List<Query>[] queriesByTypeId;
 
-        internal Dictionary<Type, TimeSpan> SystemExecutionTimes;
+        internal List<(Type, TimeSpan)> SystemExecutionTimes;
 
         int eventLifeTimeIndex;
         EventLifeTimeSystem eventLifeTimeSystem;
@@ -55,7 +55,7 @@ namespace Bitron.Ecs
             hashedQueries = new Dictionary<int, Query>();
             queriesByTypeId = new List<Query>[config.ComponentSize];
 
-            SystemExecutionTimes = new Dictionary<Type, TimeSpan>();
+            SystemExecutionTimes = new List<(Type, TimeSpan)>();
 
             this.config = config;
 
@@ -68,7 +68,7 @@ namespace Bitron.Ecs
             var info = new WorldInfo()
             {
                 WorldId = number,
-                SystemExecutionTimes = new Dictionary<Type, TimeSpan>(),
+                SystemExecutionTimes = new List<(Type, TimeSpan)>(),
             };
 
             AddResource(info);
@@ -421,11 +421,7 @@ namespace Bitron.Ecs
             info.CachedQueryCount = hashedQueries.Count;
 
             info.SystemExecutionTimes.Clear();
-            
-            foreach(var pair in SystemExecutionTimes)
-            {
-                info.SystemExecutionTimes.Add(pair.Key, pair.Value);
-            }
+            info.SystemExecutionTimes.AddRange(SystemExecutionTimes);
 
             eventLifeTimeSystem.Run(this);
 
@@ -462,7 +458,7 @@ namespace Bitron.Ecs
         public int RelationCount;
         public int ResourceCount;
         public int SystemCount;
-        public Dictionary<Type, TimeSpan> SystemExecutionTimes;
+        public List<(Type, TimeSpan)> SystemExecutionTimes;
         public int CachedQueryCount;
     }
 }

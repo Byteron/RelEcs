@@ -37,7 +37,7 @@ namespace Bitron.Ecs
             system.Run(new Commands(world, system));
 
             stopWatch.Stop();
-            world.SystemExecutionTimes[system.GetType()] = stopWatch.Elapsed;
+            world.SystemExecutionTimes.Add((system.GetType(), stopWatch.Elapsed));
         }
     }
 }
