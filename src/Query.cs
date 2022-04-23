@@ -69,13 +69,13 @@ namespace RelEcs
             var index = indices[entityId.Number];
             indices[entityId.Number] = 0;
 
-            entityCount--;
-
             if (index < entityCount)
             {
                 entities[index] = entities[entityCount];
                 indices[entities[index].Id.Number] = index;
             }
+
+            entityCount--;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
