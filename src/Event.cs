@@ -9,12 +9,6 @@ namespace RelEcs
         public Added(Entity entity) => Entity = entity;
     }
 
-    public struct Removed<T>
-    {
-        public Entity Entity;
-        public Removed(Entity entity) => Entity = entity;
-    }
-
     internal struct EventSystemList : IReset<EventSystemList>
     {
         public List<Type> List;

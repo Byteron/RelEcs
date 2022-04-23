@@ -15,6 +15,7 @@ namespace RelEcs
     {
         int Index { get; set; }
         long TypeId { get; set; }
+        Type Type { get; set; }
 
         bool Has(int entityId);
         void Remove(int entityId);
@@ -24,6 +25,7 @@ namespace RelEcs
     {
         public int Index { get; set; }
         public long TypeId { get; set; }
+        public Type Type { get; set; }
 
         int[] indices = null;
         int[] unusedIds = null;
@@ -42,6 +44,7 @@ namespace RelEcs
 
             Index = index;
             TypeId = typeId;
+            Type = typeof(T);
 
             var isAutoReset = typeof(IReset<T>).IsAssignableFrom(typeof(T));
 #if DEBUG
@@ -169,18 +172,30 @@ namespace RelEcs
         {
             return (ushort)value;
         }
-    }
-
-    public class TypeIdAssigner
-    {
-        protected static ushort counter = 0;
-    }
-
-    public class TypeIdAssigner<T> : TypeIdAssigner where T : struct
-    {
-        public static readonly ushort Id;
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static TypeIdAssigner() => Id = ++counter;
+        public static bool IsTag<T>() where T : struct
+        {
+            return TypeIdAssigner<T>.IsTag;
+        }
+
+        class TypeIdAssigner
+        {
+            protected static ushort counter = 0;
+        }
+
+        class TypeIdAssigner<T> : TypeIdAssigner where T : struct
+        {
+            public static readonly ushort Id;
+            public static readonly bool IsTag;
+        
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static TypeIdAssigner() 
+            {
+                Id = ++counter;
+                IsTag = Unsafe.SizeOf<T>() == 1;
+            }
+        }
     }
 }

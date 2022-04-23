@@ -88,6 +88,30 @@ Console.WriteLine($"Frank owes Bob {owes.Value} dollars");
 Commands commands = new Commands(world);
 ```
 
+## System
+
+```csharp
+public class MoveSystem : ISystem
+{
+    public void Run(Commands commands)
+    {        
+        // iterate using ForEach.
+        // currently only works with Components *not* with relations
+        commands.ForEach((ref Position pos, ref Velocity vel) =>
+        {
+            pos.Value += vel.Value;
+        });
+
+        // iterate using ForEach, also gets Entity
+        commands.ForEach((Entity entity, ref Position pos, ref Velocity vel) =>
+        {
+            pos.Value += vel.Value;
+            // entity.Add<Moved>(); // tag component to mark that it has moved or something
+        });
+    }
+}
+```
+
 ## Query
 
 ```csharp
@@ -95,35 +119,6 @@ Commands commands = new Commands(world);
 var appleLovers = commands.Query()
     .Has<Name>()
     .Has<Owes>(bob);
-```
-
-## System
-
-```csharp
-public class MoveSystem : ISystem
-{
-    public void Run(Commands commands)
-    {
-        // every entity that has a Position and Velocity component
-        Query movers = commands.Query()
-            .Has<Position>()
-            .Has<Velocity>();
-        
-        // iterate using ForEach.
-        // currently only works with Components *not* with relations
-        movers.ForEach((ref Position pos, ref Velocity vel) =>
-        {
-            pos.Value += vel.Value;
-        });
-
-        // iterate using ForEach, also gets Entity
-        movers.ForEach((Entity entity, ref Position pos, ref Velocity vel) =>
-        {
-            pos.Value += vel.Value;
-            // entity.Add<Moved>(); // tag component to mark that it has moved or something
-        });
-    }
-}
 ```
 
 Running a System
@@ -178,21 +173,14 @@ entity.Add<Name>(new Name("Walter"));
 entity.Remove<Name>();
 
 // you can pass in an optional parameter 'triggerEvent' 
-// to spawn an Added<T> or Removed<T> event
+// to spawn an Added<T> event
 entity.Add<Old>(true);
-entity.Remove<Young>(true);
 
 
 // you can receive those build-in events like your custom events as well
 commands.Receive((Added<Old> addedEvent) =>
 {
     Console.WriteLine("Old component added to " + addedEvent.Entity);
-})
-
-// same for the removed component
-commands.Receive((Removed<Young> removedEvent) =>
-{
-    Console.WriteLine("Young component removed from " + removedEvent.Entity);
 })
 ```
 

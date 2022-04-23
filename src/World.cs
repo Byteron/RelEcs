@@ -310,11 +310,6 @@ namespace RelEcs
             bitsets[id.Number].Clear(storage.Index);
 
             OnEntityChanged(id, storage.Index);
-
-            if (triggerEvent)
-            {
-                Send(new Removed<T>(new Entity(this, id)));
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
