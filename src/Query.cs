@@ -7,7 +7,7 @@ namespace RelEcs
 {
     public sealed class Query
     {
-        public World World;
+        World world;
 
         public Mask Mask;
 
@@ -21,7 +21,7 @@ namespace RelEcs
 
         public Query(World world, Mask mask, int entitySize)
         {
-            World = world;
+            this.world = world;
             Mask = mask;
 
             indices = new int[entitySize];
@@ -52,7 +52,7 @@ namespace RelEcs
                 Array.Resize(ref entities, entityCount << 1);
             }
 
-            entities[index] = new Entity(World, entityId);
+            entities[index] = new Entity(world, entityId);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

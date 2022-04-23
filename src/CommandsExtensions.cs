@@ -171,7 +171,7 @@ namespace RelEcs
         }
 
         public delegate void EntityRefAction(Entity entity);
-        public static void ForEach<C>(this Commands commands, EntityRefAction action)
+        public static void ForEach(this Commands commands, EntityRefAction action)
         {
             var query = commands.Query();
 

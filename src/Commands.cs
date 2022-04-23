@@ -29,19 +29,19 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<T>(T eventStruct) where T : struct
         {
-            world.Send<T>(eventStruct);
+            world.Send(eventStruct);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Receive<T>(Action<T> action) where T : struct
         {
-            world.Receive<T>(system, action);
+            world.Receive(system, action);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddResource<T>(T resource) where T : class
         {
-            world.AddResource<T>(resource);
+            world.AddResource(resource);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -53,7 +53,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetResource<T>(out T resource) where T : class
         {
-            return world.TryGetResource<T>(out resource);
+            return world.TryGetResource(out resource);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -90,7 +90,7 @@ namespace RelEcs
         public QueryCommands(World world)
         {
             World = world;
-            mask = new Mask(world);
+            mask = new Mask();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

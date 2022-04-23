@@ -27,12 +27,12 @@ namespace RelEcs
         public long TypeId { get; set; }
         public Type Type { get; set; }
 
-        int[] indices = null;
-        int[] unusedIds = null;
-        int unusedIdCount = 0;
+        int[] indices;
+        int[] unusedIds;
+        int unusedIdCount;
 
-        T[] items = null;
-        int count = 0;
+        T[] items;
+        int count;
 
         ResetHandler resetDelegate;
 

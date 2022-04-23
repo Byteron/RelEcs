@@ -12,24 +12,24 @@ namespace RelEcs
 
     public sealed class World
     {
-        static int worldCounter = 0;
+        static int worldCounter;
 
         Entity world;
         int number;
 
-        EntityId[] entities = null;
-        BitSet[] bitsets = null;
+        EntityId[] entities;
+        BitSet[] bitsets;
 
-        int entityCount = 0;
+        int entityCount;
 
-        EntityId[] unusedIds = null;
-        int unusedIdCount = 0;
+        EntityId[] unusedIds;
+        int unusedIdCount;
 
-        Dictionary<long, int> storageIndices = null;
-        IStorage[] storages = null;
-        int storageCount = 0;
+        Dictionary<long, int> storageIndices;
+        IStorage[] storages;
+        int storageCount;
 
-        int relationCount = 0;
+        int relationCount;
 
         Dictionary<int, Query> hashedQueries;
         List<Query>[] queriesByTypeId;
@@ -74,7 +74,7 @@ namespace RelEcs
 
         public Entity Spawn()
         {
-            EntityId id = default;
+            EntityId id;
 
             if (unusedIdCount > 0)
             {
@@ -198,7 +198,7 @@ namespace RelEcs
             var eventStorage = GetStorage<T>(EntityId.None);
             var systemStorage = GetStorage<EventSystemList>(EntityId.None);
 
-            var mask = new Mask(this);
+            var mask = new Mask();
 
             mask.Has(eventStorage.Index);
             mask.Has(systemStorage.Index);
@@ -313,7 +313,7 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void OnEntityChanged(EntityId entityId, int typeIndex)
+        private void OnEntityChanged(EntityId entityId, int typeIndex)
         {
             var list = queriesByTypeId[typeIndex];
 
@@ -387,7 +387,7 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEntityCompatibleWithMask(Mask mask, EntityId entityId)
+        private bool IsEntityCompatibleWithMask(Mask mask, EntityId entityId)
         {
             return !bitsets[entityId.Number].HasAnyBitSet(mask.NotBitSet)
             && bitsets[entityId.Number].HasAllBitsSet(mask.HasBitSet)

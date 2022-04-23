@@ -15,9 +15,9 @@ namespace RelEcs
 
         public void Run(World world)
         {
-            for (var i = 0; i < systems.Count; i++)
+            foreach (var system in systems)
             {
-                systems[i].Run(new Commands(world, systems[i]));
+                system.Run(new Commands(world, system));
             }
         }
     }
@@ -27,7 +27,7 @@ namespace RelEcs
         void Run(Commands commands);
     }
 
-    public static class SystemExtentions
+    public static class SystemExtensions
     {
         public static void Run(this ISystem system, World world)
         {

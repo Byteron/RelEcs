@@ -13,7 +13,7 @@ namespace RelEcs
 
         public uint[] Bits = new uint[1];
 
-        int count = 0;
+        int count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int index)
@@ -113,7 +113,7 @@ namespace RelEcs
             {
                 h ^= (int)Bits[i] * (i + 1);
             }
-            return (int)((h >> 32) ^ h);
+            return ((h >> 32) ^ h);
         }
     }
 }

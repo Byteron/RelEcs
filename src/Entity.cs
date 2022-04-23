@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace RelEcs
@@ -8,9 +7,9 @@ namespace RelEcs
         public static Entity None = default;
         public static Entity Any = new Entity(EntityId.Any);
 
-        public bool IsAny { get => Id == EntityId.Any; }
-        public bool IsNone { get => Id == EntityId.None; }
-        public bool IsAlive { get => world.IsAlive(Id); }
+        public bool IsAny => Id == EntityId.Any;
+        public bool IsNone => Id == EntityId.None;
+        public bool IsAlive => world.IsAlive(Id);
 
         public EntityId Id { get; }
 

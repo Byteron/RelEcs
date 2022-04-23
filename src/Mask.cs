@@ -17,7 +17,7 @@ namespace RelEcs
         bool isBuilt;
 #endif
 
-        public Mask(World world)
+        public Mask()
         {
             Types = new List<int>();
 
