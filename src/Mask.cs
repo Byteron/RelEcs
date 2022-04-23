@@ -24,8 +24,9 @@ namespace RelEcs
             HasBitSet = new BitSet();
             NotBitSet = new BitSet();
             AnyBitSet = new BitSet();
-
+#if DEBUG
             isBuilt = false;
+#endif
         }
 
         public void Has(int typeIndex)
@@ -91,7 +92,7 @@ namespace RelEcs
             }
 
             isBuilt = true;
-#endif      
+#endif
             Types.Sort();
         }
 

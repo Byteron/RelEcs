@@ -4,6 +4,216 @@ namespace RelEcs
 {
     public static class QueryExtensions
     {
+        public static void Has<C1, C2>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        {
+            query.Has<C1>().Has<C2>();
+        }
+
+        public static void Has<C1, C2, C3>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        {
+            query.Has<C1>().Has<C2>().Has<C3>();
+        }
+
+        public static void Has<C1, C2, C3, C4>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        {
+            query.Has<C1>().Has<C2>().Has<C3>().Has<C4>();
+        }
+
+        public static void Has<C1, C2, C3, C4, C5>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        {
+            query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
+        }
+
+        public static void Has<C1, C2, C3, C4, C5, C6>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        {
+            query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
+        }
+
+        public static void Has<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        where C7: struct
+        {
+            query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
+        }
+
+        public static void Has<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        where C7: struct
+        where C8: struct
+        {
+            query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
+        }
+
+        public static void Not<C1, C2>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        {
+            query.Not<C1>().Not<C2>();
+        }
+
+        public static void Not<C1, C2, C3>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        {
+            query.Not<C1>().Not<C2>().Not<C3>();
+        }
+
+        public static void Not<C1, C2, C3, C4>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        {
+            query.Not<C1>().Not<C2>().Not<C3>().Not<C4>();
+        }
+
+        public static void Not<C1, C2, C3, C4, C5>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        {
+            query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>();
+        }
+
+        public static void Not<C1, C2, C3, C4, C5, C6>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        {
+            query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>().Not<C6>();
+        }
+
+        public static void Not<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        where C7: struct
+        {
+            query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>().Not<C6>().Not<C7>();
+        }
+
+        public static void Not<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        where C7: struct
+        where C8: struct
+        {
+            query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>().Not<C6>().Not<C7>().Not<C8>();
+        }
+
+        public static void Any<C1, C2>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        {
+            query.Any<C1>().Any<C2>();
+        }
+
+        public static void Any<C1, C2, C3>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        {
+            query.Any<C1>().Any<C2>().Any<C3>();
+        }
+
+        public static void Any<C1, C2, C3, C4>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        {
+            query.Any<C1>().Any<C2>().Any<C3>().Any<C4>();
+        }
+
+        public static void Any<C1, C2, C3, C4, C5>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        {
+            query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>();
+        }
+
+        public static void Any<C1, C2, C3, C4, C5, C6>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        {
+            query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>().Any<C6>();
+        }
+
+        public static void Any<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        where C7: struct
+        {
+            query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>().Any<C6>().Any<C7>();
+        }
+
+        public static void Any<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query)
+        where C1 : struct
+        where C2: struct
+        where C3: struct
+        where C4: struct
+        where C5: struct
+        where C6: struct
+        where C7: struct
+        where C8: struct
+        {
+            query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>().Any<C6>().Any<C7>().Any<C8>();
+        }
+
         public delegate void RefAction<C>(ref C c);
         public static void ForEach<C>(this QueryCommands query, RefAction<C> action)
             where C : struct
