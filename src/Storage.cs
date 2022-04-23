@@ -173,11 +173,11 @@ namespace RelEcs
             return (ushort)value;
         }
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsTag<T>() where T : struct
-        {
-            return TypeIdAssigner<T>.IsTag;
-        }
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static bool IsTag<T>() where T : struct
+        // {
+        //     return TypeIdAssigner<T>.IsTag;
+        // }
 
         class TypeIdAssigner
         {
@@ -187,14 +187,14 @@ namespace RelEcs
         class TypeIdAssigner<T> : TypeIdAssigner where T : struct
         {
             public static readonly ushort Id;
-            public static readonly bool IsTag;
+            // public static readonly bool IsTag;
         
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static TypeIdAssigner() 
             {
                 Id = ++counter;
-                IsTag = Unsafe.SizeOf<T>() == 1;
+                // IsTag = Unsafe.SizeOf<T>() == 1;
             }
         }
     }
