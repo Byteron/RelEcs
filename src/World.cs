@@ -33,7 +33,9 @@ namespace RelEcs
 
         Dictionary<int, Query> hashedQueries;
         List<Query>[] queriesByTypeId;
-
+        
+        Dictionary<Type, Entity> targetTypeEntities = new Dictionary<Type, Entity>();
+        
         internal List<(Type, TimeSpan)> SystemExecutionTimes;
 
         EventLifeTimeSystem eventLifeTimeSystem;
@@ -334,6 +336,18 @@ namespace RelEcs
                     }
                 }
             }
+        }
+        
+        public Entity GetTypeEntity<T>() where T : struct
+        {
+            if (targetTypeEntities.TryGetValue(typeof(T), out var entity) && entity.IsAlive)
+            {
+                return entity;
+            }
+
+            entity = Spawn();
+            targetTypeEntities[typeof(T)] = entity;
+            return entity;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

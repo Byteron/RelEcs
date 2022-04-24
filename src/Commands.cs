@@ -100,6 +100,28 @@ namespace RelEcs
             mask.Has(typeIndex);
             return this;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public QueryCommands Has<T, TT>() where T : struct where TT : struct
+        {
+            var typeEntity = World.GetTypeEntity<TT>();
+            Has<T>(typeEntity);
+            return this;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public QueryCommands IsA(Entity target = default)
+        {
+            Has<IsA>(target);
+            return this;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public QueryCommands IsA<T>() where T : struct
+        {
+            Has<IsA, T>();
+            return this;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Not<T>(Entity target = default) where T : struct

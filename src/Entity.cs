@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 namespace RelEcs
@@ -51,6 +52,14 @@ namespace RelEcs
         public Entity Add<T>(Entity target, bool triggerEvent = false) where T : struct
         {
             world.AddComponent<T>(Id, target.Id, triggerEvent);
+            return this;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Entity Add<T, TT>(bool triggerEvent = false) where T : struct where TT : struct
+        {
+            Entity typeEntity = world.GetTypeEntity<TT>();
+            world.AddComponent<T>(Id, typeEntity.Id, triggerEvent);
             return this;
         }
 
