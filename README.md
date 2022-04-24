@@ -154,7 +154,7 @@ commands.Send<MyEvent>();
 commands.Receive((MyEvent e) =>
 {
     Console.WriteLine("An Event!");
-})
+});
 // note that events only live for 2 frames and can only be received ONCE per SYSTEM
 
 // Output:
@@ -170,7 +170,6 @@ var entity = commands.Spawn();
 
 // normally you add components like this. No events are spawned by default
 entity.Add<Name>(new Name("Walter"));
-entity.Remove<Name>();
 
 // you can pass in an optional parameter 'triggerEvent' 
 // to spawn an Added<T> event
@@ -193,10 +192,10 @@ SystemGroup group = new SystemGroup();
 // add any amount of systems to a system group
 group.Add(new SomeSystem())
     .Add(new SomeOtherSystem())
-    .Add(new AThirdSystem())
+    .Add(new AThirdSystem());
 
 // running a system group will run all added systems in the order you added them
-group.Run(world)
+group.Run(world);
 ```
 
 ## Game Loop
