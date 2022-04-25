@@ -10,7 +10,7 @@ namespace RelEcs
 
         public bool IsAny => Id == EntityId.Any;
         public bool IsNone => Id == EntityId.None;
-        public bool IsAlive => world.IsAlive(Id);
+        public bool IsAlive => world != null && world.IsAlive(Id);
 
         public EntityId Id { get; }
 
