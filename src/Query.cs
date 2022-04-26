@@ -1,15 +1,13 @@
-
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace RelEcs
 {
     public sealed class Query
     {
-        World world;
+        readonly World world;
 
-        public Mask Mask;
+        public readonly Mask Mask;
 
         int[] indices;
         Entity[] entities;

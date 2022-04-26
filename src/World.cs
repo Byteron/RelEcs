@@ -14,8 +14,7 @@ namespace RelEcs
     {
         static int worldCounter;
 
-        Entity world;
-        int number;
+        readonly Entity world;
 
         EntityId[] entities;
         BitSet[] bitsets;
@@ -61,17 +60,10 @@ namespace RelEcs
             this.config = config;
 
             world = Spawn();
-            number = ++worldCounter;
 
             eventLifeTimeSystem = new EventLifeTimeSystem();
 
-            var info = new WorldInfo()
-            {
-                WorldId = number,
-                SystemExecutionTimes = new List<(Type, TimeSpan)>(),
-            };
-
-            AddResource(info);
+            AddResource(new WorldInfo(++worldCounter));
         }
 
         public Entity Spawn()
@@ -477,7 +469,7 @@ namespace RelEcs
 
     public sealed class WorldInfo
     {
-        public int WorldId;
+        public readonly int WorldId;
         public int EntityCount;
         public int UnusedEntityCount;
         public int AllocatedEntityCount;
@@ -487,5 +479,11 @@ namespace RelEcs
         public int SystemCount;
         public List<(Type, TimeSpan)> SystemExecutionTimes;
         public int CachedQueryCount;
+
+        public WorldInfo(int id)
+        {
+            WorldId = id;
+            SystemExecutionTimes = new List<(Type, TimeSpan)>();
+        }
     }
 }

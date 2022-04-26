@@ -6,7 +6,7 @@ namespace RelEcs
     public struct Entity
     {
         public static Entity None = default;
-        public static Entity Any = new Entity(EntityId.Any);
+        public static Entity Any = new Entity(null, EntityId.Any);
 
         public bool IsAny => Id == EntityId.Any;
         public bool IsNone => Id == EntityId.None;
@@ -15,12 +15,6 @@ namespace RelEcs
         public EntityId Id { get; }
 
         World world;
-
-        public Entity(EntityId id)
-        {
-            this.world = null;
-            Id = id;
-        }
 
         public Entity(World world, EntityId id)
         {
