@@ -63,6 +63,14 @@ namespace RelEcs
             world.AddComponent<T>(Id, target.Id, triggerEvent) = data;
             return this;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Entity IsA<TT>(bool triggerEvent = false) where TT : struct
+        {
+            Entity typeEntity = world.GetTypeEntity<TT>();
+            world.AddComponent<IsA>(Id, typeEntity.Id, triggerEvent);
+            return this;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct

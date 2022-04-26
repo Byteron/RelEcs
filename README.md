@@ -186,6 +186,27 @@ commands.Receive((Added<Old> addedEvent) =>
 })
 ```
 
+## Build-in Relations
+
+```csharp
+struct Person { }
+
+var entity = commands.Spawn();
+
+// normally you add components like this. No events are spawned by default
+entity.Add<IsA, Person>();
+
+// you can pass in an optional parameter 'triggerEvent' 
+// to spawn an Added<T> event
+entity.Add<Old>(true);
+
+
+// you can receive those build-in events like your custom events as well
+commands.Receive((Added<Old> addedEvent) =>
+{
+    Console.WriteLine("Old component added to " + addedEvent.Entity);
+})
+```
 ## SystemGroup
 
 ```csharp
