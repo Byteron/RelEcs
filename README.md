@@ -60,20 +60,21 @@ world.RemoveResource<MyResource>();
 struct Likes { }
 struct Owes { int Value; }
 
-var apples = world.Spawn();
+struct Apples { }
 
 var bob = world.Spawn();
 var frank = world.Spawn();
 
 // relations basically are just components, but also
-// associated with a second "target" entity
-bob.Add<Likes>(apples);
-//             ^^^^^^
+// associated with a second "target". A Target can either be a Type, or an Entity
+bob.Add<Likes, Apples>();
+//        Type ^^^^^^
+
 frank.Add(new Owes { Value = 100 }, bob);
-//                                  ^^^
+//                           Entity ^^^
 
 // we can ask if an entity has a component or relation
-bool doesBobLikeApples = bob.Has<Likes>(apples);
+bool doesBobLikeApples = bob.Has<Likes, Apples>();
 
 // or get it directly
 ref var owes = ref frank.Get<Owes>(bob);
@@ -86,6 +87,8 @@ Console.WriteLine($"Frank owes Bob {owes.Value} dollars");
 // Commands is a Wrapper around World that provides
 // additional helpful functions
 Commands commands = new Commands(world);
+
+// Generally speaking, you *should not* create your own commands. They will be provided for you as the System.Run(Commands) argument.
 ```
 
 ## System
@@ -115,9 +118,9 @@ public class MoveSystem : ISystem
 ## Query
 
 ```csharp
-// every entity that has a Name component and owes bob money.
+// every entity that has a Name and Age component and owes bob money.
 var appleLovers = commands.Query()
-    .Has<Name>()
+    .Has<Name, Age>()
     .Has<Owes>(bob);
 ```
 
