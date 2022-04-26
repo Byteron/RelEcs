@@ -186,27 +186,20 @@ commands.Receive((Added<Old> addedEvent) =>
 })
 ```
 
-## Build-in Relations
+## Build-in Components
 
 ```csharp
 struct Person { }
 
 var entity = commands.Spawn();
 
-// normally you add components like this. No events are spawned by default
-entity.Add<IsA, Person>();
+// we have a build-in tag component `IsA` that we can use for relations
+entity.IsA<Person>(); // same as: entity.Add<IsA, Person>();
 
-// you can pass in an optional parameter 'triggerEvent' 
-// to spawn an Added<T> event
-entity.Add<Old>(true);
-
-
-// you can receive those build-in events like your custom events as well
-commands.Receive((Added<Old> addedEvent) =>
-{
-    Console.WriteLine("Old component added to " + addedEvent.Entity);
-})
+// and of course we can also query for it with a special build-in method
+var query = commands.Query().IsA<Person>(); // same as: Query().Has<IsA, Person>()
 ```
+
 ## SystemGroup
 
 ```csharp
