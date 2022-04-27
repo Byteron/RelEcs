@@ -5,8 +5,8 @@ namespace RelEcs
 {
     public sealed class Commands
     {
-        World world;
-        ISystem system;
+        readonly World world;
+        readonly ISystem system;
 
         internal Commands(World world, ISystem system)
         {
@@ -82,10 +82,11 @@ namespace RelEcs
 
     public sealed class QueryCommands
     {
-        internal World World;
+        internal readonly World World;
 
+        readonly Mask mask;
+        
         Query query;
-        Mask mask;
 
         public QueryCommands(World world)
         {
@@ -143,11 +144,10 @@ namespace RelEcs
         {
             get
             {
-                if (query == null)
-                {
-                    mask.Lock();
-                    query = World.GetQuery(mask);
-                }
+                if (query != null) return query.Count;
+                
+                mask.Lock();
+                query = World.GetQuery(mask);
 
                 return query.Count;
             }
@@ -156,11 +156,10 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Query.Enumerator GetEnumerator()
         {
-            if (query == null)
-            {
-                mask.Lock();
-                query = World.GetQuery(mask);
-            }
+            if (query != null) return query.GetEnumerator();
+            
+            mask.Lock();
+            query = World.GetQuery(mask);
 
             return query.GetEnumerator();
         }

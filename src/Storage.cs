@@ -158,7 +158,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Value<T>(int entityId) where T : struct
         {
-            return (long)TypeIdAssigner<T>.Id | (long)entityId << 32;
+            return TypeIdAssigner<T>.Id | (long)entityId << 32;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -181,7 +181,7 @@ namespace RelEcs
 
         class TypeIdAssigner
         {
-            protected static ushort counter = 0;
+            protected static ushort Counter = 0;
         }
 
         class TypeIdAssigner<T> : TypeIdAssigner where T : struct
@@ -193,7 +193,7 @@ namespace RelEcs
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static TypeIdAssigner() 
             {
-                Id = ++counter;
+                Id = ++Counter;
                 // IsTag = Unsafe.SizeOf<T>() == 1;
             }
         }

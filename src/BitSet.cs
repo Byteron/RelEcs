@@ -8,66 +8,65 @@ namespace RelEcs
         const int BitSize = (sizeof(uint) * 8) - 1;
         const int ByteSize = 5;  // log_2(BitSize + 1)
 
-        public int Count { get { return count; } }
-        public int Capacity { get { return Bits.Length * (BitSize + 1); } }
-
-        public uint[] Bits = new uint[1];
-
-        int count;
+        public int Count { get; private set; }
+        
+        public int Capacity => bits.Length * (BitSize + 1);
+        
+        uint[] bits = new uint[1];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int index)
         {
-            int b = index >> ByteSize;
-            if (b >= Bits.Length)
+            var b = index >> ByteSize;
+            if (b >= bits.Length)
             {
                 return false;
             }
 
-            return (Bits[b] & (1 << (index & BitSize))) != 0;
+            return (bits[b] & (1 << (index & BitSize))) != 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int index)
         {
-            int b = index >> ByteSize;
-            if (b >= Bits.Length)
+            var b = index >> ByteSize;
+            if (b >= bits.Length)
             {
-                Array.Resize(ref Bits, b + 1);
+                Array.Resize(ref bits, b + 1);
             }
 
-            Bits[b] |= 1u << (index & BitSize);
-            count++;
+            bits[b] |= 1u << (index & BitSize);
+            Count++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear(int index)
         {
-            int b = index >> ByteSize;
-            if (b >= Bits.Length)
+            var b = index >> ByteSize;
+            if (b >= bits.Length)
             {
                 return;
             }
 
-            Bits[b] &= ~(1u << (index & BitSize));
-            count--;
+            bits[b] &= ~(1u << (index & BitSize));
+            Count--;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAll()
         {
-            Array.Clear(Bits, 0, Bits.Length);
-            count = 0;
+            Array.Clear(bits, 0, bits.Length);
+            Count = 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAllBitsSet(BitSet mask)
         {
-            var count = Math.Min(Bits.Length, mask.Bits.Length);
+            var min = Math.Min(bits.Length, mask.bits.Length);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < min; i++)
             {
-                if ((Bits[i] & mask.Bits[i]) != mask.Bits[i])
+                if ((bits[i] & mask.bits[i]) != mask.bits[i])
                 {
                     return false;
                 }
@@ -79,11 +78,11 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAnyBitSet(BitSet mask)
         {
-            var count = Math.Min(Bits.Length, mask.Bits.Length);
+            var min = Math.Min(bits.Length, mask.bits.Length);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < min; i++)
             {
-                if ((Bits[i] & mask.Bits[i]) != 0)
+                if ((bits[i] & mask.bits[i]) != 0)
                 {
                     return true;
                 }
@@ -98,9 +97,9 @@ namespace RelEcs
             get
             {
                 uint k = 0;
-                for (int i = 0; i < Bits.Length; i++)
+                for (var i = 0; i < bits.Length; i++)
                 {
-                    k |= Bits[i];
+                    k |= bits[i];
                 }
                 return k == 0;
             }
@@ -108,10 +107,10 @@ namespace RelEcs
 
         public override int GetHashCode()
         {
-            int h = 1234;
-            for (int i = Bits.Length; --i >= 0;)
+            var h = 1234;
+            for (var i = bits.Length; --i >= 0;)
             {
-                h ^= (int)Bits[i] * (i + 1);
+                h ^= (int)bits[i] * (i + 1);
             }
             return ((h >> 32) ^ h);
         }

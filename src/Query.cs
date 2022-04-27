@@ -1,15 +1,13 @@
-
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace RelEcs
 {
     public sealed class Query
     {
-        World world;
+        readonly World world;
 
-        public Mask Mask;
+        public readonly Mask Mask;
 
         int[] indices;
         Entity[] entities;
@@ -133,11 +131,11 @@ namespace RelEcs
             return new Enumerator(this);
         }
 
-        public int Count { get => entityCount; }
+        public int Count => entityCount;
 
         public struct Enumerator : IDisposable
         {
-            Query query;
+            readonly Query query;
             int index;
 
             public Enumerator(Query query)
