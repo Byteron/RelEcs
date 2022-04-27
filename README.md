@@ -35,22 +35,22 @@ ref var vel = ref entity.Get<Velocity>();
 entity.Remove<Position>();
 ```
 
-## Resource
+## Element
 
 ```csharp
-// resources are classes
+// elements are classes
 class SavePath { string Value; }
 
-// add a resource to the world
-// you can only have one resource per type in the world
-world.AddResource(new SavePath( Value = "user://saves/"));
+// add an element to the world
+// you can only have one element per type in the world
+world.AddElement(new SavePath( Value = "user://saves/"));
 
-// get a resource from the world
-var savePath = world.GetResource<MyResource>();
+// get an element from the world
+var savePath = world.GetElement<SavePath>();
 Console.WriteLine(savePath.Value);
 
-// remove a resource from the world
-world.RemoveResource<MyResource>();
+// remove an element from the world
+world.RemoveElement<SavePath>();
 ```
 
 ## Relation
