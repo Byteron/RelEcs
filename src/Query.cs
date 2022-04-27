@@ -131,11 +131,11 @@ namespace RelEcs
             return new Enumerator(this);
         }
 
-        public int Count { get => entityCount; }
+        public int Count => entityCount;
 
         public struct Enumerator : IDisposable
         {
-            Query query;
+            readonly Query query;
             int index;
 
             public Enumerator(Query query)

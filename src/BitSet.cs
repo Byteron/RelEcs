@@ -8,17 +8,16 @@ namespace RelEcs
         const int BitSize = (sizeof(uint) * 8) - 1;
         const int ByteSize = 5;  // log_2(BitSize + 1)
 
-        public int Count { get { return count; } }
-        public int Capacity { get { return bits.Length * (BitSize + 1); } }
-
-        private uint[] bits = new uint[1];
-
-        int count;
+        public int Count { get; private set; }
+        
+        public int Capacity => bits.Length * (BitSize + 1);
+        
+        uint[] bits = new uint[1];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int index)
         {
-            int b = index >> ByteSize;
+            var b = index >> ByteSize;
             if (b >= bits.Length)
             {
                 return false;
@@ -30,34 +29,34 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int index)
         {
-            int b = index >> ByteSize;
+            var b = index >> ByteSize;
             if (b >= bits.Length)
             {
                 Array.Resize(ref bits, b + 1);
             }
 
             bits[b] |= 1u << (index & BitSize);
-            count++;
+            Count++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear(int index)
         {
-            int b = index >> ByteSize;
+            var b = index >> ByteSize;
             if (b >= bits.Length)
             {
                 return;
             }
 
             bits[b] &= ~(1u << (index & BitSize));
-            count--;
+            Count--;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAll()
         {
             Array.Clear(bits, 0, bits.Length);
-            count = 0;
+            Count = 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,7 +64,7 @@ namespace RelEcs
         {
             var min = Math.Min(bits.Length, mask.bits.Length);
 
-            for (int i = 0; i < min; i++)
+            for (var i = 0; i < min; i++)
             {
                 if ((bits[i] & mask.bits[i]) != mask.bits[i])
                 {
@@ -81,7 +80,7 @@ namespace RelEcs
         {
             var min = Math.Min(bits.Length, mask.bits.Length);
 
-            for (int i = 0; i < min; i++)
+            for (var i = 0; i < min; i++)
             {
                 if ((bits[i] & mask.bits[i]) != 0)
                 {
@@ -98,7 +97,7 @@ namespace RelEcs
             get
             {
                 uint k = 0;
-                for (int i = 0; i < bits.Length; i++)
+                for (var i = 0; i < bits.Length; i++)
                 {
                     k |= bits[i];
                 }
@@ -108,8 +107,8 @@ namespace RelEcs
 
         public override int GetHashCode()
         {
-            int h = 1234;
-            for (int i = bits.Length; --i >= 0;)
+            var h = 1234;
+            for (var i = bits.Length; --i >= 0;)
             {
                 h ^= (int)bits[i] * (i + 1);
             }

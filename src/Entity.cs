@@ -1,9 +1,8 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace RelEcs
 {
-    public struct Entity
+    public readonly struct Entity
     {
         public static Entity None = default;
         public static Entity Any = new Entity(null, EntityId.Any);
@@ -14,7 +13,7 @@ namespace RelEcs
 
         public EntityId Id { get; }
 
-        World world;
+        readonly World world;
 
         public Entity(World world, EntityId id)
         {
@@ -143,7 +142,7 @@ namespace RelEcs
         public static EntityId None = default;
         public static EntityId Any = new EntityId(int.MaxValue, 0);
 
-        public int Number;
+        public readonly int Number;
         public ushort Generation;
 
         public EntityId(int id, ushort gen)

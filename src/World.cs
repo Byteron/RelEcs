@@ -106,9 +106,9 @@ namespace RelEcs
 
             if (bitset.Count > 0)
             {
-                List<int> targetTypeIndices = new List<int>();
+                var targetTypeIndices = new List<int>();
 
-                for (int i = 0; i <= storageCount; i++)
+                for (var i = 0; i <= storageCount; i++)
                 {
                     if (storages[i] == null)
                     {
@@ -146,12 +146,11 @@ namespace RelEcs
                         {
                             var storage = GetStorage(index);
 
-                            if (storage.Has(entity.Number))
-                            {
-                                storage.Remove(entity.Number);
-                                bitsets[entity.Number].Clear(index);
-                                OnEntityChanged(entity, index);
-                            }
+                            if (!storage.Has(entity.Number)) continue;
+                            
+                            storage.Remove(entity.Number);
+                            bitsets[entity.Number].Clear(index);
+                            OnEntityChanged(entity, index);
                         }
                     }
                 }
@@ -205,11 +204,10 @@ namespace RelEcs
             {
                 ref var systemList = ref systemStorage.Get(entity.Id.Number);
 
-                if (!systemList.List.Contains(systemType))
-                {
-                    systemList.List.Add(systemType);
-                    action(eventStorage.Get(entity.Id.Number));
-                }
+                if (systemList.List.Contains(systemType)) continue;
+                
+                systemList.List.Add(systemType);
+                action(eventStorage.Get(entity.Id.Number));
             }
         }
 
@@ -286,12 +284,7 @@ namespace RelEcs
         {
             var typeId = TypeId.Value<T>(target.Number);
 
-            if (storageIndices.TryGetValue(typeId, out var index))
-            {
-                return bitsets[id.Number].Get(index);
-            }
-
-            return false;
+            return storageIndices.TryGetValue(typeId, out var index) && bitsets[id.Number].Get(index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -311,21 +304,19 @@ namespace RelEcs
         {
             var list = queriesByTypeId[typeIndex];
 
-            if (list != null)
+            if (list == null) return;
+            foreach (var query in list)
             {
-                foreach (var query in list)
-                {
-                    var isCompatible = IsEntityCompatibleWithMask(query.Mask, entityId);
-                    var isInQuery = query.HasEntity(entityId);
+                var isCompatible = IsEntityCompatibleWithMask(query.Mask, entityId);
+                var isInQuery = query.HasEntity(entityId);
 
-                    if (isCompatible && !isInQuery)
-                    {
-                        query.AddEntity(entityId);
-                    }
-                    else if (!isCompatible && isInQuery)
-                    {
-                        query.RemoveEntity(entityId);
-                    }
+                if (isCompatible && !isInQuery)
+                {
+                    query.AddEntity(entityId);
+                }
+                else if (!isCompatible && isInQuery)
+                {
+                    query.RemoveEntity(entityId);
                 }
             }
         }
@@ -372,7 +363,7 @@ namespace RelEcs
                 list.Add(query);
             }
 
-            for (int i = 0; i <= entityCount; i++)
+            for (var i = 0; i <= entityCount; i++)
             {
                 var entityId = entities[i];
 
@@ -426,12 +417,6 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IStorage GetStorage(int index)
-        {
-            return storages[index];
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Tick()
         {
             var info = GetResource<WorldInfo>();
@@ -457,6 +442,12 @@ namespace RelEcs
         public bool IsAlive(EntityId id)
         {
             return entities[id.Number] != EntityId.None;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IStorage GetStorage(int index)
+        {
+            return storages[index];
         }
     }
 

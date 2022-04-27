@@ -7,11 +7,11 @@ namespace RelEcs
 {
     public sealed class Mask
     {
-        internal BitSet HasBitSet;
-        internal BitSet NotBitSet;
-        internal BitSet AnyBitSet;
+        internal readonly BitSet HasBitSet;
+        internal readonly BitSet NotBitSet;
+        internal readonly BitSet AnyBitSet;
 
-        internal List<int> Types;
+        internal readonly List<int> Types;
 
 #if DEBUG
         bool isBuilt;
