@@ -4,10 +4,10 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs
 {
-    public struct Resource<T> where T : class
+    public struct Element<T> where T : class
     {
         public T Value;
-        public Resource(T value) => Value = value;
+        public Element(T value) => Value = value;
     }
 
     public sealed class World
@@ -71,7 +71,7 @@ namespace RelEcs
                 SystemExecutionTimes = new List<(Type, TimeSpan)>(),
             };
 
-            AddResource(info);
+            AddElement(info);
         }
 
         public Entity Spawn()
@@ -222,40 +222,40 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddResource<T>(T resource) where T : class
+        public void AddElement<T>(T element) where T : class
         {
-            AddComponent<Resource<T>>(world.Id) = new Resource<T>(resource);
+            AddComponent<Element<T>>(world.Id) = new Element<T>(element);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetResource<T>() where T : class
+        public T GetElement<T>() where T : class
         {
-            return GetComponent<Resource<T>>(world.Id).Value;
+            return GetComponent<Element<T>>(world.Id).Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetResource<T>(out T resource) where T : class
+        public bool TryGetElement<T>(out T element) where T : class
         {
-            if (HasResource<T>())
+            if (HasElement<T>())
             {
-                resource = GetResource<T>();
+                element = GetElement<T>();
                 return true;
             }
 
-            resource = null;
+            element = null;
             return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasResource<T>() where T : class
+        public bool HasElement<T>() where T : class
         {
-            return HasComponent<Resource<T>>(world.Id);
+            return HasComponent<Element<T>>(world.Id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveResource<T>() where T : class
+        public void RemoveElement<T>() where T : class
         {
-            RemoveComponent<Resource<T>>(world.Id);
+            RemoveComponent<Element<T>>(world.Id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -442,14 +442,14 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Tick()
         {
-            var info = GetResource<WorldInfo>();
+            var info = GetElement<WorldInfo>();
 
             info.EntityCount = entityCount;
             info.UnusedEntityCount = unusedIdCount;
             info.AllocatedEntityCount = entities.Length;
             info.ComponentCount = storageCount;
             info.RelationCount = relationCount;
-            info.ResourceCount = bitsets[world.Id.Number].Count;
+            info.ElementCount = bitsets[world.Id.Number].Count;
             info.SystemCount = SystemExecutionTimes.Count;
             info.CachedQueryCount = hashedQueries.Count;
 
@@ -483,7 +483,7 @@ namespace RelEcs
         public int AllocatedEntityCount;
         public int ComponentCount;
         public int RelationCount;
-        public int ResourceCount;
+        public int ElementCount;
         public int SystemCount;
         public List<(Type, TimeSpan)> SystemExecutionTimes;
         public int CachedQueryCount;

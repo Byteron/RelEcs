@@ -39,33 +39,33 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddResource<T>(T resource) where T : class
+        public void AddElement<T>(T element) where T : class
         {
-            world.AddResource(resource);
+            world.AddElement(element);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetResource<T>() where T : class
+        public T GetElement<T>() where T : class
         {
-            return world.GetResource<T>();
+            return world.GetElement<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetResource<T>(out T resource) where T : class
+        public bool TryGetElement<T>(out T element) where T : class
         {
-            return world.TryGetResource(out resource);
+            return world.TryGetElement(out element);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasResource<T>() where T : class
+        public bool HasElement<T>() where T : class
         {
-            return world.HasResource<T>();
+            return world.HasElement<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveResource<T>() where T : class
+        public void RemoveElement<T>() where T : class
         {
-            world.RemoveResource<T>();
+            world.RemoveElement<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
