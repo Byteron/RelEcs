@@ -27,9 +27,9 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<T>(T eventStruct) where T : struct
+        public void Send<T>(T triggerStruct) where T : struct
         {
-            world.Send(eventStruct);
+            world.Send(triggerStruct);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

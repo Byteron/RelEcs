@@ -9,25 +9,25 @@ namespace RelEcs
         public Added(Entity entity) => Entity = entity;
     }
 
-    internal struct EventSystemList : IReset<EventSystemList>
+    internal struct TriggerSystemList : IReset<TriggerSystemList>
     {
         public List<Type> List;
 
-        public void Reset(ref EventSystemList c)
+        public void Reset(ref TriggerSystemList c)
         {
             c.List = new List<Type>();
         }
     }
 
-    internal struct EventLifeTime { public int Value; }
+    internal struct TriggerLifeTime { public int Value; }
 
-    internal class EventLifeTimeSystem : ISystem
+    internal class TriggerLifeTimeSystem : ISystem
     {
         public void Run(Commands commands)
         {
-            var query = commands.Query().Has<EventLifeTime>();
+            var query = commands.Query().Has<TriggerLifeTime>();
 
-            query.ForEach((Entity entity, ref EventLifeTime lifeTime) =>
+            query.ForEach((Entity entity, ref TriggerLifeTime lifeTime) =>
             {
                 lifeTime.Value++;
 

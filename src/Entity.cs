@@ -28,46 +28,46 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Add<T>(bool triggerEvent = false) where T : struct
+        public Entity Add<T>(bool spawnTrigger = false) where T : struct
         {
-            world.AddComponent<T>(Id, EntityId.None, triggerEvent);
+            world.AddComponent<T>(Id, EntityId.None, spawnTrigger);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Add<T>(T data, bool triggerEvent = false) where T : struct
+        public Entity Add<T>(T data, bool spawnTrigger = false) where T : struct
         {
-            world.AddComponent<T>(Id, EntityId.None, triggerEvent) = data;
+            world.AddComponent<T>(Id, EntityId.None, spawnTrigger) = data;
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Add<T>(Entity target, bool triggerEvent = false) where T : struct
+        public Entity Add<T>(Entity target, bool spawnTrigger = false) where T : struct
         {
-            world.AddComponent<T>(Id, target.Id, triggerEvent);
+            world.AddComponent<T>(Id, target.Id, spawnTrigger);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Add<T, TT>(bool triggerEvent = false) where T : struct where TT : struct
+        public Entity Add<T, TT>(bool spawnTrigger = false) where T : struct where TT : struct
         {
             Entity typeEntity = world.GetTypeEntity<TT>();
-            world.AddComponent<T>(Id, typeEntity.Id, triggerEvent);
+            world.AddComponent<T>(Id, typeEntity.Id, spawnTrigger);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Add<T>(Entity target, T data, bool triggerEvent = false) where T : struct
+        public Entity Add<T>(Entity target, T data, bool spawnTrigger = false) where T : struct
         {
-            world.AddComponent<T>(Id, target.Id, triggerEvent) = data;
+            world.AddComponent<T>(Id, target.Id, spawnTrigger) = data;
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity IsA<TT>(bool triggerEvent = false) where TT : struct
+        public Entity IsA<TT>(bool spawnTrigger = false) where TT : struct
         {
             Entity typeEntity = world.GetTypeEntity<TT>();
-            world.AddComponent<IsA>(Id, typeEntity.Id, triggerEvent);
+            world.AddComponent<IsA>(Id, typeEntity.Id, spawnTrigger);
             return this;
         }
 
@@ -96,16 +96,16 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Remove<T>(bool triggerEvent = false) where T : struct
+        public Entity Remove<T>() where T : struct
         {
-            world.RemoveComponent<T>(Id, EntityId.None, triggerEvent);
+            world.RemoveComponent<T>(Id, EntityId.None);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Remove<T>(Entity target, bool triggerEvent = false) where T : struct
+        public Entity Remove<T>(Entity target) where T : struct
         {
-            world.RemoveComponent<T>(Id, target.Id, triggerEvent);
+            world.RemoveComponent<T>(Id, target.Id);
             return this;
         }
 

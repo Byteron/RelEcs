@@ -141,48 +141,48 @@ moveSystem.Run(world);
 moveSystem.Run(world);
 ```
 
-## Events
+## Triggers
 
 ```csharp
-// events are again just structs. They are basically components internally
-struct MyEvent { }
+// triggers are again just structs. They are basically components internally
+struct MyTrigger { }
 
-// send a bunch of events
-commands.Send<MyEvent>();
-commands.Send<MyEvent>();
-commands.Send<MyEvent>();
+// send a bunch of triggers
+commands.Send<MyTrigger>();
+commands.Send<MyTrigger>();
+commands.Send<MyTrigger>();
 
 
-// in any system, you can now receive events
-commands.Receive((MyEvent e) =>
+// in any system, you can now receive triggers
+commands.Receive((MyTrigger e) =>
 {
-    Console.WriteLine("An Event!");
+    Console.WriteLine("A Trigger!");
 });
-// note that events only live for 2 frames and can only be received ONCE per SYSTEM
+// note that triggers only live for 2 frames and can only be received ONCE per SYSTEM
 
 // Output:
-// "An Event!"
-// "An Event!"
-// "An Event!"
+// A Trigger!
+// A Trigger!
+// A Trigger!
 ```
 
-## Build-in Events
+## Build-in Triggers
 
 ```csharp
 var entity = commands.Spawn();
 
-// normally you add components like this. No events are spawned by default
+// normally you add components like this. No triggers are spawned by default
 entity.Add<Name>(new Name("Walter"));
 
-// you can pass in an optional parameter 'triggerEvent' 
-// to spawn an Added<T> event
+// you can pass in an optional parameter 'spawnTrigger' 
+// to spawn an Added<T> trigger
 entity.Add<Old>(true);
 
 
-// you can receive those build-in events like your custom events as well
-commands.Receive((Added<Old> addedEvent) =>
+// you can receive those build-in triggers like your custom triggers as well
+commands.Receive((Added<Old> addedTrigger) =>
 {
-    Console.WriteLine("Old component added to " + addedEvent.Entity);
+    Console.WriteLine("Old component added to " + addedTrigger.Entity);
 })
 ```
 

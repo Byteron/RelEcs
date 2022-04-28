@@ -4,6 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs
 {
+    public struct Trigger<T> where T : struct
+    {
+        public T Value;
+        public Trigger(T value) => Value = value;
+    }
+    
     public struct Element<T> where T : class
     {
         public T Value;
@@ -37,7 +43,7 @@ namespace RelEcs
         
         internal List<(Type, TimeSpan)> SystemExecutionTimes;
 
-        EventLifeTimeSystem eventLifeTimeSystem;
+        TriggerLifeTimeSystem triggerLifeTimeSystem;
 
         WorldConfig config;
 
@@ -61,7 +67,7 @@ namespace RelEcs
 
             world = Spawn();
 
-            eventLifeTimeSystem = new EventLifeTimeSystem();
+            triggerLifeTimeSystem = new TriggerLifeTimeSystem();
 
             AddElement(new WorldInfo(++worldCounter));
         }
@@ -167,20 +173,20 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<T>(T eventStruct) where T : struct
+        public void Send<T>(T triggerStruct) where T : struct
         {
-            Send<T>() = eventStruct;
+            Send<T>() = new Trigger<T>(triggerStruct);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Send<T>() where T : struct
+        public ref Trigger<T> Send<T>() where T : struct
         {
             var entity = Spawn();
 
-            AddComponent<EventSystemList>(entity.Id);
-            AddComponent<EventLifeTime>(entity.Id);
+            AddComponent<TriggerSystemList>(entity.Id);
+            AddComponent<TriggerLifeTime>(entity.Id);
 
-            return ref AddComponent<T>(entity.Id);
+            return ref AddComponent<Trigger<T>>(entity.Id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -188,12 +194,12 @@ namespace RelEcs
         {
             var systemType = system.GetType();
 
-            var eventStorage = GetStorage<T>(EntityId.None);
-            var systemStorage = GetStorage<EventSystemList>(EntityId.None);
+            var triggerStorage = GetStorage<Trigger<T>>(EntityId.None);
+            var systemStorage = GetStorage<TriggerSystemList>(EntityId.None);
 
             var mask = new Mask();
 
-            mask.Has(eventStorage.Index);
+            mask.Has(triggerStorage.Index);
             mask.Has(systemStorage.Index);
             mask.Lock();
 
@@ -207,7 +213,7 @@ namespace RelEcs
                 if (systemList.List.Contains(systemType)) continue;
                 
                 systemList.List.Add(systemType);
-                action(eventStorage.Get(entity.Id.Number));
+                action(triggerStorage.Get(entity.Id.Number).Value);
             }
         }
 
@@ -249,7 +255,7 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T AddComponent<T>(EntityId id, EntityId target = default, bool triggerEvent = false) where T : struct
+        public ref T AddComponent<T>(EntityId id, EntityId target = default, bool spawnTrigger = false) where T : struct
         {
             var storage = GetStorage<T>(target);
 
@@ -259,7 +265,7 @@ namespace RelEcs
 
             OnEntityChanged(id, storage.Index);
             
-            if (triggerEvent)
+            if (spawnTrigger)
             {
                 Send(new Added<T>(new Entity(this, id)));
             }
@@ -288,7 +294,7 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveComponent<T>(EntityId id, EntityId target = default, bool triggerEvent = false) where T : struct
+        public void RemoveComponent<T>(EntityId id, EntityId target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
 
@@ -433,7 +439,7 @@ namespace RelEcs
             info.SystemExecutionTimes.Clear();
             info.SystemExecutionTimes.AddRange(SystemExecutionTimes);
 
-            eventLifeTimeSystem.Run(this);
+            triggerLifeTimeSystem.Run(this);
 
             SystemExecutionTimes.Clear();
         }
