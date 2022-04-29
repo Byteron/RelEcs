@@ -1,115 +1,120 @@
 # RelEcs
-## A lightweight and easy to use entity component system with and effective feature set for making games.
+## A lightweight and easy to use entity component system with an effective feature set for making games.
 
 ## World
 
 ```csharp
-// create a new world
+// This creates a new world, which serves as a container for entities.
 World world = new World();
 ```
 
 ## Entity
 
 ```csharp
-// spawn a new entity
+// Spawn a new entity into the world.
 Entity entity = world.Spawn();
 
-// despawn an entity
+// Despawn an entity.
 entity.Despawn();
 ```
 
 ## Component
 
 ```csharp
-// components are plain ol data structs
+// Components are just plain old data structs.
 struct Position { public int X, Y; }
 struct Velocity { public int X, Y; }
 
-// add new components to an entity
+// Add new components to an entity.
 entity.Add<Position>().Add(new Velocity { X = 1, Y = 0 });
 
-// get a component from an entity
+// Get a component from an entity.
 ref var vel = ref entity.Get<Velocity>();
 
-// remove a component from an entity;
+// Remove a component from an entity.
 entity.Remove<Position>();
 ```
 
 ## Element
 
 ```csharp
-// elements are classes
+// Elements are unique class-based components that are attached directly to worlds.
 class SavePath { string Value; }
 
-// add an element to the world
-// you can only have one element per type in the world
+// Add an element to the world.
+// You can only have one element per type in a world.
 world.AddElement(new SavePath( Value = "user://saves/"));
 
-// get an element from the world
+// Get an element from the world.
 var savePath = world.GetElement<SavePath>();
 Console.WriteLine(savePath.Value);
 
-// remove an element from the world
+// Remove an element from the world.
 world.RemoveElement<SavePath>();
 ```
 
 ## Relation
 
 ```csharp
-// like components, relations are structs
+// Like components, relations are structs.
 struct Likes { }
-struct Owes { int Value; }
+struct Owes { int Amount; }
 
 struct Apples { }
 
 var bob = world.Spawn();
 var frank = world.Spawn();
 
-// relations basically are just components, but also
-// associated with a second "target". A Target can either be a Type, or an Entity
+// Relations consist of components, associated with a "target".
+// The target can either be another component, or an entity.
 bob.Add<Likes, Apples>();
-//        Type ^^^^^^
+//   Component ^^^^^^
 
-frank.Add(new Owes { Value = 100 }, bob);
-//                           Entity ^^^
+frank.Add(new Owes { Amount = 100 }, bob);
+//                            Entity ^^^
 
-// we can ask if an entity has a component or relation
+// You can test if an entity has a component or a relation.
+bool doesBobHaveApples = bob.Has<Apples>();
 bool doesBobLikeApples = bob.Has<Likes, Apples>();
 
-// or get it directly
+// Or get it directly.
+// In this case, we retrieve the amount that Frank owes Bob.
 ref var owes = ref frank.Get<Owes>(bob);
-Console.WriteLine($"Frank owes Bob {owes.Value} dollars");
+Console.WriteLine($"Frank owes Bob {owes.Amount} dollars");
 ```
 
 ## Commands
 
 ```csharp
-// Commands is a Wrapper around World that provides
-// additional helpful functions
+// Commands are a wrapper around World that provide additional helpful functions.
 Commands commands = new Commands(world);
 
-// Generally speaking, you *should not* create your own commands. They will be provided for you as the System.Run(Commands) argument.
+// You *do not* need to create your own commands.
+// They will be automatically provided for you as the System.Run(Commands) argument.
 ```
 
 ## System
 
 ```csharp
+// Systems add all the functionality to the Entity Component System.
+// Usually, you would run them from within your game loop.
 public class MoveSystem : ISystem
 {
     public void Run(Commands commands)
     {        
-        // iterate using ForEach.
-        // currently only works with Components *not* with relations
+        // Loop over a desired set of components, using ForEach.
+        // Beware: Currently only works with components, *not* with relations
         commands.ForEach((ref Position pos, ref Velocity vel) =>
         {
             pos.Value += vel.Value;
         });
 
-        // iterate using ForEach, also gets Entity
+        // You can also access the entity within the loop
         commands.ForEach((Entity entity, ref Position pos, ref Velocity vel) =>
         {
             pos.Value += vel.Value;
-            // entity.Add<Moved>(); // tag component to mark that it has moved or something
+            // Example: "Tag" a component to show that it has moved.
+            entity.Add<Moved>();
         });
     }
 }
