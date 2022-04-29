@@ -1,5 +1,5 @@
 # RelEcs
-## A lightweight and easy to use entity component system with an effective feature set for making games.
+### A lightweight and easy to use entity component system with an effective feature set for making games.
 
 ## World
 
