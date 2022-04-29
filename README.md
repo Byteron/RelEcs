@@ -22,8 +22,8 @@ entity.Despawn();
 
 ```csharp
 // components are plain ol data structs
-struct Position { int X, Y; }
-struct Velocity { int X, Y; }
+struct Position { public int X, Y; }
+struct Velocity { public int X, Y; }
 
 // add new components to an entity
 entity.Add<Position>().Add(new Velocity { X = 1, Y = 0 });
