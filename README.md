@@ -168,9 +168,9 @@ commands.Receive((MyTrigger e) =>
 });
 
 // Output:
-// A Trigger!
-// A Trigger!
-// A Trigger!
+// It's a trigger!
+// It's a trigger!
+// It's a trigger!
 
 // NOTE: Triggers live until the end of the next frame, to make sure every system receives them.
 // Each trigger is always received exactly ONCE per system.
@@ -186,7 +186,8 @@ var entity = commands.Spawn();
 entity.Add(new Name("Walter")); // No trigger.
 entity.Add(new Name("Walter"), true); // Trigger.
 
-// This also works for "tag" components without any data.
+// This also works for "tag" components without any data,
+// and components that have data, but where no initial values are needed.
 entity.Add<Old>(); // No trigger.
 entity.Add<Old>(true); // Trigger.
 
@@ -234,7 +235,7 @@ using Godot;
 using RelEcs;
 using World = RelEcs.World; // Godot also has a World class, so we need to specify this.
 
-public class GameLoopNode : Node
+public class GameLoop : Node
 {
     World world = new World();
 
@@ -242,8 +243,8 @@ public class GameLoopNode : Node
     SystemGroup runSystems = new SystemGroup();
     SystemGroup cleanupSystems = new SystemGroup();
 
-    // This is called once on Node intialization.
-    public override void _Init()
+    // Called once on node construction.
+    public GameLoop()
     {
         // Add your initialization systems.
         initSystem.Add(new SomeSpawnSystem());
@@ -257,14 +258,14 @@ public class GameLoopNode : Node
         cleanupSystems.Add(new DespawnSystem());
     }
 
-    // This is called once after the Node has been added to the SceneTree.
+    // Called every time the node is added to the scene.
     public override void _Ready()
     {
         // Run the init systems.
         initSystems.Run(world);   
     }
 
-    // This is called once every frame.
+    // Called every frame. Delta is time since the last frame.
     public override void _Process(float delta)
     {
         // Run the run systems.
@@ -275,7 +276,7 @@ public class GameLoopNode : Node
         world.Tick();
     }
 
-    // This is called once when the node is removed from the SceneTree.
+    // Called when the node is removed from the SceneTree.
     public override void _ExitTree()
     {
         // Run the cleanup systems.
