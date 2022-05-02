@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using Godot;
 
 namespace RelEcs
 {
@@ -19,6 +20,7 @@ namespace RelEcs
 
         bool Has(int entityId);
         void Remove(int entityId);
+        void Resize(int capacity);
     }
 
     public sealed class Storage<T> : IStorage where T : struct
@@ -36,9 +38,9 @@ namespace RelEcs
 
         ResetHandler resetDelegate;
 
-        public Storage(WorldConfig config, int index, long typeId)
+        public Storage(WorldConfig config, int index, long typeId, int capacity)
         {
-            indices = new int[config.EntitySize];
+            indices = new int[capacity];
             unusedIds = new int[config.StorageSize];
             items = new T[config.StorageSize];
 
@@ -109,39 +111,35 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object GetRaw(int entityId)
-        {
-#if DEBUG
-            if (indices[entityId] == 0) { throw new Exception($"{typeof(T).Name} ({Index}) is not attached to {entityId}"); }
-#endif
-            return items[indices[entityId]];
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(int entityId)
         {
             ref var index = ref indices[entityId];
 
-            if (index > 0)
+            if (index <= 0) return;
+            
+            if (unusedIdCount == unusedIds.Length)
             {
-                if (unusedIdCount == unusedIds.Length)
-                {
-                    Array.Resize(ref unusedIds, unusedIdCount << 1);
-                }
-
-                unusedIds[unusedIdCount++] = index;
-
-                if (resetDelegate != null)
-                {
-                    resetDelegate.Invoke(ref items[index]);
-                }
-                else
-                {
-                    items[index] = default;
-                }
-
-                index = 0;
+                Array.Resize(ref unusedIds, unusedIdCount << 1);
             }
+
+            unusedIds[unusedIdCount++] = index;
+
+            if (resetDelegate != null)
+            {
+                resetDelegate.Invoke(ref items[index]);
+            }
+            else
+            {
+                items[index] = default;
+            }
+
+            index = 0;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Resize(int capacity)
+        {
+            Array.Resize(ref indices, capacity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

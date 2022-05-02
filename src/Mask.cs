@@ -102,7 +102,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            int hash = Types.Count;
+            var hash = Types.Count;
 
             foreach (var index in Types)
             {

@@ -88,6 +88,11 @@ namespace RelEcs
                 {
                     Array.Resize(ref entities, entityCount << 1);
                     Array.Resize(ref bitsets, entityCount << 1);
+                    
+                    for (var i = 1; i <= storageCount; i++)
+                    {
+                        storages[i].Resize(entityCount << 1);
+                    }
                 }
 
                 entities[id.Number] = id;
@@ -415,7 +420,7 @@ namespace RelEcs
                 Array.Resize(ref storages, (index << 1));
             }
 
-            var storage = new Storage<T>(config, index, typeId);
+            var storage = new Storage<T>(config, index, typeId, entityCount << 1);
 
             storages[index] = storage;
 
