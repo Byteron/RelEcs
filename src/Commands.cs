@@ -74,7 +74,7 @@ namespace RelEcs
             return new QueryCommands(world);
         }
 
-        public Storage<T> GetStorage<T>(EntityId target) where T : struct
+        public Storage<T> GetStorage<T>(Identity target) where T : struct
         {
             return world.GetStorage<T>(target);
         }
@@ -97,7 +97,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Has<T>(Entity target = default) where T : struct
         {
-            var typeIndex = World.GetStorage<T>(target.Id).Index;
+            var typeIndex = World.GetStorage<T>(target.Identity).Index;
             mask.Has(typeIndex);
             return this;
         }
@@ -127,7 +127,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Not<T>(Entity target = default) where T : struct
         {
-            var typeIndex = World.GetStorage<T>(target.Id).Index;
+            var typeIndex = World.GetStorage<T>(target.Identity).Index;
             mask.Not(typeIndex);
             return this;
         }
@@ -135,7 +135,7 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public QueryCommands Any<T>(Entity target = default) where T : struct
         {
-            var typeIndex = World.GetStorage<T>(target.Id).Index;
+            var typeIndex = World.GetStorage<T>(target.Identity).Index;
             mask.Any(typeIndex);
             return this;
         }

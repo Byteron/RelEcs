@@ -32,52 +32,52 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddEntity(EntityId entityId)
+        public void AddEntity(Identity identity)
         {
-            if (AddDelayedOperation(entityId, true)) { return; }
+            if (AddDelayedOperation(identity, true)) { return; }
 
             var index = ++entityCount;
 
-            if (entityId.Number >= indices.Length)
+            if (identity.Id >= indices.Length)
             {
-                Array.Resize(ref indices, entityId.Number << 1);
+                Array.Resize(ref indices, identity.Id << 1);
             }
 
-            indices[entityId.Number] = index;
+            indices[identity.Id] = index;
 
             if (entityCount == entities.Length)
             {
                 Array.Resize(ref entities, entityCount << 1);
             }
 
-            entities[index] = new Entity(world, entityId);
+            entities[index] = new Entity(world, identity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasEntity(EntityId entityId)
+        public bool HasEntity(Identity identity)
         {
-            return indices.Length > entityId.Number && indices[entityId.Number] > 0;
+            return indices.Length > identity.Id && indices[identity.Id] > 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveEntity(EntityId entityId)
+        public void RemoveEntity(Identity identity)
         {
-            if (AddDelayedOperation(entityId, false)) { return; }
+            if (AddDelayedOperation(identity, false)) { return; }
 
-            var index = indices[entityId.Number];
-            indices[entityId.Number] = 0;
+            var index = indices[identity.Id];
+            indices[identity.Id] = 0;
 
             if (index < entityCount)
             {
                 entities[index] = entities[entityCount];
-                indices[entities[index].Id.Number] = index;
+                indices[entities[index].Identity.Id] = index;
             }
 
             entityCount--;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        bool AddDelayedOperation(EntityId entityId, bool added)
+        bool AddDelayedOperation(Identity identity, bool added)
         {
             if (lockCount <= 0) { return false; }
 
@@ -89,7 +89,7 @@ namespace RelEcs
             ref var op = ref delayedOperations[delayedOperationCount++];
 
             op.Added = added;
-            op.EntityId = entityId;
+            op.Identity = identity;
 
             return true;
         }
@@ -113,11 +113,11 @@ namespace RelEcs
 
                     if (op.Added)
                     {
-                        AddEntity(op.EntityId);
+                        AddEntity(op.Identity);
                     }
                     else
                     {
-                        RemoveEntity(op.EntityId);
+                        RemoveEntity(op.Identity);
                     }
                 }
 
@@ -166,7 +166,7 @@ namespace RelEcs
         struct DelayedOperation
         {
             public bool Added;
-            public EntityId EntityId;
+            public Identity Identity;
         }
     }
 }

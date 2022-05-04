@@ -104,15 +104,15 @@ namespace RelEcs
                 return k == 0;
             }
         }
-
+        
         public override int GetHashCode()
         {
-            var h = 1234;
-            for (var i = bits.Length; --i >= 0;)
+            long h = 1234;
+            for (var i = bits.Length; i > 0;)
             {
-                h ^= (int)bits[i] * (i + 1);
+                h ^= i * bits[--i];
             }
-            return ((h >> 32) ^ h);
+            return (int) ((h >> 32) ^ h);
         }
     }
 }

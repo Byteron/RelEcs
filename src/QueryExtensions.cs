@@ -262,11 +262,11 @@ namespace RelEcs
         public static void ForEach<C>(this QueryCommands query, RefAction<C> action)
             where C : struct
         {
-            var storage = query.World.GetStorage<C>(EntityId.None);
+            var storage = query.World.GetStorage<C>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage.Get(entity.Id.Number));
+                action(ref storage.Get(entity.Identity.Id));
             }
         }
 
@@ -276,12 +276,12 @@ namespace RelEcs
             where C1 : struct
             where C2 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id));
             }
         }
 
@@ -292,13 +292,13 @@ namespace RelEcs
             where C2 : struct
             where C3 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id));
             }
         }
 
@@ -310,14 +310,14 @@ namespace RelEcs
             where C3 : struct
             where C4 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id));
             }
         }
 
@@ -330,15 +330,15 @@ namespace RelEcs
             where C4 : struct
             where C5 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id));
             }
         }
 
@@ -352,16 +352,16 @@ namespace RelEcs
             where C5 : struct
             where C6 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
-            var storage6 = query.World.GetStorage<C6>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
+            var storage6 = query.World.GetStorage<C6>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id));
             }
         }
 
@@ -376,17 +376,17 @@ namespace RelEcs
             where C6 : struct
             where C7 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
-            var storage6 = query.World.GetStorage<C6>(EntityId.None);
-            var storage7 = query.World.GetStorage<C7>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
+            var storage6 = query.World.GetStorage<C6>(Identity.None);
+            var storage7 = query.World.GetStorage<C7>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id));
             }
         }
 
@@ -402,18 +402,18 @@ namespace RelEcs
             where C7 : struct
             where C8 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
-            var storage6 = query.World.GetStorage<C6>(EntityId.None);
-            var storage7 = query.World.GetStorage<C7>(EntityId.None);
-            var storage8 = query.World.GetStorage<C8>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
+            var storage6 = query.World.GetStorage<C6>(Identity.None);
+            var storage7 = query.World.GetStorage<C7>(Identity.None);
+            var storage8 = query.World.GetStorage<C8>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number), ref storage8.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id), ref storage8.Get(entity.Identity.Id));
             }
         }
         
@@ -431,11 +431,11 @@ namespace RelEcs
         public static void ForEach<C>(this QueryCommands query, EntityRefAction<C> action)
             where C : struct
         {
-            var storage = query.World.GetStorage<C>(EntityId.None);
+            var storage = query.World.GetStorage<C>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage.Get(entity.Id.Number));
+                action(entity, ref storage.Get(entity.Identity.Id));
             }
         }
 
@@ -445,12 +445,12 @@ namespace RelEcs
             where C1 : struct
             where C2 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id));
             }
         }
 
@@ -461,13 +461,13 @@ namespace RelEcs
             where C2 : struct
             where C3 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id));
             }
         }
 
@@ -479,14 +479,14 @@ namespace RelEcs
             where C3 : struct
             where C4 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id));
             }
         }
 
@@ -499,15 +499,15 @@ namespace RelEcs
             where C4 : struct
             where C5 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id));
             }
         }
 
@@ -521,16 +521,16 @@ namespace RelEcs
             where C5 : struct
             where C6 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
-            var storage6 = query.World.GetStorage<C6>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
+            var storage6 = query.World.GetStorage<C6>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id));
             }
         }
 
@@ -545,17 +545,17 @@ namespace RelEcs
             where C6 : struct
             where C7 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
-            var storage6 = query.World.GetStorage<C6>(EntityId.None);
-            var storage7 = query.World.GetStorage<C7>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
+            var storage6 = query.World.GetStorage<C6>(Identity.None);
+            var storage7 = query.World.GetStorage<C7>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id));
             }
         }
 
@@ -571,18 +571,18 @@ namespace RelEcs
             where C7 : struct
             where C8 : struct
         {
-            var storage1 = query.World.GetStorage<C1>(EntityId.None);
-            var storage2 = query.World.GetStorage<C2>(EntityId.None);
-            var storage3 = query.World.GetStorage<C3>(EntityId.None);
-            var storage4 = query.World.GetStorage<C4>(EntityId.None);
-            var storage5 = query.World.GetStorage<C5>(EntityId.None);
-            var storage6 = query.World.GetStorage<C6>(EntityId.None);
-            var storage7 = query.World.GetStorage<C7>(EntityId.None);
-            var storage8 = query.World.GetStorage<C8>(EntityId.None);
+            var storage1 = query.World.GetStorage<C1>(Identity.None);
+            var storage2 = query.World.GetStorage<C2>(Identity.None);
+            var storage3 = query.World.GetStorage<C3>(Identity.None);
+            var storage4 = query.World.GetStorage<C4>(Identity.None);
+            var storage5 = query.World.GetStorage<C5>(Identity.None);
+            var storage6 = query.World.GetStorage<C6>(Identity.None);
+            var storage7 = query.World.GetStorage<C7>(Identity.None);
+            var storage8 = query.World.GetStorage<C8>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number), ref storage8.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id), ref storage8.Get(entity.Identity.Id));
             }
         }
     }

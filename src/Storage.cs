@@ -18,8 +18,8 @@ namespace RelEcs
         long TypeId { get; set; }
         Type Type { get; set; }
 
-        bool Has(int entityId);
-        void Remove(int entityId);
+        bool Has(int id);
+        void Remove(int id);
         void Resize(int capacity);
     }
 
@@ -70,15 +70,15 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Add(int entityId)
+        public ref T Add(int id)
         {
-            if (entityId >= indices.Length)
+            if (id >= indices.Length)
             {
-                Array.Resize(ref indices, entityId << 1);
+                Array.Resize(ref indices, id << 1);
             }
 
 #if DEBUG
-            if (indices[entityId] > 0) { throw new Exception($"{typeof(T).Name} ({Index}) is already attached to {entityId}"); }
+            if (indices[id] > 0) { throw new Exception($"{typeof(T).Name} ({Index}) is already attached to {id}"); }
 #endif
             int index;
 
@@ -96,24 +96,24 @@ namespace RelEcs
                 resetDelegate?.Invoke(ref items[index]);
             }
 
-            indices[entityId] = index;
+            indices[id] = index;
 
             return ref items[index];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Get(int entityId)
+        public ref T Get(int id)
         {
 #if DEBUG
-            if (indices[entityId] == 0) { throw new Exception($"{typeof(T).Name} ({Index}) is not attached to {entityId}"); }
+            if (indices[id] == 0) { throw new Exception($"{typeof(T).Name} ({Index}) is not attached to {id}"); }
 #endif
-            return ref items[indices[entityId]];
+            return ref items[indices[id]];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(int entityId)
+        public void Remove(int id)
         {
-            ref var index = ref indices[entityId];
+            ref var index = ref indices[id];
 
             if (index <= 0) return;
             
@@ -143,9 +143,9 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Has(int entityId)
+        public bool Has(int id)
         {
-            return indices[entityId] > 0;
+            return indices[id] > 0;
         }
 
         delegate void ResetHandler(ref T component);
@@ -154,9 +154,9 @@ namespace RelEcs
     public static class TypeId
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long Value<T>(int entityId) where T : struct
+        public static long Value<T>(int id) where T : struct
         {
-            return TypeIdAssigner<T>.Id | (long)entityId << 32;
+            return TypeIdAssigner<T>.Id | (long)id << 32;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

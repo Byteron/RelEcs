@@ -22,12 +22,12 @@ namespace RelEcs
 
         readonly Entity world;
 
-        EntityId[] entities;
+        Identity[] entities;
         BitSet[] bitsets;
 
         int entityCount;
 
-        EntityId[] unusedIds;
+        Identity[] unusedIds;
         int unusedIdCount;
 
         Dictionary<long, int> storageIndices;
@@ -51,9 +51,9 @@ namespace RelEcs
 
         public World(WorldConfig config)
         {
-            entities = new EntityId[config.EntitySize];
+            entities = new Identity[config.EntitySize];
             bitsets = new BitSet[config.EntitySize];
-            unusedIds = new EntityId[config.EntitySize];
+            unusedIds = new Identity[config.EntitySize];
 
             storageIndices = new Dictionary<long, int>(config.ComponentSize);
             storages = new IStorage[config.ComponentSize];
@@ -74,7 +74,7 @@ namespace RelEcs
 
         public Entity Spawn()
         {
-            EntityId id;
+            Identity id;
 
             if (unusedIdCount > 0)
             {
@@ -82,7 +82,7 @@ namespace RelEcs
             }
             else
             {
-                id = new EntityId(++entityCount, 1);
+                id = new Identity(++entityCount, 1);
 
                 if (entities.Length == entityCount)
                 {
@@ -95,25 +95,25 @@ namespace RelEcs
                     }
                 }
 
-                entities[id.Number] = id;
+                entities[id.Id] = id;
             }
 
-            if (bitsets[id.Number] == null)
+            if (bitsets[id.Id] == null)
             {
-                bitsets[id.Number] = new BitSet();
+                bitsets[id.Id] = new BitSet();
             }
 
             return new Entity(this, id);
         }
 
-        public void Despawn(EntityId id)
+        public void Despawn(Identity id)
         {
-            if (!IsAlive(entities[id.Number]))
+            if (!IsAlive(entities[id.Id]))
             {
                 return;
             }
 
-            var bitset = bitsets[id.Number];
+            var bitset = bitsets[id.Id];
 
             if (bitset.Count > 0)
             {
@@ -128,12 +128,12 @@ namespace RelEcs
 
                     if (bitset.Get(i))
                     {
-                        storages[i].Remove(id.Number);
+                        storages[i].Remove(id.Id);
                         bitset.Clear(i);
                         OnEntityChanged(id, i);
                     }
 
-                    if (TypeId.Entity(storages[i].TypeId) == id.Number)
+                    if (TypeId.Entity(storages[i].TypeId) == id.Id)
                     {
                         targetTypeIndices.Add(i);
                     }
@@ -157,10 +157,10 @@ namespace RelEcs
                         {
                             var storage = GetStorage(index);
 
-                            if (!storage.Has(entity.Number)) continue;
+                            if (!storage.Has(entity.Id)) continue;
                             
-                            storage.Remove(entity.Number);
-                            bitsets[entity.Number].Clear(index);
+                            storage.Remove(entity.Id);
+                            bitsets[entity.Id].Clear(index);
                             OnEntityChanged(entity, index);
                         }
                     }
@@ -174,7 +174,7 @@ namespace RelEcs
 
             id.Generation++;
             unusedIds[unusedIdCount++] = id;
-            entities[id.Number] = EntityId.None;
+            entities[id.Id] = Identity.None;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -188,10 +188,10 @@ namespace RelEcs
         {
             var entity = Spawn();
 
-            AddComponent<TriggerSystemList>(entity.Id);
-            AddComponent<TriggerLifeTime>(entity.Id);
+            AddComponent<TriggerSystemList>(entity.Identity);
+            AddComponent<TriggerLifeTime>(entity.Identity);
 
-            return ref AddComponent<Trigger<T>>(entity.Id);
+            return ref AddComponent<Trigger<T>>(entity.Identity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -199,8 +199,8 @@ namespace RelEcs
         {
             var systemType = system.GetType();
 
-            var triggerStorage = GetStorage<Trigger<T>>(EntityId.None);
-            var systemStorage = GetStorage<TriggerSystemList>(EntityId.None);
+            var triggerStorage = GetStorage<Trigger<T>>(Identity.None);
+            var systemStorage = GetStorage<TriggerSystemList>(Identity.None);
 
             var mask = new Mask();
 
@@ -213,25 +213,25 @@ namespace RelEcs
 
             foreach (var entity in query)
             {
-                ref var systemList = ref systemStorage.Get(entity.Id.Number);
+                ref var systemList = ref systemStorage.Get(entity.Identity.Id);
 
                 if (systemList.List.Contains(systemType)) continue;
                 
                 systemList.List.Add(systemType);
-                action(triggerStorage.Get(entity.Id.Number).Value);
+                action(triggerStorage.Get(entity.Identity.Id).Value);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddElement<T>(T element) where T : class
         {
-            AddComponent<Element<T>>(world.Id) = new Element<T>(element);
+            AddComponent<Element<T>>(world.Identity) = new Element<T>(element);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetElement<T>() where T : class
         {
-            return GetComponent<Element<T>>(world.Id).Value;
+            return GetComponent<Element<T>>(world.Identity).Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -250,23 +250,23 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasElement<T>() where T : class
         {
-            return HasComponent<Element<T>>(world.Id);
+            return HasComponent<Element<T>>(world.Identity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveElement<T>() where T : class
         {
-            RemoveComponent<Element<T>>(world.Id);
+            RemoveComponent<Element<T>>(world.Identity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T AddComponent<T>(EntityId id, EntityId target = default, bool spawnTrigger = false) where T : struct
+        public ref T AddComponent<T>(Identity id, Identity target = default, bool spawnTrigger = false) where T : struct
         {
             var storage = GetStorage<T>(target);
 
-            bitsets[id.Number].Set(storage.Index);
+            bitsets[id.Id].Set(storage.Index);
 
-            ref var component = ref storage.Add(id.Number);
+            ref var component = ref storage.Add(id.Id);
 
             OnEntityChanged(id, storage.Index);
             
@@ -284,50 +284,50 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T GetComponent<T>(EntityId id, EntityId target = default) where T : struct
+        public ref T GetComponent<T>(Identity id, Identity target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
-            return ref storage.Get(id.Number);
+            return ref storage.Get(id.Id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasComponent<T>(EntityId id, EntityId target = default) where T : struct
+        public bool HasComponent<T>(Identity id, Identity target = default) where T : struct
         {
-            var typeId = TypeId.Value<T>(target.Number);
+            var typeId = TypeId.Value<T>(target.Id);
 
-            return storageIndices.TryGetValue(typeId, out var index) && bitsets[id.Number].Get(index);
+            return storageIndices.TryGetValue(typeId, out var index) && bitsets[id.Id].Get(index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveComponent<T>(EntityId id, EntityId target = default) where T : struct
+        public void RemoveComponent<T>(Identity id, Identity target = default) where T : struct
         {
             var storage = GetStorage<T>(target);
 
-            storage.Remove(id.Number);
+            storage.Remove(id.Id);
 
-            bitsets[id.Number].Clear(storage.Index);
+            bitsets[id.Id].Clear(storage.Index);
 
             OnEntityChanged(id, storage.Index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void OnEntityChanged(EntityId entityId, int typeIndex)
+        private void OnEntityChanged(Identity identity, int typeIndex)
         {
             var list = queriesByTypeId[typeIndex];
 
             if (list == null) return;
             foreach (var query in list)
             {
-                var isCompatible = IsEntityCompatibleWithMask(query.Mask, entityId);
-                var isInQuery = query.HasEntity(entityId);
+                var isCompatible = IsEntityCompatibleWithMask(query.Mask, identity);
+                var isInQuery = query.HasEntity(identity);
 
                 if (isCompatible && !isInQuery)
                 {
-                    query.AddEntity(entityId);
+                    query.AddEntity(identity);
                 }
                 else if (!isCompatible && isInQuery)
                 {
-                    query.RemoveEntity(entityId);
+                    query.RemoveEntity(identity);
                 }
             }
         }
@@ -376,36 +376,36 @@ namespace RelEcs
 
             for (var i = 0; i <= entityCount; i++)
             {
-                var entityId = entities[i];
+                var identity = entities[i];
 
-                if (!IsAlive(entityId) || entityId == world.Id)
+                if (!IsAlive(identity) || identity == world.Identity)
                 {
                     continue;
                 }
 
-                if (!IsEntityCompatibleWithMask(mask, entityId))
+                if (!IsEntityCompatibleWithMask(mask, identity))
                 {
                     continue;
                 }
 
-                query.AddEntity(entityId);
+                query.AddEntity(identity);
             }
 
             return query;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsEntityCompatibleWithMask(Mask mask, EntityId entityId)
+        bool IsEntityCompatibleWithMask(Mask mask, Identity identity)
         {
-            return !bitsets[entityId.Number].HasAnyBitSet(mask.NotBitSet)
-            && bitsets[entityId.Number].HasAllBitsSet(mask.HasBitSet)
-            && (mask.AnyBitSet.Count == 0 || bitsets[entityId.Number].HasAnyBitSet(mask.AnyBitSet));
+            return !bitsets[identity.Id].HasAnyBitSet(mask.NotBitSet)
+            && bitsets[identity.Id].HasAllBitsSet(mask.HasBitSet)
+            && (mask.AnyBitSet.Count == 0 || bitsets[identity.Id].HasAnyBitSet(mask.AnyBitSet));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Storage<T> GetStorage<T>(EntityId target) where T : struct
+        public Storage<T> GetStorage<T>(Identity target) where T : struct
         {
-            var typeId = TypeId.Value<T>(target.Number);
+            var typeId = TypeId.Value<T>(target.Id);
 
             if (storageIndices.TryGetValue(typeId, out var index))
             {
@@ -437,7 +437,7 @@ namespace RelEcs
             info.AllocatedEntityCount = entities.Length;
             info.ComponentCount = storageCount;
             info.RelationCount = relationCount;
-            info.ElementCount = bitsets[world.Id.Number].Count;
+            info.ElementCount = bitsets[world.Identity.Id].Count;
             info.SystemCount = SystemExecutionTimes.Count;
             info.CachedQueryCount = hashedQueries.Count;
 
@@ -450,9 +450,9 @@ namespace RelEcs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsAlive(EntityId id)
+        public bool IsAlive(Identity id)
         {
-            return entities[id.Number] != EntityId.None;
+            return entities[id.Id] != Identity.None;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

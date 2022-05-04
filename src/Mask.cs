@@ -96,7 +96,6 @@ namespace RelEcs
 
             isBuilt = true;
 #endif
-            Types.Sort();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -104,12 +103,9 @@ namespace RelEcs
         {
             var hash = Types.Count;
 
-            foreach (var index in Types)
-            {
-                hash = unchecked(hash * HasBitSet.GetHashCode() + index);
-                hash = unchecked(hash * NotBitSet.GetHashCode() + index);
-                hash = unchecked(hash * AnyBitSet.GetHashCode() + index);
-            }
+            hash = unchecked(hash * 314159 + HasBitSet.GetHashCode());
+            hash = unchecked(hash * 314159 - NotBitSet.GetHashCode());
+            hash = unchecked(hash * 314159 + AnyBitSet.GetHashCode() * 2);
 
             return hash;
         }

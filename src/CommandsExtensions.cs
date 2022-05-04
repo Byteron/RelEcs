@@ -11,11 +11,11 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C>();
 
-            var storage = commands.GetStorage<C>(EntityId.None);
+            var storage = commands.GetStorage<C>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage.Get(entity.Id.Number));
+                action(ref storage.Get(entity.Identity.Id));
             }
         }
 
@@ -27,12 +27,12 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id));
             }
         }
 
@@ -45,13 +45,13 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id));
             }
         }
 
@@ -65,14 +65,14 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id));
             }
         }
 
@@ -87,15 +87,15 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id));
             }
         }
 
@@ -111,16 +111,16 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
-            var storage6 = commands.GetStorage<C6>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
+            var storage6 = commands.GetStorage<C6>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id));
             }
         }
 
@@ -137,17 +137,17 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
-            var storage6 = commands.GetStorage<C6>(EntityId.None);
-            var storage7 = commands.GetStorage<C7>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
+            var storage6 = commands.GetStorage<C6>(Identity.None);
+            var storage7 = commands.GetStorage<C7>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id));
             }
         }
 
@@ -165,18 +165,18 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
-            var storage6 = commands.GetStorage<C6>(EntityId.None);
-            var storage7 = commands.GetStorage<C7>(EntityId.None);
-            var storage8 = commands.GetStorage<C8>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
+            var storage6 = commands.GetStorage<C6>(Identity.None);
+            var storage7 = commands.GetStorage<C7>(Identity.None);
+            var storage8 = commands.GetStorage<C8>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number), ref storage8.Get(entity.Id.Number));
+                action(ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id), ref storage8.Get(entity.Identity.Id));
             }
         }
 
@@ -199,11 +199,11 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C>();
 
-            var storage = commands.GetStorage<C>(EntityId.None);
+            var storage = commands.GetStorage<C>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage.Get(entity.Id.Number));
+                action(entity, ref storage.Get(entity.Identity.Id));
             }
         }
 
@@ -215,12 +215,12 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id));
             }
         }
 
@@ -233,13 +233,13 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id));
             }
         }
 
@@ -253,14 +253,14 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id));
             }
         }
 
@@ -275,15 +275,15 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id));
             }
         }
 
@@ -299,16 +299,16 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
-            var storage6 = commands.GetStorage<C6>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
+            var storage6 = commands.GetStorage<C6>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id));
             }
         }
 
@@ -325,17 +325,17 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
-            var storage6 = commands.GetStorage<C6>(EntityId.None);
-            var storage7 = commands.GetStorage<C7>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
+            var storage6 = commands.GetStorage<C6>(Identity.None);
+            var storage7 = commands.GetStorage<C7>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id));
             }
         }
 
@@ -353,18 +353,18 @@ namespace RelEcs
         {
             var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
 
-            var storage1 = commands.GetStorage<C1>(EntityId.None);
-            var storage2 = commands.GetStorage<C2>(EntityId.None);
-            var storage3 = commands.GetStorage<C3>(EntityId.None);
-            var storage4 = commands.GetStorage<C4>(EntityId.None);
-            var storage5 = commands.GetStorage<C5>(EntityId.None);
-            var storage6 = commands.GetStorage<C6>(EntityId.None);
-            var storage7 = commands.GetStorage<C7>(EntityId.None);
-            var storage8 = commands.GetStorage<C8>(EntityId.None);
+            var storage1 = commands.GetStorage<C1>(Identity.None);
+            var storage2 = commands.GetStorage<C2>(Identity.None);
+            var storage3 = commands.GetStorage<C3>(Identity.None);
+            var storage4 = commands.GetStorage<C4>(Identity.None);
+            var storage5 = commands.GetStorage<C5>(Identity.None);
+            var storage6 = commands.GetStorage<C6>(Identity.None);
+            var storage7 = commands.GetStorage<C7>(Identity.None);
+            var storage8 = commands.GetStorage<C8>(Identity.None);
 
             foreach (var entity in query)
             {
-                action(entity, ref storage1.Get(entity.Id.Number), ref storage2.Get(entity.Id.Number), ref storage3.Get(entity.Id.Number), ref storage4.Get(entity.Id.Number), ref storage5.Get(entity.Id.Number), ref storage6.Get(entity.Id.Number), ref storage7.Get(entity.Id.Number), ref storage8.Get(entity.Id.Number));
+                action(entity, ref storage1.Get(entity.Identity.Id), ref storage2.Get(entity.Identity.Id), ref storage3.Get(entity.Identity.Id), ref storage4.Get(entity.Identity.Id), ref storage5.Get(entity.Identity.Id), ref storage6.Get(entity.Identity.Id), ref storage7.Get(entity.Identity.Id), ref storage8.Get(entity.Identity.Id));
             }
         }
     }
