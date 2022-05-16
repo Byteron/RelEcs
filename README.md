@@ -67,15 +67,15 @@ var frank = world.Spawn();
 
 // Relations consist of components, associated with a "target".
 // The target can either be another component, or an entity.
-bob.Add<Likes, Apples>();
-//   Component ^^^^^^
+bob.Add<Likes>(typeof(Apples));
+//   Component ^^^^^^^^^^^^^^
 
 frank.Add(new Owes { Amount = 100 }, bob);
 //                            Entity ^^^
 
 // You can test if an entity has a component or a relation.
 bool doesBobHaveApples = bob.Has<Apples>();
-bool doesBobLikeApples = bob.Has<Likes, Apples>();
+bool doesBobLikeApples = bob.Has<Likes>(typeof(Apples));
 
 // Or get it directly.
 // In this case, we retrieve the amount that Frank owes Bob.
@@ -174,42 +174,6 @@ commands.Receive((MyTrigger e) =>
 
 // NOTE: Triggers live until the end of the next frame, to make sure every system receives them.
 // Each trigger is always received exactly ONCE per system.
-```
-
-## Built-in Triggers
-
-```csharp
-var entity = commands.Spawn();
-
-// When you add a component, usually no triggers are created.
-// You can pass in an optional parameter 'spawnTrigger' to spawn an Added<T> trigger.
-entity.Add(new Name("Walter")); // No trigger.
-entity.Add(new Name("Walter"), true); // Trigger.
-
-// This also works for "tag" components without any data,
-// and components that have data, but where no initial values are needed.
-entity.Add<Old>(); // No trigger.
-entity.Add<Old>(true); // Trigger.
-
-// You can receive these built-in triggers like any other triggers.
-commands.Receive((Added<Old> addedTrigger) =>
-{
-    Console.WriteLine("Old component added to " + addedTrigger.Entity);
-})
-```
-
-## Built-in Components
-
-```csharp
-struct Person { }
-
-var entity = commands.Spawn();
-
-// You can also use the built-in tag component `IsA` for relations.
-entity.IsA<Person>(); // Same as: entity.Add<IsA, Person>()
-
-// And you can query for it with a built-in `IsA` method.
-var query = commands.Query().IsA<Person>(); // Same as: Query().Has<IsA, Person>()
 ```
 
 ## SystemGroup

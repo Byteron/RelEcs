@@ -1,167 +1,74 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace RelEcs
+namespace RelEcs;
+
+public readonly struct Commands
 {
-    public sealed class Commands
+    public readonly World World;
+    readonly ISystem system;
+
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Commands(World world, ISystem system)
     {
-        readonly World world;
-        readonly ISystem system;
-
-        internal Commands(World world, ISystem system)
-        {
-            this.world = world;
-            this.system = system;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity Spawn()
-        {
-            return world.Spawn();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<T>() where T : struct
-        {
-            world.Send<T>();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<T>(T triggerStruct) where T : struct
-        {
-            world.Send(triggerStruct);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Receive<T>(Action<T> action) where T : struct
-        {
-            world.Receive(system, action);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddElement<T>(T element) where T : class
-        {
-            world.AddElement(element);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetElement<T>() where T : class
-        {
-            return world.GetElement<T>();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetElement<T>(out T element) where T : class
-        {
-            return world.TryGetElement(out element);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasElement<T>() where T : class
-        {
-            return world.HasElement<T>();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveElement<T>() where T : class
-        {
-            world.RemoveElement<T>();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Query()
-        {
-            return new QueryCommands(world);
-        }
-
-        public Storage<T> GetStorage<T>(Identity target) where T : struct
-        {
-            return world.GetStorage<T>(target);
-        }
+        World = world;
+        this.system = system;
     }
 
-    public sealed class QueryCommands
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Entity Spawn()
     {
-        internal readonly World World;
+        return World.Spawn();
+    }
 
-        readonly Mask mask;
-        
-        Query query;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Send<T>(T triggerStruct = default) where T : struct
+    {
+        World.Send(triggerStruct);
+    }
 
-        public QueryCommands(World world)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Receive<T>(Action<T> action) where T : struct
+    {
+        World.Receive(system, action);
+    }
+    
+    public void AddElement<T>(T element) where T : class
+    {
+        World.AddElement(element);
+    }
+
+    public T GetElement<T>() where T : class
+    {
+        return World.GetElement<T>();
+    }
+
+    public bool TryGetElement<T>(out T element) where T : class
+    {
+        if (World.HasElement<T>())
         {
-            World = world;
-            mask = new Mask();
+            element = World.GetElement<T>();
+            return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Has<T>(Entity target = default) where T : struct
-        {
-            var typeIndex = World.GetStorage<T>(target.Identity).Index;
-            mask.Has(typeIndex);
-            return this;
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Has<T, TT>() where T : struct where TT : struct
-        {
-            var typeEntity = World.GetTypeEntity<TT>();
-            Has<T>(typeEntity);
-            return this;
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands IsA(Entity target = default)
-        {
-            Has<IsA>(target);
-            return this;
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands IsA<T>() where T : struct
-        {
-            Has<IsA, T>();
-            return this;
-        }
+        element = null;
+        return false;
+    }
+    
+    public bool HasElement<T>() where T : class
+    {
+        return World.HasElement<T>();
+    }
+    
+    public void RemoveElement<T>() where T : class
+    {
+        World.RemoveElement<T>();
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Not<T>(Entity target = default) where T : struct
-        {
-            var typeIndex = World.GetStorage<T>(target.Identity).Index;
-            mask.Not(typeIndex);
-            return this;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public QueryCommands Any<T>(Entity target = default) where T : struct
-        {
-            var typeIndex = World.GetStorage<T>(target.Identity).Index;
-            mask.Any(typeIndex);
-            return this;
-        }
-
-        public int Count
-        {
-            get
-            {
-                if (query != null) return query.Count;
-                
-                mask.Lock();
-                query = World.GetQuery(mask);
-
-                return query.Count;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Query.Enumerator GetEnumerator()
-        {
-            if (query != null) return query.GetEnumerator();
-            
-            mask.Lock();
-            query = World.GetQuery(mask);
-
-            return query.GetEnumerator();
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public QueryCommands Query()
+    {
+        return new QueryCommands(World);
     }
 }

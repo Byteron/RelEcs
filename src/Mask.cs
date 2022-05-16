@@ -1,113 +1,44 @@
-
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace RelEcs
+namespace RelEcs;
+
+public sealed class Mask
 {
-    public sealed class Mask
+    internal readonly List<StorageType> HasTypes = new();
+    internal readonly List<StorageType> NotTypes = new();
+    internal readonly List<StorageType> AnyTypes = new();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Has(StorageType type)
     {
-        internal readonly BitSet HasBitSet;
-        internal readonly BitSet NotBitSet;
-        internal readonly BitSet AnyBitSet;
+        HasTypes.Add(type);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Not(StorageType type)
+    {
+        NotTypes.Add(type);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Any(StorageType type)
+    {
+        AnyTypes.Add(type);
+    }
 
-        internal readonly List<int> Types;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode()
+    {
+        var hash = HasTypes.Count + AnyTypes.Count + NotTypes.Count;
 
-#if DEBUG
-        bool isBuilt;
-#endif
-
-        public Mask()
+        unchecked
         {
-            Types = new List<int>();
-
-            HasBitSet = new BitSet();
-            NotBitSet = new BitSet();
-            AnyBitSet = new BitSet();
-#if DEBUG
-            isBuilt = false;
-#endif
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Has(int typeIndex)
-        {
-#if DEBUG
-            if (isBuilt)
-            {
-                throw new Exception("Cant change built mask.");
-            }
-
-            if (Types.IndexOf(typeIndex) != -1)
-            {
-                throw new Exception($"duplicate type in constrains list");
-            }
-#endif
-            HasBitSet.Set(typeIndex);
-            Types.Add(typeIndex);
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Any(int typeIndex)
-        {
-#if DEBUG
-            if (isBuilt)
-            {
-                throw new Exception("Cant change built mask.");
-            }
-
-            if (Types.IndexOf(typeIndex) != -1)
-            {
-                throw new Exception($"duplicate type in constrains list");
-            }
-#endif
-
-            AnyBitSet.Set(typeIndex);
-            Types.Add(typeIndex);
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Not(int typeIndex)
-        {
-#if DEBUG
-            if (isBuilt)
-            {
-                throw new Exception("Cant change built mask.");
-            }
-
-            if (Types.IndexOf(typeIndex) != -1)
-            {
-                throw new Exception($"duplicate type in constrains list");
-            }
-#endif
-
-            NotBitSet.Set(typeIndex);
-            Types.Add(typeIndex);
+            foreach (var type in HasTypes) hash = hash * 314159 + type.Value.GetHashCode();
+            foreach (var type in NotTypes) hash = hash * 314159 - type.Value.GetHashCode();
+            foreach (var type in AnyTypes) hash *= 314159 * type.Value.GetHashCode();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Lock(int capacity = 512)
-        {
-#if DEBUG
-            if (isBuilt)
-            {
-                throw new Exception("Cant change built mask.");
-            }
-
-            isBuilt = true;
-#endif
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode()
-        {
-            var hash = Types.Count;
-
-            hash = unchecked(hash * 314159 + HasBitSet.GetHashCode());
-            hash = unchecked(hash * 314159 - NotBitSet.GetHashCode());
-            hash = unchecked(hash * 314159 + AnyBitSet.GetHashCode() * 2);
-
-            return hash;
-        }
+        return hash;
     }
 }

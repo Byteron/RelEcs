@@ -1,41 +1,42 @@
 using System;
 using System.Collections.Generic;
 
-namespace RelEcs
+namespace RelEcs;
+
+public struct Added<T>
 {
-    public struct Added<T>
-    {
-        public Entity Entity;
-        public Added(Entity entity) => Entity = entity;
-    }
+    public Entity Entity;
+    public Added(Entity entity) => Entity = entity;
+}
 
-    internal struct TriggerSystemList : IReset<TriggerSystemList>
-    {
-        public List<Type> List;
+public struct Trigger<T> where T : struct
+{
+    public T Value;
+    public Trigger(T value) => Value = value;
+}
 
-        public void Reset(ref TriggerSystemList c)
+internal struct TriggerSystemList
+{
+    public readonly List<Type> List;
+    public TriggerSystemList(List<Type> list) => List = list;
+}
+
+internal struct TriggerLifeTime { public int Value; }
+
+internal class TriggerLifeTimeSystem : ISystem
+{
+    public void Run(Commands commands)
+    {
+        var query = commands.Query().Has<TriggerLifeTime>();
+
+        query.ForEach((Entity entity, ref TriggerSystemList systemList, ref TriggerLifeTime lifeTime) =>
         {
-            c.List = new List<Type>();
-        }
-    }
+            lifeTime.Value++;
 
-    internal struct TriggerLifeTime { public int Value; }
-
-    internal class TriggerLifeTimeSystem : ISystem
-    {
-        public void Run(Commands commands)
-        {
-            var query = commands.Query().Has<TriggerLifeTime>();
-
-            query.ForEach((Entity entity, ref TriggerLifeTime lifeTime) =>
-            {
-                lifeTime.Value++;
-
-                if (lifeTime.Value == 2)
-                {
-                    entity.Despawn();
-                }
-            });
-        }
+            if (lifeTime.Value < 2) return;
+            
+            ListPool<Type>.Add(systemList.List);
+            entity.Despawn();
+        });
     }
 }
