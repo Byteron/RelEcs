@@ -315,9 +315,23 @@ public sealed class World
         
         foreach (var type in hasAnyTarget)
         {
-            if (!relationsByTypes.TryGetValue(type.TypeId, out var list)) return false;
+            if (!relationsByTypes.TryGetValue(type.TypeId, out var list))
+            {
+                matchesRelation = false;
+                continue;
+            }
+            
             matchesRelation &= table.Types.Overlaps(list);
         }
+        
+        ListPool<StorageType>.Add(has);
+        ListPool<StorageType>.Add(not);
+        ListPool<StorageType>.Add(any);
+        ListPool<StorageType>.Add(hasAnyTarget);
+        ListPool<StorageType>.Add(notAnyTarget);
+        ListPool<StorageType>.Add(anyAnyTarget);
+
+        return matchesComponents && matchesRelation;
 
         return matchesComponents && matchesRelation;
     }
