@@ -6,8 +6,7 @@ namespace RelEcs;
 public static class CommandsExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ForEach<C>(this Commands commands, Action<C> action) 
-        where C : IComponent
+    public static void ForEach<C>(this Commands commands, Action<C> action)
     {
         var query = commands.Query().Has<C>();
 
@@ -28,8 +27,6 @@ public static class CommandsExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2>(this Commands commands, Action<C1, C2> action)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>();
 
@@ -51,9 +48,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3>(this Commands commands, Action<C1, C2, C3> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>();
 
@@ -76,10 +70,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4>(this Commands commands, Action<C1, C2, C3, C4> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>();
     
@@ -103,11 +93,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5>(this Commands commands, Action<C1, C2, C3, C4, C5> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
     
@@ -132,12 +117,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6>(this Commands commands, Action<C1, C2, C3, C4, C5, C6> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
     
@@ -163,13 +142,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7>(this Commands commands, Action<C1, C2, C3, C4, C5, C6, C7> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
     
@@ -196,14 +168,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7, C8>(this Commands commands, Action<C1, C2, C3, C4, C5, C6, C7, C8> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
 
@@ -251,7 +215,6 @@ public static class CommandsExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C>(this Commands commands, Action<Entity, C> action)
-        where C : IComponent
     {
         var query = commands.Query().Has<C>();
 
@@ -273,8 +236,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2>(this Commands commands, Action<Entity, C1, C2> action)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>();
 
@@ -297,9 +258,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3>(this Commands commands, Action<Entity, C1, C2, C3> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>();
 
@@ -323,10 +281,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4>(this Commands commands, Action<Entity, C1, C2, C3, C4> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>();
     
@@ -351,11 +305,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5>(this Commands commands, Action<Entity, C1, C2, C3, C4, C5> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
     
@@ -381,12 +330,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6>(this Commands commands, Action<Entity, C1, C2, C3, C4, C5, C6> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
     
@@ -413,13 +356,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7>(this Commands commands, Action<Entity, C1, C2, C3, C4, C5, C6, C7> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
     
@@ -447,14 +383,6 @@ public static class CommandsExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7, C8>(this Commands commands, Action<Entity, C1, C2, C3, C4, C5, C6, C7, C8> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         var query = commands.Query().Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
     

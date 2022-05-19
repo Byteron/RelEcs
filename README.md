@@ -22,8 +22,8 @@ entity.Despawn();
 
 ```csharp
 // Components are just plain old data structs.
-class Position : IComponent { public int X, Y; }
-class Velocity : IComponent { public int X, Y; }
+class Position { public int X, Y; }
+class Velocity { public int X, Y; }
 
 // Add new components to an entity.
 entity.Add<Position>().Add(new Velocity { X = 1, Y = 0 });
@@ -39,7 +39,7 @@ entity.Remove<Position>();
 
 ```csharp
 // Elements are unique class-based components that are attached directly to worlds.
-class SavePath : IElement { string Value; }
+class SavePath { string Value; }
 
 // Add an element to the world.
 // You can only have one element per type in a world.
@@ -57,8 +57,8 @@ world.RemoveElement<SavePath>();
 
 ```csharp
 // Like components, relations are structs.
-class Likes : IComponent { }
-class Owes : IComponent { public int Amount; }
+class Likes { }
+class Owes { public int Amount; }
 
 class Apples { }
 
@@ -154,7 +154,7 @@ var appleLovers = commands.Query()
 ```csharp
 // Triggers are also just structs and very similar to components.
 // They act much like a simplified, ECS version of C# events.
-struct MyTrigger : ITrigger { }
+struct MyTrigger { }
 
 // You can send a bunch of triggers inside of a system.
 commands.Send<MyTrigger>();

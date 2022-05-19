@@ -7,8 +7,6 @@ public static class QueryExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         query.Has<C1>().Has<C2>();
         return query;
@@ -16,9 +14,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2, C3>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         query.Has<C1>().Has<C2>().Has<C3>();
         return query;
@@ -26,10 +21,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2, C3, C4>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         query.Has<C1>().Has<C2>().Has<C3>().Has<C4>();
         return query;
@@ -37,11 +28,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2, C3, C4, C5>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
         return query;
@@ -49,12 +35,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2, C3, C4, C5, C6>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
         return query;
@@ -62,13 +42,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
         return query;
@@ -76,14 +49,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Has<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         query.Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
         return query;
@@ -91,8 +56,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         query.Not<C1>().Not<C2>();
         return query;
@@ -100,9 +63,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2, C3>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         query.Not<C1>().Not<C2>().Not<C3>();
         return query;
@@ -110,10 +70,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2, C3, C4>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         query.Not<C1>().Not<C2>().Not<C3>().Not<C4>();
         return query;
@@ -121,11 +77,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2, C3, C4, C5>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>();
         return query;
@@ -133,12 +84,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2, C3, C4, C5, C6>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>().Not<C6>();
         return query;
@@ -146,13 +91,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>().Not<C6>().Not<C7>();
         return query;
@@ -160,14 +98,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Not<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         query.Not<C1>().Not<C2>().Not<C3>().Not<C4>().Not<C5>().Not<C6>().Not<C7>().Not<C8>();
         return query;
@@ -175,8 +105,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         query.Any<C1>().Any<C2>();
         return query;
@@ -184,9 +112,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2, C3>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         query.Any<C1>().Any<C2>().Any<C3>();
         return query;
@@ -194,10 +119,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2, C3, C4>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         query.Any<C1>().Any<C2>().Any<C3>().Any<C4>();
         return query;
@@ -205,11 +126,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2, C3, C4, C5>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>();
         return query;
@@ -217,12 +133,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2, C3, C4, C5, C6>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>().Any<C6>();
         return query;
@@ -230,13 +140,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>().Any<C6>().Any<C7>();
         return query;
@@ -244,14 +147,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QueryCommands Any<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         query.Any<C1>().Any<C2>().Any<C3>().Any<C4>().Any<C5>().Any<C6>().Any<C7>().Any<C8>();
         return query;
@@ -260,7 +155,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C>(this QueryCommands query, Action<C> action)
-        where C : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -280,8 +174,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2>(this QueryCommands query, Action<C1, C2> action)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -302,9 +194,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3>(this QueryCommands query, Action<C1, C2, C3> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -326,10 +215,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4>(this QueryCommands query, Action<C1, C2, C3, C4> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -352,11 +237,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5>(this QueryCommands query, Action<C1, C2, C3, C4, C5> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -381,12 +261,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6>(this QueryCommands query,
         Action<C1, C2, C3, C4, C5, C6> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -413,13 +287,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query,
         Action<C1, C2, C3, C4, C5, C6, C7> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -447,14 +314,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query,
         Action<C1, C2, C3, C4, C5, C6, C7, C8> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -501,7 +360,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C>(this QueryCommands query, Action<Entity, C> action)
-        where C : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -522,8 +380,6 @@ public static class QueryExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2>(this QueryCommands query, Action<Entity, C1, C2> action)
-        where C1 : IComponent
-        where C2 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -545,9 +401,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3>(this QueryCommands query, Action<Entity, C1, C2, C3> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -570,10 +423,6 @@ public static class QueryExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4>(this QueryCommands query, Action<Entity, C1, C2, C3, C4> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -599,11 +448,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5>(this QueryCommands query,
         Action<Entity, C1, C2, C3, C4, C5> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -630,12 +474,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6>(this QueryCommands query,
         Action<Entity, C1, C2, C3, C4, C5, C6> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -663,13 +501,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7>(this QueryCommands query,
         Action<Entity, C1, C2, C3, C4, C5, C6, C7> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
     {
         foreach (var table in query.Tables)
         {
@@ -698,14 +529,6 @@ public static class QueryExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ForEach<C1, C2, C3, C4, C5, C6, C7, C8>(this QueryCommands query, 
         Action<Entity, C1, C2, C3, C4, C5, C6, C7, C8> action)
-        where C1 : IComponent
-        where C2 : IComponent
-        where C3 : IComponent
-        where C4 : IComponent
-        where C5 : IComponent
-        where C6 : IComponent
-        where C7 : IComponent
-        where C8 : IComponent
     {
         foreach (var table in query.Tables)
         {

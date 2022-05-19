@@ -1,6 +1,6 @@
 namespace RelEcs;
 
-internal class Element<T> : IComponent where T : class, IElement
+internal class Element<T> where T : class
 {
     public readonly T Value;
     public Element(T value) => Value = value;

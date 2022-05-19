@@ -5,11 +5,6 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public interface ITrigger { }
-public interface IElement { }
-public interface IComponent { }
-public interface IReset { }
-
 public sealed class World
 {
     static int worldCount;
@@ -103,7 +98,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct) where T : class, ITrigger
+    public void Send<T>(T triggerStruct) where T : class
     {
         var entity = Spawn();
         AddComponent(entity.Identity, new TriggerSystemList(ListPool<Type>.Get()));
@@ -112,7 +107,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(ISystem system, Action<T> action) where T : class, ITrigger
+    public void Receive<T>(ISystem system, Action<T> action) where T : class
     {
         var systemType = system.GetType();
 
@@ -140,28 +135,28 @@ public sealed class World
         }
     }
 
-    public void AddElement<T>(T element) where T : class, IElement
+    public void AddElement<T>(T element) where T : class
     {
         world.Add(new Element<T>(element));
     }
 
-    public T GetElement<T>() where T : class, IElement
+    public T GetElement<T>() where T : class
     {
         return world.Get<Element<T>>().Value;
     }
 
-    public bool HasElement<T>() where T : class, IElement
+    public bool HasElement<T>() where T : class
     {
         return world.Has<Element<T>>();
     }
 
-    public void RemoveElement<T>() where T : class, IElement
+    public void RemoveElement<T>() where T : class
     {
         world.Remove<Element<T>>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class, IComponent
+    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
         AddComponent(type, identity, data);
@@ -205,7 +200,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T GetComponent<T>(Identity identity, Identity target = default) where T: class, IComponent
+    public ref T GetComponent<T>(Identity identity, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
 
@@ -216,7 +211,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasComponent<T>(Identity identity, Identity target = default) where T: class, IComponent
+    public bool HasComponent<T>(Identity identity, Identity target = default) where T: class
     {
         var meta = entities[identity.Id];
 
@@ -227,7 +222,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RemoveComponent<T>(Identity identity, Identity target = default) where T: class, IComponent
+    public void RemoveComponent<T>(Identity identity, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
         RemoveComponent(type, identity);
@@ -351,7 +346,7 @@ public sealed class World
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal Entity[] GetTargets<T>(Identity identity) where T : class, IComponent
+    internal Entity[] GetTargets<T>(Identity identity) where T : class
     {
         var type = StorageType.Create<T>(Identity.None);
         
@@ -476,7 +471,7 @@ public sealed class World
     }
 }
 
-public sealed class WorldInfo : IElement
+public sealed class WorldInfo
 {
     public readonly int WorldId;
     public int EntityCount;

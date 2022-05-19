@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace RelEcs;
 
-public class Trigger<T> : IComponent
+public class Trigger<T>
 {
     public T Value;
     public Trigger(T value) => Value = value;
 }
 
-internal class TriggerSystemList : IComponent
+internal class TriggerSystemList
 {
     public readonly List<Type> List;
     public TriggerSystemList(List<Type> list) => List = list;
 }
 
-internal class TriggerLifeTime : IComponent { public int Value; }
+internal class TriggerLifeTime { public int Value; }
 
 internal class TriggerLifeTimeSystem : ISystem
 {
