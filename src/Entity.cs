@@ -23,36 +23,36 @@ public readonly struct Entity
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(Entity target = default) where T : struct
+    public Entity Add<T>(Entity target = default) where T : class, IComponent, new()
     {
-        world.AddComponent<T>(Identity, default, target.Identity);
+        world.AddComponent(Identity, new T(), target.Identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(Type type) where T : struct
+    public Entity Add<T>(Type type) where T : class, IComponent, new()
     {
         var identity = world.GetTypeIdentity(type);
-        world.AddComponent<T>(Identity, default, identity);
+        world.AddComponent(Identity, new T(), identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(T data) where T : struct
+    public Entity Add<T>(T data) where T : class, IComponent
     {
         world.AddComponent(Identity, data);
         return this;
     }
         
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(T data, Entity target) where T : struct
+    public Entity Add<T>(T data, Entity target) where T : class, IComponent
     {
         world.AddComponent(Identity, data, target.Identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(T data, Type type) where T : struct
+    public Entity Add<T>(T data, Type type) where T : class, IComponent
     {
         var identity = world.GetTypeIdentity(type);
         world.AddComponent(Identity, data, identity);
@@ -60,59 +60,92 @@ public readonly struct Entity
     }
         
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T Get<T>() where T : struct
+    public T Get<T>() where T : class, IComponent
     {
-        return ref world.GetComponent<T>(Identity);
+        return world.GetComponent<T>(Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T Get<T>(Entity target) where T : struct
+    public T Get<T>(Entity target) where T : class, IComponent
     {
-        return ref world.GetComponent<T>(Identity, target.Identity);
+        return world.GetComponent<T>(Identity, target.Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T Get<T>(Type type) where T : struct
+    public T Get<T>(Type type) where T : class, IComponent
     {
         var identity = world.GetTypeIdentity(type);
-        return ref world.GetComponent<T>(Identity, identity);
+        return world.GetComponent<T>(Identity, identity);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGet<T>(out T component) where T : class, IComponent
+    {
+        return TryGet(None, out component);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Has<T>() where T : struct
+    public bool TryGet<T>(Entity target, out T component) where T : class, IComponent
+    {
+        if (world.HasComponent<T>(Identity))
+        {
+            component = world.GetComponent<T>(Identity, target.Identity);
+            return true;
+        }
+
+        component = null;
+        return false;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGet<T>(Type type, out T component) where T : class, IComponent
+    {
+        var identity = world.GetTypeIdentity(type);
+        if (Has<T>())
+        {
+            component = world.GetComponent<T>(Identity, identity);
+            return true;
+        }
+
+        component = null;
+        return false;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Has<T>() where T : class, IComponent
     {
         return world.HasComponent<T>(Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Has<T>(Entity target) where T : struct
+    public bool Has<T>(Entity target) where T : class, IComponent
     {
         return world.HasComponent<T>(Identity, target.Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Has<T>(Type type) where T : struct
+    public bool Has<T>(Type type) where T : class, IComponent
     {
         var identity = world.GetTypeIdentity(type);
         return world.HasComponent<T>(Identity, identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Remove<T>() where T : struct
+    public Entity Remove<T>() where T : class, IComponent
     {
         world.RemoveComponent<T>(Identity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Remove<T>(Entity target) where T : struct
+    public Entity Remove<T>(Entity target) where T : class, IComponent
     {
         world.RemoveComponent<T>(Identity, target.Identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Remove<T>(Type type) where T : struct
+    public Entity Remove<T>(Type type) where T : class, IComponent
     {
         var identity = world.GetTypeIdentity(type);
         world.RemoveComponent<T>(Identity, identity);
@@ -120,7 +153,7 @@ public readonly struct Entity
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity[] GetTargets<T>() where T : struct
+    public Entity[] GetTargets<T>() where T : class, IComponent
     {
         return world.GetTargets<T>(Identity);
     }

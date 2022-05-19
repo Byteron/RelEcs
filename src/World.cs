@@ -5,6 +5,11 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
+public interface ITrigger { }
+public interface IElement { }
+public interface IComponent { }
+public interface IReset { }
+
 public sealed class World
 {
     static int worldCount;
@@ -98,17 +103,16 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct) where T : struct
+    public void Send<T>(T triggerStruct) where T : class, ITrigger
     {
         var entity = Spawn();
         AddComponent(entity.Identity, new TriggerSystemList(ListPool<Type>.Get()));
-        AddComponent<TriggerLifeTime>(entity.Identity);
-        AddComponent<Trigger<T>>(entity.Identity);
-        GetComponent<Trigger<T>>(entity.Identity) = new Trigger<T>(triggerStruct);
+        AddComponent(entity.Identity, new TriggerLifeTime());
+        AddComponent(entity.Identity, new Trigger<T>(triggerStruct));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(ISystem system, Action<T> action) where T : struct
+    public void Receive<T>(ISystem system, Action<T> action) where T : class, ITrigger
     {
         var systemType = system.GetType();
 
@@ -126,7 +130,7 @@ public sealed class World
 
             for (var i = 0; i < table.Count; i++)
             {
-                ref var systemList = ref systemStorage[i];
+                var systemList = systemStorage[i];
 
                 if (systemList.List.Contains(systemType)) continue;
 
@@ -136,28 +140,28 @@ public sealed class World
         }
     }
 
-    public void AddElement<T>(T element) where T : class
+    public void AddElement<T>(T element) where T : class, IElement
     {
         world.Add(new Element<T>(element));
     }
 
-    public T GetElement<T>() where T : class
+    public T GetElement<T>() where T : class, IElement
     {
         return world.Get<Element<T>>().Value;
     }
 
-    public bool HasElement<T>() where T : class
+    public bool HasElement<T>() where T : class, IElement
     {
         return world.Has<Element<T>>();
     }
 
-    public void RemoveElement<T>() where T : class
+    public void RemoveElement<T>() where T : class, IElement
     {
         world.Remove<Element<T>>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T : struct
+    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class, IComponent
     {
         var type = StorageType.Create<T>(target);
         AddComponent(type, identity, data);
@@ -201,20 +205,20 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T GetComponent<T>(Identity identity, Identity target = default) where T : struct
+    public ref T GetComponent<T>(Identity identity, Identity target = default) where T: class, IComponent
     {
         var type = StorageType.Create<T>(target);
 
-        ref var meta = ref entities[identity.Id];
+        var meta = entities[identity.Id];
         var table = tables[meta.TableId];
         var storage = (T[])table.GetStorage(type); // return storages[indices[type]]
         return ref storage[meta.Row];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasComponent<T>(Identity identity, Identity target = default) where T : struct
+    public bool HasComponent<T>(Identity identity, Identity target = default) where T: class, IComponent
     {
-        ref var meta = ref entities[identity.Id];
+        var meta = entities[identity.Id];
 
         if (meta.Identity == Identity.None) return false;
 
@@ -223,7 +227,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RemoveComponent<T>(Identity identity, Identity target = default) where T : struct
+    public void RemoveComponent<T>(Identity identity, Identity target = default) where T: class, IComponent
     {
         var type = StorageType.Create<T>(target);
         RemoveComponent(type, identity);
@@ -332,8 +336,6 @@ public sealed class World
         ListPool<StorageType>.Add(anyAnyTarget);
 
         return matchesComponents && matchesRelation;
-
-        return matchesComponents && matchesRelation;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -349,7 +351,7 @@ public sealed class World
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal Entity[] GetTargets<T>(Identity identity) where T : struct
+    internal Entity[] GetTargets<T>(Identity identity) where T : class, IComponent
     {
         var type = StorageType.Create<T>(Identity.None);
         
@@ -474,7 +476,7 @@ public sealed class World
     }
 }
 
-public sealed class WorldInfo
+public sealed class WorldInfo : IElement
 {
     public readonly int WorldId;
     public int EntityCount;

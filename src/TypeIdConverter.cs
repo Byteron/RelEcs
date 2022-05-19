@@ -6,7 +6,7 @@ namespace RelEcs;
 public static class TypeIdConverter
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ulong Value<T>(Identity identity) where T : struct
+    public static ulong Value<T>(Identity identity)
     {
         return TypeIdAssigner<T>.Id | (ulong)identity.Generation << 16 | (ulong)identity.Id << 32;
     }
@@ -24,7 +24,7 @@ public static class TypeIdConverter
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsTag<T>() where T : struct
+    public static bool IsTag<T>()
     {
         return TypeIdAssigner<T>.IsTag;
     }
@@ -35,7 +35,7 @@ public static class TypeIdConverter
     }
 
     // ReSharper disable once ClassNeverInstantiated.Local
-    class TypeIdAssigner<T> : TypeIdAssigner where T : struct
+    class TypeIdAssigner<T> : TypeIdAssigner
     {
         // ReSharper disable once StaticMemberInGenericType
         public static readonly ushort Id;

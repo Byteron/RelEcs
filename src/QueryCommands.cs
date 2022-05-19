@@ -31,7 +31,7 @@ public struct QueryCommands
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryCommands Has<T>(Entity target = default) where T : struct
+    public QueryCommands Has<T>(Entity target = default)
     {
         var typeIndex = StorageType.Create<T>(target.Identity);
         mask.Has(typeIndex);
@@ -39,7 +39,7 @@ public struct QueryCommands
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryCommands Has<T>(Type type) where T : struct
+    public QueryCommands Has<T>(Type type)
     {
         var identity = World.GetTypeIdentity(type);
         var typeIndex = StorageType.Create<T>(identity);
@@ -48,7 +48,7 @@ public struct QueryCommands
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryCommands Not<T>(Entity target = default) where T : struct
+    public QueryCommands Not<T>(Entity target = default)
     {
         var typeIndex = StorageType.Create<T>(target.Identity);
         mask.Not(typeIndex);
@@ -56,7 +56,7 @@ public struct QueryCommands
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryCommands Not<T>(Type type) where T : struct
+    public QueryCommands Not<T>(Type type)
     {
         var identity = World.GetTypeIdentity(type);
         var typeIndex = StorageType.Create<T>(identity);
@@ -65,7 +65,7 @@ public struct QueryCommands
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryCommands Any<T>(Entity target = default) where T : struct
+    public QueryCommands Any<T>(Entity target = default)
     {
         var typeIndex = StorageType.Create<T>(target.Identity);
         mask.Any(typeIndex);
@@ -73,7 +73,7 @@ public struct QueryCommands
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryCommands Any<T>(Type type) where T : struct
+    public QueryCommands Any<T>(Type type)
     {
         var identity = World.GetTypeIdentity(type);
         var typeIndex = StorageType.Create<T>(identity);

@@ -22,14 +22,14 @@ entity.Despawn();
 
 ```csharp
 // Components are just plain old data structs.
-struct Position { public int X, Y; }
-struct Velocity { public int X, Y; }
+class Position : IComponent { public int X, Y; }
+class Velocity : IComponent { public int X, Y; }
 
 // Add new components to an entity.
 entity.Add<Position>().Add(new Velocity { X = 1, Y = 0 });
 
 // Get a component from an entity.
-ref var vel = ref entity.Get<Velocity>();
+var vel = entity.Get<Velocity>();
 
 // Remove a component from an entity.
 entity.Remove<Position>();
@@ -39,7 +39,7 @@ entity.Remove<Position>();
 
 ```csharp
 // Elements are unique class-based components that are attached directly to worlds.
-class SavePath { string Value; }
+class SavePath : IElement { string Value; }
 
 // Add an element to the world.
 // You can only have one element per type in a world.
@@ -57,10 +57,10 @@ world.RemoveElement<SavePath>();
 
 ```csharp
 // Like components, relations are structs.
-struct Likes { }
-struct Owes { int Amount; }
+class Likes : IComponent { }
+class Owes : IComponent { public int Amount; }
 
-struct Apples { }
+class Apples { }
 
 var bob = world.Spawn();
 var frank = world.Spawn();
@@ -79,7 +79,7 @@ bool doesBobLikeApples = bob.Has<Likes>(typeof(Apples));
 
 // Or get it directly.
 // In this case, we retrieve the amount that Frank owes Bob.
-ref var owes = ref frank.Get<Owes>(bob);
+var owes = frank.Get<Owes>(bob);
 Console.WriteLine($"Frank owes Bob {owes.Amount} dollars");
 ```
 
@@ -104,13 +104,13 @@ public class MoveSystem : ISystem
     {        
         // Loop over a desired set of components, using ForEach.
         // Beware: Currently only works with components, *not* with relations
-        commands.ForEach((ref Position pos, ref Velocity vel) =>
+        commands.ForEach((Position pos, Velocity vel) =>
         {
             pos.Value += vel.Value;
         });
 
         // You can also access the entity within the loop
-        commands.ForEach((Entity entity, ref Position pos, ref Velocity vel) =>
+        commands.ForEach((Entity entity, Position pos, Velocity vel) =>
         {
             pos.Value += vel.Value;
             // Example: "Tag" a component to show that it has moved.
@@ -154,7 +154,7 @@ var appleLovers = commands.Query()
 ```csharp
 // Triggers are also just structs and very similar to components.
 // They act much like a simplified, ECS version of C# events.
-struct MyTrigger { }
+struct MyTrigger : ITrigger { }
 
 // You can send a bunch of triggers inside of a system.
 commands.Send<MyTrigger>();
