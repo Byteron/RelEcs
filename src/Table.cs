@@ -106,7 +106,7 @@ public sealed class Table
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T[] GetStorage<T>(Identity target) where T : struct
+    public T[] GetStorage<T>(Identity target)
     {
         var type = StorageType.Create<T>(target);
         return (T[])GetStorage(type);

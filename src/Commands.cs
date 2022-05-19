@@ -23,13 +23,13 @@ public readonly struct Commands
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct = default) where T : struct
+    public void Send<T>(T triggerStruct = default) where T : class
     {
         World.Send(triggerStruct);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(Action<T> action) where T : struct
+    public void Receive<T>(Action<T> action) where T : class
     {
         World.Receive(system, action);
     }

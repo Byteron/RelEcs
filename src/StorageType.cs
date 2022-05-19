@@ -23,7 +23,7 @@ public struct StorageType : IComparable<StorageType>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static StorageType Create<T>(Identity identity) where T : struct
+    public static StorageType Create<T>(Identity identity)
     {   
         return new StorageType()
         {

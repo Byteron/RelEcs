@@ -98,17 +98,16 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct) where T : struct
+    public void Send<T>(T triggerStruct) where T : class
     {
         var entity = Spawn();
         AddComponent(entity.Identity, new TriggerSystemList(ListPool<Type>.Get()));
-        AddComponent<TriggerLifeTime>(entity.Identity);
-        AddComponent<Trigger<T>>(entity.Identity);
-        GetComponent<Trigger<T>>(entity.Identity) = new Trigger<T>(triggerStruct);
+        AddComponent(entity.Identity, new TriggerLifeTime());
+        AddComponent(entity.Identity, new Trigger<T>(triggerStruct));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(ISystem system, Action<T> action) where T : struct
+    public void Receive<T>(ISystem system, Action<T> action) where T : class
     {
         var systemType = system.GetType();
 
@@ -126,7 +125,7 @@ public sealed class World
 
             for (var i = 0; i < table.Count; i++)
             {
-                ref var systemList = ref systemStorage[i];
+                var systemList = systemStorage[i];
 
                 if (systemList.List.Contains(systemType)) continue;
 
@@ -157,7 +156,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T : struct
+    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
         AddComponent(type, identity, data);
@@ -201,20 +200,20 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T GetComponent<T>(Identity identity, Identity target = default) where T : struct
+    public ref T GetComponent<T>(Identity identity, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
 
-        ref var meta = ref entities[identity.Id];
+        var meta = entities[identity.Id];
         var table = tables[meta.TableId];
         var storage = (T[])table.GetStorage(type); // return storages[indices[type]]
         return ref storage[meta.Row];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasComponent<T>(Identity identity, Identity target = default) where T : struct
+    public bool HasComponent<T>(Identity identity, Identity target = default) where T: class
     {
-        ref var meta = ref entities[identity.Id];
+        var meta = entities[identity.Id];
 
         if (meta.Identity == Identity.None) return false;
 
@@ -223,7 +222,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RemoveComponent<T>(Identity identity, Identity target = default) where T : struct
+    public void RemoveComponent<T>(Identity identity, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
         RemoveComponent(type, identity);
@@ -332,8 +331,6 @@ public sealed class World
         ListPool<StorageType>.Add(anyAnyTarget);
 
         return matchesComponents && matchesRelation;
-
-        return matchesComponents && matchesRelation;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -349,7 +346,7 @@ public sealed class World
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal Entity[] GetTargets<T>(Identity identity) where T : struct
+    internal Entity[] GetTargets<T>(Identity identity) where T : class
     {
         var type = StorageType.Create<T>(Identity.None);
         
