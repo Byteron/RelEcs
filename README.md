@@ -154,7 +154,7 @@ var appleLovers = commands.Query()
 ```csharp
 // Triggers are also just structs and very similar to components.
 // They act much like a simplified, ECS version of C# events.
-struct MyTrigger { }
+class MyTrigger { }
 
 // You can send a bunch of triggers inside of a system.
 commands.Send<MyTrigger>();
