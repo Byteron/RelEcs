@@ -25,7 +25,7 @@ public readonly struct Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Add<T>(Entity target = default) where T : class, new()
     {
-        world.AddComponent(Identity, new T(), target.Identity);
+        world.AddComponent<T>(Identity, default, target.Identity);
         return this;
     }
     
@@ -33,7 +33,7 @@ public readonly struct Entity
     public Entity Add<T>(Type type) where T : class, new()
     {
         var identity = world.GetTypeIdentity(type);
-        world.AddComponent(Identity, new T(), identity);
+        world.AddComponent<T>(Identity, default, identity);
         return this;
     }
     

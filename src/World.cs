@@ -159,6 +159,7 @@ public sealed class World
     public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class
     {
         var type = StorageType.Create<T>(target);
+        if (!type.IsTag && data == null) throw new Exception("non-tag component cannot be null");
         AddComponent(type, identity, data);
     }
 
@@ -192,9 +193,9 @@ public sealed class World
 
         meta.Row = newRow;
         meta.TableId = newTable.Id;
-
+        
         if (type.IsTag) return;
-
+        
         var storage = newTable.GetStorage(type);
         storage.SetValue(data, newRow);
     }
