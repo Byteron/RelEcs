@@ -21,7 +21,7 @@ entity.Despawn();
 ## Component
 
 ```csharp
-// Components are just plain old data structs.
+// Components are simple classes.
 class Position { public int X, Y; }
 class Velocity { public int X, Y; }
 
@@ -56,7 +56,7 @@ world.RemoveElement<SavePath>();
 ## Relation
 
 ```csharp
-// Like components, relations are structs.
+// Like components, relations are classes.
 class Likes { }
 class Owes { public int Amount; }
 
