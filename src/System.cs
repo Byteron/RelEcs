@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -26,7 +27,7 @@ public sealed class SystemGroup
     {
         foreach (var system in systems)
         {
-            system.Run(new Commands(world, system));
+            system.Run(world);
         }
     }
 }
