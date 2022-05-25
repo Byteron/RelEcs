@@ -21,9 +21,9 @@ internal class TriggerLifeTimeSystem : ISystem
 {
     public void Run(Commands commands)
     {
-        var query = commands.Query().Has<TriggerLifeTime>();
+        var query = commands.Query<Entity, TriggerSystemList, TriggerLifeTime>();
         
-        query.ForEach((Entity entity, TriggerSystemList systemList, TriggerLifeTime lifeTime) =>
+        foreach (var (entity, systemList, lifeTime) in query)
         {
             lifeTime.Value++;
         
@@ -31,6 +31,6 @@ internal class TriggerLifeTimeSystem : ISystem
             
             ListPool<Type>.Add(systemList.List);
             entity.Despawn();
-        });
+        }
     }
 }

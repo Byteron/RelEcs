@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public readonly struct Entity
+public class Entity
 {
     public static Entity None = default;
     public static Entity Any = new(null, Identity.Any);
@@ -25,7 +25,7 @@ public readonly struct Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Add<T>(Entity target = default) where T : class, new()
     {
-        world.AddComponent<T>(Identity, default, target.Identity);
+        world.AddComponent<T>(Identity, default, target?.Identity ?? Identity.None);
         return this;
     }
     
@@ -183,7 +183,7 @@ public readonly struct Entity
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(Entity left, Entity right) => left.Equals(right);
+    public static bool operator ==(Entity left, Entity right) => left is not null && left.Equals(right);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(Entity left, Entity right) => !left.Equals(right);
+    public static bool operator !=(Entity left, Entity right) => left is null || !left.Equals(right);
 }

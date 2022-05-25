@@ -35,7 +35,7 @@ public sealed class World
     
     public World()
     {
-        AddTable(new SortedSet<StorageType>());
+        AddTable(new SortedSet<StorageType> { StorageType.Create<Entity>(Identity.None)});
 
         world = Spawn();
 
@@ -55,7 +55,11 @@ public sealed class World
 
         entities[identity.Id] = new EntityMeta(identity, table.Id, row);
 
-        return new Entity(this, identity);
+        var entity = new Entity(this, identity);
+
+        table.Storages[0].SetValue(entity, row);
+        
+        return entity;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
