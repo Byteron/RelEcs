@@ -93,6 +93,32 @@ Commands commands = new Commands(world);
 // They will be automatically provided for you as the System.Run(Commands) argument.
 ```
 
+
+## Query
+
+```csharp
+// With queries, we can get a list of components that we can iterate through.
+// A simple query looks like this
+var query = commands.Query<Position, Velocity>();
+
+// Now we can loop through these components
+foreach(var (pos, vel) in query)
+{
+    pos.Value += vel.Value;
+}
+        
+// You can create more complex, expressive queries.
+// Here, we request every entity that has a Name component, owes money to Bob and does not have the Dead tag.
+var appleLovers = commands.Query<Name>().Has<Owes>(bob).Not<Dead>();
+
+// Note that we only get the components inside Query<>.
+// Has<T>, Not<T> and Any<T> only filter, but we don't actually get T int he loop.
+foreach(var name in query)
+{
+    Console.WriteLine($"{name.Value} owes bob money and is still alive.")
+}
+```
+
 ## System
 
 ```csharp
@@ -101,21 +127,23 @@ Commands commands = new Commands(world);
 public class MoveSystem : ISystem
 {
     public void Run(Commands commands)
-    {        
-        // Loop over a desired set of components, using ForEach.
-        // Beware: Currently only works with components, *not* with relations
-        commands.ForEach((Position pos, Velocity vel) =>
+    {
+        // Query desired components.
+        var query = commands.Query<Position, Velocity>(); 
+        // Loop over queried of components.
+        foreach(var (pos, vel) in query)
         {
             pos.Value += vel.Value;
-        });
+        }
 
-        // You can also access the entity within the loop
-        commands.ForEach((Entity entity, Position pos, Velocity vel) =>
+        // You can also access the entity within the loop.
+        var query = commands.Query<Entity, Position, Velocity>();
+        foreach (var (entity, pos, vel) in query) =>
         {
             pos.Value += vel.Value;
             // Example: "Tag" a component to show that it has moved.
             entity.Add<Moved>();
-        });
+        }
     }
 }
 ```
@@ -137,16 +165,6 @@ moveSystem.Run(world);
 moveSystem.Run(world);
 
 // Usually, systems are run once a frame, inside your game loop.
-```
-
-## Query
-
-```csharp
-// You can create complex, expressive queries.
-// Here, we request every entity that has a Name and Age component and owes money to Bob.
-var appleLovers = commands.Query()
-    .Has<Name, Age>()
-    .Has<Owes>(bob);
 ```
 
 ## Triggers

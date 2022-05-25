@@ -19,6 +19,7 @@ public sealed class Table
     public readonly SortedSet<StorageType> Types;
     
     public Identity[] Entities => entities;
+    public Array[] Storages => storages;
     
     public int Count { get; private set; }
     public bool IsEmpty => Count == 0;
