@@ -59,6 +59,11 @@ public class Enumerator : IEnumerator, IDisposable
         EntityIndex = 0;
         TableIndex++;
 
+        while (TableIndex < Tables.Count && Tables[TableIndex].Count == 0)
+        {
+            TableIndex++;
+        }
+
         UpdateStorage();
         
         return TableIndex < Tables.Count && EntityIndex < Tables[TableIndex].Count;

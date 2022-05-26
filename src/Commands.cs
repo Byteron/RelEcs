@@ -23,9 +23,9 @@ public readonly struct Commands
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct = default) where T : class
+    public void Send<T>(T trigger) where T : class
     {
-        World.Send(triggerStruct);
+        World.Send(trigger);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

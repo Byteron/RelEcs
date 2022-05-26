@@ -10,72 +10,72 @@ public class Entity
 
     public bool IsAny => Identity == Identity.Any;
     public bool IsNone => Identity == Identity.None;
-    public bool IsAlive => world != null && world.IsAlive(Identity);
+    public bool IsAlive => World != null && World.IsAlive(Identity);
 
     public Identity Identity { get; }
 
-    readonly World world;
+    internal readonly World World;
 
     public Entity(World world, Identity identity)
     {
-        this.world = world;
+        this.World = world;
         Identity = identity;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Add<T>(Entity target = default) where T : class, new()
     {
-        world.AddComponent<T>(Identity, default, target?.Identity ?? Identity.None);
+        World.AddComponent<T>(Identity, default, target?.Identity ?? Identity.None);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Add<T>(Type type) where T : class, new()
     {
-        var identity = world.GetTypeIdentity(type);
-        world.AddComponent<T>(Identity, default, identity);
+        var identity = World.GetTypeIdentity(type);
+        World.AddComponent<T>(Identity, default, identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(T data) where T : class
+    public Entity Add<T>(T data) where T : class, new()
     {
-        world.AddComponent(Identity, data);
+        World.AddComponent(Identity, data);
         return this;
     }
         
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(T data, Entity target) where T : class
+    public Entity Add<T>(T data, Entity target) where T : class, new()
     {
-        world.AddComponent(Identity, data, target.Identity);
+        World.AddComponent(Identity, data, target.Identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity Add<T>(T data, Type type) where T : class
+    public Entity Add<T>(T data, Type type) where T : class, new()
     {
-        var identity = world.GetTypeIdentity(type);
-        world.AddComponent(Identity, data, identity);
+        var identity = World.GetTypeIdentity(type);
+        World.AddComponent(Identity, data, identity);
         return this;
     }
         
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T Get<T>() where T : class
     {
-        return world.GetComponent<T>(Identity);
+        return World.GetComponent<T>(Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T Get<T>(Entity target) where T : class
     {
-        return world.GetComponent<T>(Identity, target.Identity);
+        return World.GetComponent<T>(Identity, target.Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T Get<T>(Type type) where T : class
     {
-        var identity = world.GetTypeIdentity(type);
-        return world.GetComponent<T>(Identity, identity);
+        var identity = World.GetTypeIdentity(type);
+        return World.GetComponent<T>(Identity, identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -87,9 +87,9 @@ public class Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGet<T>(Entity target, out T component) where T : class
     {
-        if (world.HasComponent<T>(Identity))
+        if (World.HasComponent<T>(Identity))
         {
-            component = world.GetComponent<T>(Identity, target.Identity);
+            component = World.GetComponent<T>(Identity, target.Identity);
             return true;
         }
 
@@ -100,10 +100,10 @@ public class Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGet<T>(Type type, out T component) where T : class
     {
-        var identity = world.GetTypeIdentity(type);
+        var identity = World.GetTypeIdentity(type);
         if (Has<T>())
         {
-            component = world.GetComponent<T>(Identity, identity);
+            component = World.GetComponent<T>(Identity, identity);
             return true;
         }
 
@@ -114,54 +114,54 @@ public class Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Has<T>() where T : class
     {
-        return world.HasComponent<T>(Identity);
+        return World.HasComponent<T>(Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Has<T>(Entity target) where T : class
     {
-        return world.HasComponent<T>(Identity, target.Identity);
+        return World.HasComponent<T>(Identity, target.Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Has<T>(Type type) where T : class
     {
-        var identity = world.GetTypeIdentity(type);
-        return world.HasComponent<T>(Identity, identity);
+        var identity = World.GetTypeIdentity(type);
+        return World.HasComponent<T>(Identity, identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Remove<T>() where T : class
     {
-        world.RemoveComponent<T>(Identity);
+        World.RemoveComponent<T>(Identity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Remove<T>(Entity target) where T : class
     {
-        world.RemoveComponent<T>(Identity, target.Identity);
+        World.RemoveComponent<T>(Identity, target.Identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Remove<T>(Type type) where T : class
     {
-        var identity = world.GetTypeIdentity(type);
-        world.RemoveComponent<T>(Identity, identity);
+        var identity = World.GetTypeIdentity(type);
+        World.RemoveComponent<T>(Identity, identity);
         return this;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity[] GetTargets<T>() where T : class
     {
-        return world.GetTargets<T>(Identity);
+        return World.GetTargets<T>(Identity);
     }
         
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Despawn()
     {
-        world.Despawn(Identity);
+        World.Despawn(Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

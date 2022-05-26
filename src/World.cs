@@ -102,12 +102,14 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct) where T : class
+    public void Send<T>(T trigger) where T : class
     {
+        if (trigger is null) throw new Exception("trigger cannot be null");
+        
         var entity = Spawn();
         AddComponent(entity.Identity, new TriggerSystemList(ListPool<Type>.Get()));
         AddComponent(entity.Identity, new TriggerLifeTime());
-        AddComponent(entity.Identity, new Trigger<T>(triggerStruct));
+        AddComponent(entity.Identity, new Trigger<T>(trigger));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -141,7 +143,7 @@ public sealed class World
 
     public void AddElement<T>(T element) where T : class
     {
-        world.Add(new Element<T>(element));
+        world.Add(new Element<T> { Value = element });
     }
 
     public T GetElement<T>() where T : class
@@ -160,10 +162,10 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class
+    public void AddComponent<T>(Identity identity, T data = default, Identity target = default) where T: class, new()
     {
         var type = StorageType.Create<T>(target);
-        if (!type.IsTag && data == null) throw new Exception("non-tag component cannot be null");
+        if (!type.IsTag && data == null) data = new T();
         AddComponent(type, identity, data);
     }
 
