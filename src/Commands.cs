@@ -23,9 +23,9 @@ public readonly struct Commands
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T triggerStruct = default) where T : class
+    public void Send<T>(T trigger) where T : class
     {
-        World.Send(triggerStruct);
+        World.Send(trigger);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -37,6 +37,17 @@ public readonly struct Commands
     public void AddElement<T>(T element) where T : class
     {
         World.AddElement(element);
+    }
+
+    public void ReplaceElement<T>(T element) where T : class
+    {
+        World.ReplaceElement(element);
+    }
+
+    public void AddOrReplaceElement<T>(T element) where T : class
+    {
+        if (World.HasElement<T>()) World.ReplaceElement(element);
+        else World.AddElement(element);
     }
 
     public T GetElement<T>() where T : class

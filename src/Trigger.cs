@@ -6,12 +6,19 @@ namespace RelEcs;
 public class Trigger<T>
 {
     public T Value;
+
+    public Trigger()
+    {
+    }
+
     public Trigger(T value) => Value = value;
 }
 
 internal class TriggerSystemList
 {
     public readonly List<Type> List;
+
+    public TriggerSystemList() => List = new List<Type>();
     public TriggerSystemList(List<Type> list) => List = list;
 }
 
