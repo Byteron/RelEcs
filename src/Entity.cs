@@ -5,7 +5,7 @@ namespace RelEcs;
 
 public class Entity
 {
-    public static Entity None = default;
+    public static Entity None = new Entity(null, Identity.None);
     public static Entity Any = new(null, Identity.Any);
 
     public bool IsAny => Identity == Identity.Any;
@@ -87,7 +87,7 @@ public class Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGet<T>(Entity target, out T component) where T : class
     {
-        if (World.HasComponent<T>(Identity))
+        if (World.HasComponent<T>(Identity, target.Identity))
         {
             component = World.GetComponent<T>(Identity, target.Identity);
             return true;

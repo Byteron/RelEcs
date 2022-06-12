@@ -66,17 +66,24 @@ public sealed class World
     public void Despawn(Identity identity)
     {
         if (!IsAlive(identity)) return;
-
-        unusedIds.Enqueue(identity);
-
+        
         ref var meta = ref entities[identity.Id];
 
         var table = tables[meta.TableId];
+
+        if (table.IsLocked)
+        {
+            tableOperations.Add(new TableOperation { Despawn = true, Identity = identity });
+            return;
+        }
+        
         table.Remove(meta.Row);
 
         meta.Row = 0;
         meta.Identity = Identity.None;
 
+        unusedIds.Enqueue(identity);
+        
         if (!typesByRelationTarget.TryGetValue(identity, out var list))
         {
             return;
@@ -439,14 +446,9 @@ public sealed class World
         {
             var op = tableOperations[i];
 
-            if (op.Add)
-            {
-                AddComponent(op.Type, op.Identity, op.Data);
-            }
-            else
-            {
-                RemoveComponent(op.Type, op.Identity);
-            }
+            if (op.Despawn) Despawn(op.Identity);
+            else if (op.Add) AddComponent(op.Type, op.Identity, op.Data);
+            else RemoveComponent(op.Type, op.Identity);
 
             tableOperations.RemoveAt(i);
         }
@@ -476,6 +478,7 @@ public sealed class World
 
     struct TableOperation
     {
+        public bool Despawn;
         public bool Add;
         public StorageType Type;
         public Identity Identity;
