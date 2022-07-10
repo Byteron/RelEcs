@@ -185,5 +185,5 @@ public class Entity
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Entity left, Entity right) => left is not null && left.Equals(right);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(Entity left, Entity right) => left is null || !left.Equals(right);
+    public static bool operator !=(Entity left, Entity right) => (left is null && right is not null) || (left is not null && !left.Equals(right));
 }
