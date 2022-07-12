@@ -447,8 +447,8 @@ public sealed class World
             var op = tableOperations[i];
 
             if (op.Despawn) Despawn(op.Identity);
-            else if (op.Add) AddComponent(op.Type, op.Identity, op.Data);
-            else RemoveComponent(op.Type, op.Identity);
+            else if (op.Add && IsAlive(op.Identity)) AddComponent(op.Type, op.Identity, op.Data);
+            else if (IsAlive(op.Identity)) RemoveComponent(op.Type, op.Identity);
 
             tableOperations.RemoveAt(i);
         }
