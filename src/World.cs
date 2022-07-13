@@ -33,6 +33,9 @@ public sealed class World
 
     readonly Dictionary<Type, Identity> typeIdentities = new();
     
+    int lockCount;
+    bool isLocked;
+    
     public World()
     {
         AddTable(new SortedSet<StorageType> { StorageType.Create<Entity>(Identity.None)});
@@ -66,17 +69,16 @@ public sealed class World
     public void Despawn(Identity identity)
     {
         if (!IsAlive(identity)) return;
-        
-        ref var meta = ref entities[identity.Id];
 
-        var table = tables[meta.TableId];
-
-        if (table.IsLocked)
+        if (isLocked)
         {
             tableOperations.Add(new TableOperation { Despawn = true, Identity = identity });
             return;
         }
-        
+        ref var meta = ref entities[identity.Id];
+
+        var table = tables[meta.TableId];
+
         table.Remove(meta.Row);
 
         meta.Row = 0;
@@ -88,24 +90,23 @@ public sealed class World
         {
             return;
         }
-
+        
+        Lock();
+        
         foreach (var type in list)
         {
             var tablesWithType = tablesByType[type];
 
             foreach (var tableWithType in tablesWithType)
             {
-                tableWithType.Lock();
                 for (var i = 0; i < tableWithType.Count; i++)
                 {
                     RemoveComponent(type, tableWithType.Entities[i]);
                 }
-
-                tableWithType.Unlock();
             }
-
-            ApplyTableOperations();
         }
+        
+        Unlock();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -184,6 +185,11 @@ public sealed class World
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void AddComponent(StorageType type, Identity identity, object data = default)
     {
+        if (isLocked)
+        {
+            tableOperations.Add(new TableOperation { Add = true, Identity = identity, Type = type, Data = data });
+            return;
+        }
         ref var meta = ref entities[identity.Id];
         var oldTable = tables[meta.TableId];
         var oldEdge = oldTable.GetTableEdge(type);
@@ -199,12 +205,6 @@ public sealed class World
 
             var newEdge = newTable.GetTableEdge(type);
             newEdge.Remove = oldTable;
-        }
-
-        if (oldTable.IsLocked || newTable.IsLocked)
-        {
-            tableOperations.Add(new TableOperation { Add = true, Identity = identity, Type = type, Data = data });
-            return;
         }
 
         var newRow = Table.MoveEntry(identity, meta.Row, oldTable, newTable);
@@ -250,6 +250,12 @@ public sealed class World
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void RemoveComponent(StorageType type, Identity identity)
     {
+        if (isLocked)
+        {
+            tableOperations.Add(new TableOperation { Add = false, Identity = identity, Type = type });
+            return;
+        }
+        
         ref var meta = ref entities[identity.Id];
         var oldTable = tables[meta.TableId];
         var oldEdge = oldTable.GetTableEdge(type);
@@ -267,12 +273,6 @@ public sealed class World
             newEdge.Add = oldTable;
 
             tables.Add(newTable);
-        }
-
-        if (oldTable.IsLocked || newTable.IsLocked)
-        {
-            tableOperations.Add(new TableOperation { Add = false, Identity = identity, Type = type });
-            return;
         }
 
         var newRow = Table.MoveEntry(identity, meta.Row, oldTable, newTable);
@@ -440,20 +440,38 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void ApplyTableOperations()
+    void ApplyTableOperations()
     {
-        for (var i = tableOperations.Count - 1; i >= 0; i--)
-        {
-            var op = tableOperations[i];
+        if (isLocked) return;
 
+        foreach (var op in tableOperations)
+        {
             if (op.Despawn) Despawn(op.Identity);
             else if (op.Add) AddComponent(op.Type, op.Identity, op.Data);
             else RemoveComponent(op.Type, op.Identity);
-
-            tableOperations.RemoveAt(i);
         }
+        
+        tableOperations.Clear();
     }
-
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Lock()
+    {
+        lockCount++;
+        isLocked = true;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Unlock()
+    {
+        lockCount--;
+        
+        if (lockCount != 0) return;
+        
+        isLocked = false;
+        ApplyTableOperations();
+    }
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Tick()
     {

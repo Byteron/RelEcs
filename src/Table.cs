@@ -23,11 +23,8 @@ public sealed class Table
     
     public int Count { get; private set; }
     public bool IsEmpty => Count == 0;
-    public bool IsLocked { get; private set; }
     
     readonly World world;
-    
-    int lockCount;
 
     Identity[] entities;
     readonly Array[] storages;
@@ -165,22 +162,5 @@ public sealed class Table
         oldTable.Remove(oldRow);
 
         return newRow;
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Lock()
-    {
-        lockCount++;
-        IsLocked = true;
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Unlock()
-    {
-        lockCount--;
-        if (lockCount == 0)
-        {
-            IsLocked = false;
-        }
     }
 }
