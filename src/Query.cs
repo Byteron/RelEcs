@@ -38,13 +38,9 @@ public class Enumerator : IEnumerator, IDisposable
     protected Enumerator(World world, List<Table> tables)
     {
         this.world = world;
-        
         Tables = tables;
         
-        foreach (var table in tables)
-        {
-            table.Lock();
-        }
+        world.Lock();
         
         Reset();
     }
@@ -87,12 +83,7 @@ public class Enumerator : IEnumerator, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
-        foreach (var table in Tables)
-        {
-            table.Unlock();
-        }
-        
-        world.ApplyTableOperations();
+        world.Unlock();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
