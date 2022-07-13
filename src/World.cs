@@ -450,17 +450,13 @@ public sealed class World
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ApplyTableOperations()
     {
-        if (isLocked) return;
-
         foreach (var op in tableOperations)
         {
+            if (!IsAlive(op.Identity)) continue;
+            
             if (op.Despawn) Despawn(op.Identity);
-            // only try other operations if the entity is still alive at this point
-            else if (IsAlive(op.Identity))
-            {
-                if (op.Add) AddComponent(op.Type, op.Identity, op.Data);
-                else RemoveComponent(op.Type, op.Identity);
-            }
+            else if (op.Add) AddComponent(op.Type, op.Identity, op.Data);
+            else RemoveComponent(op.Type, op.Identity);
         }
 
         tableOperations.Clear();
@@ -477,10 +473,9 @@ public sealed class World
     public void Unlock()
     {
         lockCount--;
-
         if (lockCount != 0) return;
-
         isLocked = false;
+        
         ApplyTableOperations();
     }
 
