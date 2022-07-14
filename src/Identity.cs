@@ -15,7 +15,7 @@ public struct EntityMeta
         Row = row;
     }
 }
-    
+
 public readonly struct Identity
 {
     public static Identity None = default;
@@ -23,20 +23,20 @@ public readonly struct Identity
 
     public readonly int Id;
     public readonly ushort Generation;
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Identity(int id, ushort generation = 1)
     {
         Id = id;
         Generation = generation;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object obj)
     {
         return (obj is Identity other) && Id == other.Id && Generation == other.Generation;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
@@ -48,15 +48,16 @@ public readonly struct Identity
             return hashcode;
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         return Id.ToString();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Identity left, Identity right) => left.Equals(right);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(Identity left, Identity right) => !left.Equals(right);
 }

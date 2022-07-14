@@ -14,14 +14,14 @@ public interface ISystem
 public sealed class SystemGroup
 {
     readonly List<ISystem> systems = new();
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SystemGroup Add(ISystem system)
     {
         systems.Add(system);
         return this;
     }
-        
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Run(World world)
     {

@@ -8,6 +8,16 @@
 World world = new World();
 ```
 
+## Commands
+
+```csharp
+// Commands are a wrapper around World that provide additional helpful functions.
+Commands commands = new Commands(world);
+
+// You *do not* need to create your own commands.
+// They will be automatically provided for you as the System.Run(Commands) argument.
+```
+
 ## Entity
 
 ```csharp
@@ -15,24 +25,37 @@ World world = new World();
 Entity entity = world.Spawn();
 
 // Despawn an entity.
-entity.Despawn();
+world.Despawn(entity);
 ```
 
 ## Component
 
 ```csharp
 // Components are simple classes.
+class Name { public string Value; }
 class Position { public int X, Y; }
 class Velocity { public int X, Y; }
 
-// Add new components to an entity.
-entity.Add<Position>().Add(new Velocity { X = 1, Y = 0 });
+// Add new components to an entity via world...
+world.AddComponent(new Name { Value = "Bob" };
+// or with commands via EntityBuilder.
+commands.Amend(entity)
+    .Add<Position>()
+    .Add(new Velocity { X = 1, Y = 0 });
 
-// Get a component from an entity.
-var vel = entity.Get<Velocity>();
+// Get one component from an entity
+var name = world.GetComponent<Name>(entity);
 
-// Remove a component from an entity.
-entity.Remove<Position>();
+// Get multiple components from an entity.
+var query = commands.Query<Position, Velocity>().Build();
+var (pos, vel) = query.Get(entity);
+
+// Remove components from an entity.
+world.RemoveComponent<Name>(entity);
+// Like with Add, you can also use the EntityBuilder.
+commands.Amend(entity)
+    .Remove<Position>()
+    .Remove<Velocity>();
 ```
 
 ## Element
@@ -62,35 +85,26 @@ class Owes { public int Amount; }
 
 class Apples { }
 
-var bob = world.Spawn();
-var frank = world.Spawn();
+var bob = world.Spawn().Id();
+var frank = world.Spawn().Id();
 
 // Relations consist of components, associated with a "target".
 // The target can either be another component, or an entity.
-bob.Add<Likes>(typeof(Apples));
-//   Component ^^^^^^^^^^^^^^
+commands.Amend(bob).Add<Likes>(typeof(Apples));
+//   Component                  ^^^^^^^^^^^^^^
 
-frank.Add(new Owes { Amount = 100 }, bob);
-//                            Entity ^^^
+commands.Amend(frank).Add(new Owes { Amount = 100 }, bob);
+//                                             Entity ^^^
 
-// You can test if an entity has a component or a relation.
-bool doesBobHaveApples = bob.Has<Apples>();
-bool doesBobLikeApples = bob.Has<Likes>(typeof(Apples));
+// if you want to know if an entity has a component
+bool doesBobHaveApples = commands.HasComponent<Apples>(bob);
+// if you want to know if an entity has a relation
+bool doesBobLikeApples = commands.HasComponent<Likes>(bob, typeof(Apples));
 
 // Or get it directly.
 // In this case, we retrieve the amount that Frank owes Bob.
-var owes = frank.Get<Owes>(bob);
+var owes = commands.GetComponent<Owes>(frank, bob);
 Console.WriteLine($"Frank owes Bob {owes.Amount} dollars");
-```
-
-## Commands
-
-```csharp
-// Commands are a wrapper around World that provide additional helpful functions.
-Commands commands = new Commands(world);
-
-// You *do not* need to create your own commands.
-// They will be automatically provided for you as the System.Run(Commands) argument.
 ```
 
 
@@ -99,7 +113,7 @@ Commands commands = new Commands(world);
 ```csharp
 // With queries, we can get a list of components that we can iterate through.
 // A simple query looks like this
-var query = commands.Query<Position, Velocity>();
+var query = commands.Query<Position, Velocity>().Build();
 
 // Now we can loop through these components
 foreach(var (pos, vel) in query)
@@ -109,7 +123,7 @@ foreach(var (pos, vel) in query)
         
 // You can create more complex, expressive queries.
 // Here, we request every entity that has a Name component, owes money to Bob and does not have the Dead tag.
-var appleLovers = commands.Query<Name>().Has<Owes>(bob).Not<Dead>();
+var appleLovers = commands.Query<Name>().Has<Owes>(bob).Not<Dead>().Build();
 
 // Note that we only get the components inside Query<>.
 // Has<T>, Not<T> and Any<T> only filter, but we don't actually get T int he loop.
@@ -129,16 +143,16 @@ public class MoveSystem : ISystem
     public void Run(Commands commands)
     {
         // Query desired components.
-        var query = commands.Query<Position, Velocity>(); 
+        var query1 = commands.Query<Position, Velocity>().Build();
         // Loop over queried of components.
-        foreach(var (pos, vel) in query)
+        foreach(var (pos, vel) in query1)
         {
             pos.Value += vel.Value;
         }
 
         // You can also access the entity within the loop.
-        var query = commands.Query<Entity, Position, Velocity>();
-        foreach (var (entity, pos, vel) in query) =>
+        var query2 = commands.Query<Entity, Position, Velocity>().Build();
+        foreach (var (entity, pos, vel) in query2) =>
         {
             pos.Value += vel.Value;
             // Example: "Tag" a component to show that it has moved.
