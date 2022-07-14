@@ -324,14 +324,22 @@ public sealed class World
         var anyAnyTarget = ListPool<StorageType>.Get();
 
         foreach (var type in mask.HasTypes)
+        {
             if (type.Identity == Identity.Any) hasAnyTarget.Add(type);
             else has.Add(type);
+        }
+
         foreach (var type in mask.NotTypes)
+        {
             if (type.Identity == Identity.Any) notAnyTarget.Add(type);
             else not.Add(type);
+        }
+
         foreach (var type in mask.AnyTypes)
+        {
             if (type.Identity == Identity.Any) anyAnyTarget.Add(type);
             else any.Add(type);
+        }
 
         var matchesComponents = table.Types.IsSupersetOf(has);
         matchesComponents &= !table.Types.Overlaps(not);
