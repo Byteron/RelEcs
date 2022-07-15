@@ -122,7 +122,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(ISystem system, Action<T> action) where T : class
+    public void Receive<T>(System system, Action<T> action) where T : class
     {
         var systemType = system.GetType();
 
