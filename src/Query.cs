@@ -24,14 +24,28 @@ public class Query
 
         UpdateStorages();
     }
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddTable(Table table)
+    public bool Has(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        return Indices.ContainsKey(meta.TableId);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void AddTable(Table table)
     {
         Tables.Add(table);
         UpdateStorages();
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected virtual Array[] GetStorages(Table table)
+    {
+        throw new Exception("Invalid Enumerator");
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void UpdateStorages()
     {
         Storages.Clear();
@@ -42,12 +56,6 @@ public class Query
             Indices.Add(Tables[i].Id, i);
             Storages.Add(GetStorages(Tables[i]));
         }
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected virtual Array[] GetStorages(Table table)
-    {
-        throw new Exception("Invalid Enumerator");
     }
 }
 
@@ -68,13 +76,6 @@ public class Query<C> : Query
         var meta = World.GetEntityMeta(entity.Identity);
         var storage = (C[])Storages[Indices[meta.TableId]][0];
         return storage[meta.Row];
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Has(Entity entity)
-    {
-        var meta = World.GetEntityMeta(entity.Identity);
-        return Indices.ContainsKey(meta.TableId);
     }
 
     public Enumerator<C> GetEnumerator()
