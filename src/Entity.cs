@@ -46,79 +46,79 @@ public class Entity
 
 public readonly struct EntityBuilder
 {
+    internal readonly World World;
     readonly Identity identity;
-    readonly World world;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder(World world, Identity identity)
     {
-        this.world = world;
+        World = world;
         this.identity = identity;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(Entity target = default) where T : class, new()
     {
-        world.AddComponent<T>(identity, default, target?.Identity ?? Identity.None);
+        World.AddComponent<T>(identity, default, target?.Identity ?? Identity.None);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(Type type) where T : class, new()
     {
-        var typeIdentity = world.GetTypeIdentity(type);
-        world.AddComponent<T>(identity, default, typeIdentity);
+        var typeIdentity = World.GetTypeIdentity(type);
+        World.AddComponent<T>(identity, default, typeIdentity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(T data) where T : class, new()
     {
-        world.AddComponent(identity, data);
+        World.AddComponent(identity, data);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(T data, Entity target) where T : class, new()
     {
-        world.AddComponent(identity, data, target.Identity);
+        World.AddComponent(identity, data, target.Identity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(T data, Type type) where T : class, new()
     {
-        var typeIdentity = world.GetTypeIdentity(type);
-        world.AddComponent(identity, data, typeIdentity);
+        var typeIdentity = World.GetTypeIdentity(type);
+        World.AddComponent(identity, data, typeIdentity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Remove<T>() where T : class
     {
-        world.RemoveComponent<T>(identity);
+        World.RemoveComponent<T>(identity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Remove<T>(Entity target) where T : class
     {
-        world.RemoveComponent<T>(identity, target.Identity);
+        World.RemoveComponent<T>(identity, target.Identity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Remove<T>(Type type) where T : class
     {
-        var typeIdentity = world.GetTypeIdentity(type);
-        world.RemoveComponent<T>(identity, typeIdentity);
+        var typeIdentity = World.GetTypeIdentity(type);
+        World.RemoveComponent<T>(identity, typeIdentity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Despawn()
     {
-        world.Despawn(identity);
+        World.Despawn(identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
