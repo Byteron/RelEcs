@@ -74,6 +74,7 @@ public sealed class QueryBuilder<C> : QueryBuilder
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C>(world, mask, matchingTables);
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public QueryBuilder(World world) : base(world)
     {
         Has<C>();
@@ -115,9 +116,16 @@ public sealed class QueryBuilder<C> : QueryBuilder
         return (QueryBuilder<C>)base.Any<T>(type);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C> Build()
     {
         return (Query<C>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C> GetEnumerator()
+    {
+        return ((Query<C>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -128,6 +136,7 @@ public sealed class QueryBuilder<C1, C2> : QueryBuilder
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2>(world, mask, matchingTables);
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>();
@@ -169,9 +178,16 @@ public sealed class QueryBuilder<C1, C2> : QueryBuilder
         return (QueryBuilder<C1, C2>)base.Any<T>(type);
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2> Build()
     {
         return (Query<C1, C2>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2> GetEnumerator()
+    {
+        return ((Query<C1, C2>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -183,6 +199,7 @@ public sealed class QueryBuilder<C1, C2, C3> : QueryBuilder
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3>(world, mask, matchingTables);
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>();
@@ -223,10 +240,17 @@ public sealed class QueryBuilder<C1, C2, C3> : QueryBuilder
     {
         return (QueryBuilder<C1, C2, C3>)base.Any<T>(type);
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3> Build()
     {
         return (Query<C1, C2, C3>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -238,7 +262,8 @@ public sealed class QueryBuilder<C1, C2, C3, C4> : QueryBuilder
 {
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3, C4>(world, mask, matchingTables);
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]    
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>().Has<C4>();
@@ -280,9 +305,16 @@ public sealed class QueryBuilder<C1, C2, C3, C4> : QueryBuilder
         return (QueryBuilder<C1, C2, C3, C4>)base.Any<T>(type);
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3, C4> Build()
     {
         return (Query<C1, C2, C3, C4>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3, C4> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3, C4>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -295,7 +327,8 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5> : QueryBuilder
 {
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3, C4, C5>(world, mask, matchingTables);
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]    
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>();
@@ -337,9 +370,16 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5> : QueryBuilder
         return (QueryBuilder<C1, C2, C3, C4, C5>)base.Any<T>(type);
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3, C4, C5> Build()
     {
         return (Query<C1, C2, C3, C4, C5>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3, C4, C5> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3, C4, C5>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -353,7 +393,8 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6> : QueryBuilder
 {
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3, C4, C5, C6>(world, mask, matchingTables);
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]    
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>();
@@ -395,9 +436,16 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6> : QueryBuilder
         return (QueryBuilder<C1, C2, C3, C4, C5, C6>)base.Any<T>(type);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3, C4, C5, C6> Build()
     {
         return (Query<C1, C2, C3, C4, C5, C6>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3, C4, C5, C6> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3, C4, C5, C6>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -413,6 +461,7 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7> : QueryBuilder
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3, C4, C5, C6, C7>(world, mask, matchingTables);
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>();
@@ -454,9 +503,16 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7> : QueryBuilder
         return (QueryBuilder<C1, C2, C3, C4, C5, C6, C7>)base.Any<T>(type);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3, C4, C5, C6, C7> Build()
     {
         return (Query<C1, C2, C3, C4, C5, C6, C7>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3, C4, C5, C6, C7> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3, C4, C5, C6, C7>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -473,6 +529,7 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8> : QueryBuilder
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3, C4, C5, C6, C7, C8>(world, mask, matchingTables);
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>();
@@ -514,9 +571,16 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8> : QueryBuilder
         return (QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>)base.Any<T>(type);
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3, C4, C5, C6, C7, C8> Build()
     {
         return (Query<C1, C2, C3, C4, C5, C6, C7, C8>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3, C4, C5, C6, C7, C8> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3, C4, C5, C6, C7, C8>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -534,6 +598,7 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> : QueryBuil
     static readonly Func<World, Mask, List<Table>, Query> CreateQuery = 
         (world, mask, matchingTables) => new Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>(world, mask, matchingTables);
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public QueryBuilder(World world) : base(world)
     {
         Has<C1>().Has<C2>().Has<C3>().Has<C4>().Has<C5>().Has<C6>().Has<C7>().Has<C8>().Has<C9>();
@@ -575,8 +640,15 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> : QueryBuil
         return (QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>)base.Any<T>(type);
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> Build()
     {
         return (Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>)World.GetQuery(Mask, CreateQuery);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Enumerator<C1, C2, C3, C4, C5, C6, C7, C8, C9> GetEnumerator()
+    {
+        return ((Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
