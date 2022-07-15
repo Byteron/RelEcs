@@ -21,6 +21,18 @@ public abstract class System
     {
         return new EntityBuilder(World, entity.Identity);
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Despawn(Entity entity)
+    {
+        World.Despawn(entity.Identity);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsAlive(Entity entity)
+    {
+        return entity != null && World.IsAlive(entity.Identity);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T GetComponent<T>(Entity entity) where T : class
@@ -97,12 +109,6 @@ public abstract class System
     public Entity[] GetTargets<T>(Entity entity) where T : class
     {
         return World.GetTargets<T>(entity.Identity);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Despawn(Entity entity)
-    {
-        World.Despawn(entity.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
