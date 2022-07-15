@@ -85,8 +85,8 @@ class Owes { public int Amount; }
 
 class Apples { }
 
-var bob = world.Spawn().Id();
-var frank = world.Spawn().Id();
+var bob = world.Spawn();
+var frank = world.Spawn();
 
 // Relations consist of components, associated with a "target".
 // The target can either be another component, or an entity.
