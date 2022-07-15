@@ -31,8 +31,7 @@ internal class TriggerLifeTimeSystem : System
 {
     public override void Run()
     {
-        var query = Query<Entity, TriggerSystemList, TriggerLifeTime>().Build();
-        
+        var query = Query<Entity, TriggerSystemList, TriggerLifeTime>();
         foreach (var (entity, systemList, lifeTime) in query)
         {
             lifeTime.Value++;

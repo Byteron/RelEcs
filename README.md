@@ -47,7 +47,7 @@ commands.Amend(entity)
 var name = world.GetComponent<Name>(entity);
 
 // Get multiple components from an entity.
-var query = commands.Query<Position, Velocity>().Build();
+var query = Query<Position, Velocity>().Build();
 var (pos, vel) = query.Get(entity);
 
 // Remove components from an entity.
