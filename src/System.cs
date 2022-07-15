@@ -174,58 +174,58 @@ public abstract class System
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<Entity> Query()
+    public Query<Entity> Query()
     {
-        return new QueryBuilder<Entity>(World);
+        return new QueryBuilder<Entity>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C> Query<C>()
+    public Query<C> Query<C>()
         where C : class
     {
-        return new QueryBuilder<C>(World);
+        return new QueryBuilder<C>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2> Query<C1, C2>()
+    public Query<C1, C2> Query<C1, C2>()
         where C1 : class
         where C2 : class
     {
-        return new QueryBuilder<C1, C2>(World);
+        return new QueryBuilder<C1, C2>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3> Query<C1, C2, C3>()
+    public Query<C1, C2, C3> Query<C1, C2, C3>()
         where C1 : class
         where C2 : class
         where C3 : class
     {
-        return new QueryBuilder<C1, C2, C3>(World);
+        return new QueryBuilder<C1, C2, C3>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3, C4> Query<C1, C2, C3, C4>()
+    public Query<C1, C2, C3, C4> Query<C1, C2, C3, C4>()
         where C1 : class
         where C2 : class
         where C3 : class
         where C4 : class
     {
-        return new QueryBuilder<C1, C2, C3, C4>(World);
+        return new QueryBuilder<C1, C2, C3, C4>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3, C4, C5> Query<C1, C2, C3, C4, C5>()
+    public Query<C1, C2, C3, C4, C5> Query<C1, C2, C3, C4, C5>()
         where C1 : class
         where C2 : class
         where C3 : class
         where C4 : class
         where C5 : class
     {
-        return new QueryBuilder<C1, C2, C3, C4, C5>(World);
+        return new QueryBuilder<C1, C2, C3, C4, C5>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3, C4, C5, C6> Query<C1, C2, C3, C4, C5, C6>()
+    public Query<C1, C2, C3, C4, C5, C6> Query<C1, C2, C3, C4, C5, C6>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -233,11 +233,11 @@ public abstract class System
         where C5 : class
         where C6 : class
     {
-        return new QueryBuilder<C1, C2, C3, C4, C5, C6>(World);
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3, C4, C5, C6, C7> Query<C1, C2, C3, C4, C5, C6, C7>()
+    public Query<C1, C2, C3, C4, C5, C6, C7> Query<C1, C2, C3, C4, C5, C6, C7>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -246,11 +246,11 @@ public abstract class System
         where C6 : class
         where C7 : class
     {
-        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7>(World);
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8> Query<C1, C2, C3, C4, C5, C6, C7, C8>()
+    public Query<C1, C2, C3, C4, C5, C6, C7, C8> Query<C1, C2, C3, C4, C5, C6, C7, C8>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -260,11 +260,11 @@ public abstract class System
         where C7 : class
         where C8 : class
     {
-        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>(World);
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
+    public Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -275,7 +275,7 @@ public abstract class System
         where C8 : class
         where C9 : class
     {
-        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>(World);
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>(World).Build();
     }
 }
 

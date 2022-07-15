@@ -121,12 +121,6 @@ public sealed class QueryBuilder<C> : QueryBuilder
     {
         return (Query<C>)World.GetQuery(Mask, CreateQuery);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C> GetEnumerator()
-    {
-        return ((Query<C>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
-    }
 }
 
 public sealed class QueryBuilder<C1, C2> : QueryBuilder
@@ -182,12 +176,6 @@ public sealed class QueryBuilder<C1, C2> : QueryBuilder
     public Query<C1, C2> Build()
     {
         return (Query<C1, C2>)World.GetQuery(Mask, CreateQuery);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2> GetEnumerator()
-    {
-        return ((Query<C1, C2>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -245,12 +233,6 @@ public sealed class QueryBuilder<C1, C2, C3> : QueryBuilder
     public Query<C1, C2, C3> Build()
     {
         return (Query<C1, C2, C3>)World.GetQuery(Mask, CreateQuery);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -310,12 +292,6 @@ public sealed class QueryBuilder<C1, C2, C3, C4> : QueryBuilder
     {
         return (Query<C1, C2, C3, C4>)World.GetQuery(Mask, CreateQuery);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3, C4> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3, C4>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
-    }
 }
 
 public sealed class QueryBuilder<C1, C2, C3, C4, C5> : QueryBuilder
@@ -374,12 +350,6 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5> : QueryBuilder
     public Query<C1, C2, C3, C4, C5> Build()
     {
         return (Query<C1, C2, C3, C4, C5>)World.GetQuery(Mask, CreateQuery);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3, C4, C5> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3, C4, C5>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -441,12 +411,6 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6> : QueryBuilder
     {
         return (Query<C1, C2, C3, C4, C5, C6>)World.GetQuery(Mask, CreateQuery);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3, C4, C5, C6> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3, C4, C5, C6>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
-    }
 }
 
 public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7> : QueryBuilder
@@ -507,12 +471,6 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7> : QueryBuilder
     public Query<C1, C2, C3, C4, C5, C6, C7> Build()
     {
         return (Query<C1, C2, C3, C4, C5, C6, C7>)World.GetQuery(Mask, CreateQuery);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3, C4, C5, C6, C7> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3, C4, C5, C6, C7>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
 
@@ -576,12 +534,6 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8> : QueryBuilder
     {
         return (Query<C1, C2, C3, C4, C5, C6, C7, C8>)World.GetQuery(Mask, CreateQuery);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3, C4, C5, C6, C7, C8> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3, C4, C5, C6, C7, C8>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
-    }
 }
 
 public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> : QueryBuilder
@@ -644,11 +596,5 @@ public sealed class QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> : QueryBuil
     public Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> Build()
     {
         return (Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>)World.GetQuery(Mask, CreateQuery);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator<C1, C2, C3, C4, C5, C6, C7, C8, C9> GetEnumerator()
-    {
-        return ((Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>)World.GetQuery(Mask, CreateQuery)).GetEnumerator();
     }
 }
