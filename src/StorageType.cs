@@ -9,11 +9,11 @@ public struct StorageType : IComparable<StorageType>
     public ulong Value { get; private set; }
     public bool IsTag { get; private set; }
     public bool IsRelation { get; private set; }
-        
+
     public ushort TypeId
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => TypeIdConverter.Type(Value); 
+        get => TypeIdConverter.Type(Value);
     }
 
     public Identity Identity
@@ -24,7 +24,7 @@ public struct StorageType : IComparable<StorageType>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static StorageType Create<T>(Identity identity)
-    {   
+    {
         return new StorageType()
         {
             Value = TypeIdConverter.Value<T>(identity),
@@ -33,25 +33,25 @@ public struct StorageType : IComparable<StorageType>
             IsRelation = identity.Id > 0,
         };
     }
-        
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int CompareTo(StorageType other)
     {
         return Value.CompareTo(other.Value);
     }
-        
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object obj)
     {
         return (obj is StorageType other) && Value == other.Value;
     }
-        
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
         return Value.GetHashCode();
     }
-        
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {

@@ -9,19 +9,417 @@ public class Query
 {
     public readonly List<Table> Tables;
     
+    internal readonly World World;
     internal readonly Mask Mask;
+    
+    protected readonly List<Array[]> Storages = new();
+    protected readonly Dictionary<int, int> Indices = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query(Mask mask, List<Table> tables)
+    public Query(World world, Mask mask, List<Table> tables)
     {
-        Mask = mask;
         Tables = tables;
+        World = world;
+        Mask = mask;
+
+        UpdateStorages();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddTable(Table table)
     {
         Tables.Add(table);
+        UpdateStorages();
+    }
+    
+    void UpdateStorages()
+    {
+        Storages.Clear();
+        Indices.Clear();
+        
+        for (var i = 0; i < Tables.Count; i++)
+        {
+            Indices.Add(Tables[i].Id, i);
+            Storages.Add(GetStorages(Tables[i]));
+        }
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected virtual Array[] GetStorages(Table table)
+    {
+        throw new Exception("Invalid Enumerator");
+    }
+}
+
+public class Query<C> : Query
+    where C : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[] { table.GetStorage<C>(Identity.None) };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public C Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storage = (C[])Storages[Indices[meta.TableId]][0];
+        return storage[meta.Row];
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Has(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        return Indices.ContainsKey(meta.TableId);
+    }
+
+    public Enumerator<C> GetEnumerator()
+    {
+        return new Enumerator<C>(World, Tables);
+    }
+}
+
+public class Query<C1, C2> : Query
+    where C1 : class
+    where C2 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        return (storage1[meta.Row], storage2[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2> GetEnumerator()
+    {
+        return new Enumerator<C1, C2>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3, C4> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+    where C4 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+            table.GetStorage<C4>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3, C4) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        var storage4 = (C4[])storages[3];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row], storage4[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3, C4> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3, C4>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3, C4, C5> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+    where C4 : class
+    where C5 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+            table.GetStorage<C4>(Identity.None),
+            table.GetStorage<C5>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3, C4, C5) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        var storage4 = (C4[])storages[3];
+        var storage5 = (C5[])storages[4];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row], storage4[meta.Row], storage5[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3, C4, C5> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3, C4, C5>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3, C4, C5, C6> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+    where C4 : class
+    where C5 : class
+    where C6 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+            table.GetStorage<C4>(Identity.None),
+            table.GetStorage<C5>(Identity.None),
+            table.GetStorage<C6>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3, C4, C5, C6) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        var storage4 = (C4[])storages[3];
+        var storage5 = (C5[])storages[4];
+        var storage6 = (C6[])storages[5];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row], storage4[meta.Row], storage5[meta.Row], storage6[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3, C4, C5, C6> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3, C4, C5, C6>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3, C4, C5, C6, C7> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+    where C4 : class
+    where C5 : class
+    where C6 : class
+    where C7 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+            table.GetStorage<C4>(Identity.None),
+            table.GetStorage<C5>(Identity.None),
+            table.GetStorage<C6>(Identity.None),
+            table.GetStorage<C7>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3, C4, C5, C6, C7) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        var storage4 = (C4[])storages[3];
+        var storage5 = (C5[])storages[4];
+        var storage6 = (C6[])storages[5];
+        var storage7 = (C7[])storages[6];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row], storage4[meta.Row], storage5[meta.Row], storage6[meta.Row], storage7[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3, C4, C5, C6, C7> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3, C4, C5, C6, C7>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3, C4, C5, C6, C7, C8> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+    where C4 : class
+    where C5 : class
+    where C6 : class
+    where C7 : class
+    where C8 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+            table.GetStorage<C4>(Identity.None),
+            table.GetStorage<C5>(Identity.None),
+            table.GetStorage<C6>(Identity.None),
+            table.GetStorage<C7>(Identity.None),
+            table.GetStorage<C8>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3, C4, C5, C6, C7, C8) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        var storage4 = (C4[])storages[3];
+        var storage5 = (C5[])storages[4];
+        var storage6 = (C6[])storages[5];
+        var storage7 = (C7[])storages[6];
+        var storage8 = (C8[])storages[7];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row], storage4[meta.Row], storage5[meta.Row], storage6[meta.Row], storage7[meta.Row], storage8[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3, C4, C5, C6, C7, C8> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3, C4, C5, C6, C7, C8>(World, Tables);
+    }
+}
+
+public class Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> : Query
+    where C1 : class
+    where C2 : class
+    where C3 : class
+    where C4 : class
+    where C5 : class
+    where C6 : class
+    where C7 : class
+    where C8 : class
+    where C9 : class
+{
+    public Query(World world, Mask mask, List<Table> tables) : base(world, mask, tables) { }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected override Array[] GetStorages(Table table)
+    {
+        return new Array[]
+        {
+            table.GetStorage<C1>(Identity.None),
+            table.GetStorage<C2>(Identity.None),
+            table.GetStorage<C3>(Identity.None),
+            table.GetStorage<C4>(Identity.None),
+            table.GetStorage<C5>(Identity.None),
+            table.GetStorage<C6>(Identity.None),
+            table.GetStorage<C7>(Identity.None),
+            table.GetStorage<C8>(Identity.None),
+            table.GetStorage<C9>(Identity.None),
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public (C1, C2, C3, C4, C5, C6, C7, C8, C9) Get(Entity entity)
+    {
+        var meta = World.GetEntityMeta(entity.Identity);
+        var storages = Storages[Indices[meta.TableId]];
+        var storage1 = (C1[])storages[0];
+        var storage2 = (C2[])storages[1];
+        var storage3 = (C3[])storages[2];
+        var storage4 = (C4[])storages[3];
+        var storage5 = (C5[])storages[4];
+        var storage6 = (C6[])storages[5];
+        var storage7 = (C7[])storages[6];
+        var storage8 = (C8[])storages[7];
+        var storage9 = (C9[])storages[8];
+        return (storage1[meta.Row], storage2[meta.Row], storage3[meta.Row], storage4[meta.Row], storage5[meta.Row], storage6[meta.Row], storage7[meta.Row], storage8[meta.Row], storage9[meta.Row]);
+    }
+    
+    public Enumerator<C1, C2, C3, C4, C5, C6, C7, C8, C9> GetEnumerator()
+    {
+        return new Enumerator<C1, C2, C3, C4, C5, C6, C7, C8, C9>(World, Tables);
     }
 }
 

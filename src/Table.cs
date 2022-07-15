@@ -13,17 +13,17 @@ public sealed class TableEdge
 public sealed class Table
 {
     const int StartCapacity = 4;
-    
+
     public readonly int Id;
 
     public readonly SortedSet<StorageType> Types;
-    
+
     public Identity[] Entities => entities;
     public Array[] Storages => storages;
-    
+
     public int Count { get; private set; }
     public bool IsEmpty => Count == 0;
-    
+
     readonly World world;
 
     Identity[] entities;
@@ -80,7 +80,7 @@ public sealed class Table
             {
                 Array.Copy(storage, Count, storage, row, 1);
             }
-            
+
             world.GetEntityMeta(entities[row]).Row = row;
         }
 
@@ -91,7 +91,7 @@ public sealed class Table
             Array.Clear(storage, Count, 1);
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TableEdge GetTableEdge(StorageType type)
     {
@@ -102,21 +102,21 @@ public sealed class Table
 
         return edge;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T[] GetStorage<T>(Identity target)
     {
         var type = StorageType.Create<T>(target);
         return (T[])GetStorage(type);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Array GetStorage(StorageType type)
     {
         if (type.IsTag) throw new Exception("Cannot get Storage of Tag Component");
         return storages[indices[type]];
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void EnsureCapacity(int capacity)
     {
@@ -125,7 +125,7 @@ public sealed class Table
 
         Resize(Math.Max(capacity, StartCapacity) << 1);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void Resize(int length)
     {
@@ -143,12 +143,12 @@ public sealed class Table
             storages[i] = newStorage;
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int MoveEntry(Identity identity, int oldRow, Table oldTable, Table newTable)
     {
         var newRow = newTable.Add(identity);
-        
+
         foreach (var (type, oldIndex) in oldTable.indices)
         {
             if (!newTable.indices.TryGetValue(type, out var newIndex) || newIndex < 0) continue;

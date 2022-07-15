@@ -5,7 +5,7 @@ namespace RelEcs;
 
 public class Trigger<T>
 {
-    public T Value;
+    public readonly T Value;
 
     public Trigger()
     {
@@ -22,22 +22,26 @@ internal class TriggerSystemList
     public TriggerSystemList(List<Type> list) => List = list;
 }
 
-internal class TriggerLifeTime { public int Value; }
+internal class TriggerLifeTime
+{
+    public int Value;
+}
 
 internal class TriggerLifeTimeSystem : ISystem
 {
     public void Run(Commands commands)
     {
-        var query = commands.Query<Entity, TriggerSystemList, TriggerLifeTime>();
-        
+        var query = commands.Query<Entity, TriggerSystemList, TriggerLifeTime>().Build();
+
         foreach (var (entity, systemList, lifeTime) in query)
         {
             lifeTime.Value++;
-        
+
             if (lifeTime.Value < 2) return;
-            
+
             ListPool<Type>.Add(systemList.List);
-            entity.Despawn();
+
+            commands.Despawn(entity);
         }
     }
 }

@@ -14,13 +14,13 @@ public sealed class Mask
     {
         HasTypes.Add(type);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Not(StorageType type)
     {
         NotTypes.Add(type);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Any(StorageType type)
     {

@@ -58,7 +58,7 @@ public sealed class World
 
         entities[identity.Id] = new EntityMeta(identity, table.Id, row);
 
-        var entity = new Entity(this, identity);
+        var entity = new Entity(identity);
 
         table.Storages[0].SetValue(entity, row);
 
@@ -131,7 +131,8 @@ public sealed class World
         mask.Has(StorageType.Create<Trigger<T>>(Identity.None));
         mask.Has(StorageType.Create<TriggerSystemList>(Identity.None));
 
-        var query = GetQuery(mask);
+        var query = GetQuery(mask,
+            (w, m, t) => new Query<Trigger<T>, TriggerSystemList>(w, m, t));
 
         foreach (var table in query.Tables)
         {
@@ -152,27 +153,27 @@ public sealed class World
 
     public void AddElement<T>(T element) where T : class
     {
-        world.Add(new Element<T> { Value = element });
+        AddComponent(world.Identity, new Element<T> { Value = element });
     }
 
     public T GetElement<T>() where T : class
     {
-        return world.Get<Element<T>>().Value;
+        return GetComponent<Element<T>>(world.Identity).Value;
     }
 
     public void ReplaceElement<T>(T element) where T : class
     {
-        world.Get<Element<T>>().Value = element;
+        GetComponent<Element<T>>(world.Identity).Value = element;
     }
 
     public bool HasElement<T>() where T : class
     {
-        return world.Has<Element<T>>();
+        return HasComponent<Element<T>>(world.Identity);
     }
 
     public void RemoveElement<T>() where T : class
     {
-        world.Remove<Element<T>>();
+        RemoveComponent<Element<T>>(world.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -284,7 +285,7 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query GetQuery(Mask mask)
+    public Query GetQuery(Mask mask, Func<World, Mask, List<Table>, Query> createQuery)
     {
         var hash = mask.GetHashCode();
 
@@ -306,7 +307,7 @@ public sealed class World
             matchingTables.Add(table);
         }
 
-        query = new Query(mask, matchingTables);
+        query = createQuery(this, mask, matchingTables);
         queries.Add(hash, query);
 
         return query;
@@ -381,6 +382,12 @@ public sealed class World
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Table GetTable(int tableId)
+    {
+        return tables[tableId];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal Entity[] GetTargets<T>(Identity identity) where T : class
     {
         var type = StorageType.Create<T>(Identity.None);
@@ -393,7 +400,7 @@ public sealed class World
         foreach (var storageType in table.Types)
         {
             if (!storageType.IsRelation || storageType.TypeId != type.TypeId) continue;
-            list.Add(new Entity(this, storageType.Identity));
+            list.Add(new Entity(storageType.Identity));
         }
 
         var targetEntities = list.ToArray();
@@ -461,7 +468,7 @@ public sealed class World
         foreach (var op in tableOperations)
         {
             if (!IsAlive(op.Identity)) continue;
-            
+
             if (op.Despawn) Despawn(op.Identity);
             else if (op.Add) AddComponent(op.Type, op.Identity, op.Data);
             else RemoveComponent(op.Type, op.Identity);
@@ -483,7 +490,7 @@ public sealed class World
         lockCount--;
         if (lockCount != 0) return;
         isLocked = false;
-        
+
         ApplyTableOperations();
     }
 
@@ -525,9 +532,7 @@ public sealed class WorldInfo
     public int EntityCount;
     public int UnusedEntityCount;
     public int AllocatedEntityCount;
-
     public int ArchetypeCount;
-
     // public int RelationCount;
     public int ElementCount;
     public int SystemCount;
