@@ -46,8 +46,8 @@ public class Entity
 
 public readonly struct EntityBuilder
 {
-    readonly Identity identity;
     internal readonly World World;
+    readonly Identity identity;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder(World world, Identity identity)
