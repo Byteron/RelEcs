@@ -62,10 +62,9 @@ public override void Run()
 
 ```csharp
 // Like components, relations are classes.
+class Apples { }
 class Likes { }
 class Owes { public int Amount; }
-
-class Apples { }
 ```
 
 ```csharp
@@ -101,7 +100,7 @@ public override void Run()
 {
     // With queries, we can get a list of components that we can iterate through.
     // A simple query looks like this
-    var query = commands.Query<Position, Velocity>();
+    var query = Query<Position, Velocity>();
     
     // Now we can loop through these components
     foreach(var (pos, vel) in query)
@@ -111,13 +110,13 @@ public override void Run()
             
     // You can create more complex, expressive queries through the QueryBuilder.
     // Here, we request every entity that has a Name component, owes money to Bob and does not have the Dead tag.
-    var appleLovers = new QueryBuilder<Name>(World).Has<Owes>(bob).Not<Dead>().Build();
+    var appleLovers = new QueryBuilder<Entity, Name>(World).Has<Owes>(bob).Not<Dead>().Build();
     
     // Note that we only get the components inside Query<>.
     // Has<T>, Not<T> and Any<T> only filter, but we don't actually get T int he loop.
-    foreach(var name in query)
+    foreach(var (entity, name) in query)
     {
-        Console.WriteLine($"{name.Value} owes bob money and is still alive.")
+        Console.WriteLine($"Entity {entity} with name {name.Value} owes bob money and is still alive.")
     }
 }
 ```
@@ -134,9 +133,9 @@ class MyTrigger { }
 public override void Run()
 {
     // You can send a bunch of triggers inside of a system.
-    Send<MyTrigger>();
-    Send<MyTrigger>();
-    Send<MyTrigger>();
+    Send(new MyTrigger());
+    Send(new MyTrigger());
+    Send(new MyTrigger());
     
     // In any system, including the origin system, you can now receive these triggers.
     Receive((MyTrigger e) =>
