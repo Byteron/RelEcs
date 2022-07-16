@@ -14,25 +14,24 @@ public class Trigger<T>
     public Trigger(T value) => Value = value;
 }
 
-internal class TriggerSystemList
+internal class SystemList
 {
     public readonly List<Type> List;
 
-    public TriggerSystemList() => List = new List<Type>();
-    public TriggerSystemList(List<Type> list) => List = list;
+    public SystemList() => List = new List<Type>();
+    public SystemList(List<Type> list) => List = list;
 }
 
-internal class TriggerLifeTime
+internal class LifeTime
 {
     public int Value;
 }
 
-internal class TriggerLifeTimeSystem : ISystem
+internal class TriggerLifeTimeASystem : ASystem
 {
-    public void Run(Commands commands)
+    public override void Run()
     {
-        var query = commands.Query<Entity, TriggerSystemList, TriggerLifeTime>().Build();
-
+        var query = Query<Entity, SystemList, LifeTime>();
         foreach (var (entity, systemList, lifeTime) in query)
         {
             lifeTime.Value++;
@@ -41,7 +40,7 @@ internal class TriggerLifeTimeSystem : ISystem
 
             ListPool<Type>.Add(systemList.List);
 
-            commands.Despawn(entity);
+            Despawn(entity);
         }
     }
 }
