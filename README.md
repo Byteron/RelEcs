@@ -70,8 +70,8 @@ class Owes { public int Amount; }
 ```csharp
 public override void Run()
 {
-    var bob = world.Spawn().Id();
-    var frank = world.Spawn().Id();
+    var bob = Spawn().Id();
+    var frank = Spawn().Id();
     
     // Relations consist of components, associated with a "target".
     // The target can either be another component, or an entity.
