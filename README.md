@@ -1,82 +1,64 @@
 # RelEcs
 ### A lightweight and easy to use entity component system with an effective feature set for making games.
 
-## World
-
-```csharp
-// A world is a container for different kinds of data like entities & components.
-World world = new World();
-```
-
-## Commands
-
-```csharp
-// Commands are a wrapper around World that provide additional helpful functions.
-Commands commands = new Commands(world);
-
-// You *do not* need to create your own commands.
-// They will be automatically provided for you as the System.Run(Commands) argument.
-```
-
-## Entity
-
-```csharp
-// Spawn a new entity into the world.
-Entity entity = world.Spawn();
-
-// Despawn an entity.
-world.Despawn(entity);
-```
-
-## Component
+## Components
 
 ```csharp
 // Components are simple classes.
-class Name { public string Value; }
 class Position { public int X, Y; }
 class Velocity { public int X, Y; }
-
-// Add new components to an entity via world...
-world.AddComponent(new Name { Value = "Bob" };
-// or with commands via EntityBuilder.
-commands.Amend(entity)
-    .Add<Position>()
-    .Add(new Velocity { X = 1, Y = 0 });
-
-// Get one component from an entity
-var name = world.GetComponent<Name>(entity);
-
-// Get multiple components from an entity.
-var query = Query<Position, Velocity>().Build();
-var (pos, vel) = query.Get(entity);
-
-// Remove components from an entity.
-world.RemoveComponent<Name>(entity);
-// Like with Add, you can also use the EntityBuilder.
-commands.Amend(entity)
-    .Remove<Position>()
-    .Remove<Velocity>();
 ```
 
-## Element
+## Systems
 
 ```csharp
-// Elements are unique class-based components that are attached directly to worlds.
-class SavePath { string Value; }
-
-// Add an element to the world.
-// You can only have one element per type in a world.
-world.AddElement(new SavePath( Value = "user://saves/"));
-
-// Get an element from the world.
-var savePath = world.GetElement<SavePath>();
-Console.WriteLine(savePath.Value);
-
-// Remove an element from the world.
-world.RemoveElement<SavePath>();
+// Systems add all the functionality to the Entity Component System.
+// Usually, you would run them from within your game loop.
+public class MoveSystem : ASystem
+{
+    public override void Run()
+    {
+        // iterate sets of components.
+        foreach(var (pos, vel) in Query<Position, Velocity>())
+        {
+            pos.X += vel.X;
+            pos.Y += vel.Y;
+        }
+    }
+}
 ```
 
-## Relation
+### Spawning / Despawning Entities
+
+```csharp
+public override void Run()
+{
+    // Spawn a new entity into the world and store the id for later use
+    Entity entity = Spawn().Id();
+    
+    // Despawn an entity.
+    Despawn(entity);
+}
+```
+
+### Adding / Removing Components
+
+```csharp
+public override void Run()
+{
+    // Spawn an entity with components
+    Entity entity = Spawn()
+        .Add<Position>()
+        .Add(new Velocity { X = 5 })
+        .Add<Tag>()
+        .Id();
+    
+    // Change an Entities Components
+    On(entity).Add(new Name { Value = "Bob" }).Remove<Tag>();
+}
+```
+
+### Relations
 
 ```csharp
 // Like components, relations are classes.
@@ -84,86 +66,102 @@ class Likes { }
 class Owes { public int Amount; }
 
 class Apples { }
-
-var bob = world.Spawn();
-var frank = world.Spawn();
-
-// Relations consist of components, associated with a "target".
-// The target can either be another component, or an entity.
-commands.Amend(bob).Add<Likes>(typeof(Apples));
-//   Component                  ^^^^^^^^^^^^^^
-
-commands.Amend(frank).Add(new Owes { Amount = 100 }, bob);
-//                                             Entity ^^^
-
-// if you want to know if an entity has a component
-bool doesBobHaveApples = commands.HasComponent<Apples>(bob);
-// if you want to know if an entity has a relation
-bool doesBobLikeApples = commands.HasComponent<Likes>(bob, typeof(Apples));
-
-// Or get it directly.
-// In this case, we retrieve the amount that Frank owes Bob.
-var owes = commands.GetComponent<Owes>(frank, bob);
-Console.WriteLine($"Frank owes Bob {owes.Amount} dollars");
 ```
 
-
-## Query
-
 ```csharp
-// With queries, we can get a list of components that we can iterate through.
-// A simple query looks like this
-var query = commands.Query<Position, Velocity>().Build();
-
-// Now we can loop through these components
-foreach(var (pos, vel) in query)
+public override void Run()
 {
-    pos.Value += vel.Value;
-}
-        
-// You can create more complex, expressive queries.
-// Here, we request every entity that has a Name component, owes money to Bob and does not have the Dead tag.
-var appleLovers = commands.Query<Name>().Has<Owes>(bob).Not<Dead>().Build();
-
-// Note that we only get the components inside Query<>.
-// Has<T>, Not<T> and Any<T> only filter, but we don't actually get T int he loop.
-foreach(var name in query)
-{
-    Console.WriteLine($"{name.Value} owes bob money and is still alive.")
+    var bob = world.Spawn().Id();
+    var frank = world.Spawn().Id();
+    
+    // Relations consist of components, associated with a "target".
+    // The target can either be another component, or an entity.
+    On(bob).Add<Likes>(typeof(Apples));
+    //   Component     ^^^^^^^^^^^^^^
+    
+    On(frank).Add(new Owes { Amount = 100 }, bob);
+    //                                Entity ^^^
+    
+    // if you want to know if an entity has a component
+    bool doesBobHaveApples = HasComponent<Apples>(bob);
+    // if you want to know if an entity has a relation
+    bool doesBobLikeApples = HasComponent<Likes>(bob, typeof(Apples));
+    
+    // Or get it directly.
+    // In this case, we retrieve the amount that Frank owes Bob.
+    var owes = GetComponent<Owes>(frank, bob);
+    Console.WriteLine($"Frank owes Bob {owes.Amount} dollars");
 }
 ```
 
-## System
+### Queries
 
 ```csharp
-// Systems add all the functionality to the Entity Component System.
-// Usually, you would run them from within your game loop.
-public class MoveSystem : ISystem
+public override void Run()
 {
-    public void Run(Commands commands)
+    // With queries, we can get a list of components that we can iterate through.
+    // A simple query looks like this
+    var query = commands.Query<Position, Velocity>();
+    
+    // Now we can loop through these components
+    foreach(var (pos, vel) in query)
     {
-        // Query desired components.
-        var query1 = commands.Query<Position, Velocity>().Build();
-        // Loop over queried of components.
-        foreach(var (pos, vel) in query1)
-        {
-            pos.Value += vel.Value;
-        }
-
-        // You can also access the entity within the loop.
-        var query2 = commands.Query<Entity, Position, Velocity>().Build();
-        foreach (var (entity, pos, vel) in query2) =>
-        {
-            pos.Value += vel.Value;
-            // Example: "Tag" a component to show that it has moved.
-            entity.Add<Moved>();
-        }
+        pos.Value += vel.Value;
+    }
+            
+    // You can create more complex, expressive queries through the QueryBuilder.
+    // Here, we request every entity that has a Name component, owes money to Bob and does not have the Dead tag.
+    var appleLovers = new QueryBuilder<Name>(World).Has<Owes>(bob).Not<Dead>().Build();
+    
+    // Note that we only get the components inside Query<>.
+    // Has<T>, Not<T> and Any<T> only filter, but we don't actually get T int he loop.
+    foreach(var name in query)
+    {
+        Console.WriteLine($"{name.Value} owes bob money and is still alive.")
     }
 }
 ```
 
+### Triggers
 
-### Running a System
+```csharp
+// Triggers are also just classes and very similar to components.
+// They act much like a simplified, ECS version of C# events.
+class MyTrigger { }
+```
+
+```csharp
+public override void Run()
+{
+    // You can send a bunch of triggers inside of a system.
+    Send<MyTrigger>();
+    Send<MyTrigger>();
+    Send<MyTrigger>();
+    
+    // In any system, including the origin system, you can now receive these triggers.
+    Receive((MyTrigger e) =>
+    {
+        Console.WriteLine("It's a trigger!");
+    });
+    
+    // Output:
+    // It's a trigger!
+    // It's a trigger!
+    // It's a trigger!
+    
+    // NOTE: Triggers live until the end of the next frame, to make sure every system receives them.
+    // Each trigger is always received exactly ONCE per system.
+}
+```
+
+## Creating a World
+
+```csharp
+// A world is a container for different kinds of data like entities & components.
+World world = new World();
+```
+
+## Running a System
 
 ```csharp
 // Create an instance of your system.
@@ -181,34 +179,7 @@ moveSystem.Run(world);
 // Usually, systems are run once a frame, inside your game loop.
 ```
 
-## Triggers
-
-```csharp
-// Triggers are also just structs and very similar to components.
-// They act much like a simplified, ECS version of C# events.
-class MyTrigger { }
-
-// You can send a bunch of triggers inside of a system.
-commands.Send<MyTrigger>();
-commands.Send<MyTrigger>();
-commands.Send<MyTrigger>();
-
-// In any system, including the origin system, you can now receive these triggers.
-commands.Receive((MyTrigger e) =>
-{
-    Console.WriteLine("It's a trigger!");
-});
-
-// Output:
-// It's a trigger!
-// It's a trigger!
-// It's a trigger!
-
-// NOTE: Triggers live until the end of the next frame, to make sure every system receives them.
-// Each trigger is always received exactly ONCE per system.
-```
-
-## SystemGroup
+## SystemGroups
 
 ```csharp
 // You can create system groups, which bundle together multiple systems.

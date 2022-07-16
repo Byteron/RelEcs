@@ -17,7 +17,7 @@ public abstract class ASystem
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected EntityBuilder Amend(Entity entity)
+    protected EntityBuilder On(Entity entity)
     {
         return new EntityBuilder(World, entity.Identity);
     }
