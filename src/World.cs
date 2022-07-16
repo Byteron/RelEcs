@@ -23,7 +23,7 @@ public sealed class World
 
     internal readonly List<(Type, TimeSpan)> SystemExecutionTimes = new();
 
-    readonly TriggerLifeTimeSystem triggerLifeTimeSystem = new();
+    readonly TriggerLifeTimeASystem triggerLifeTimeASystem = new();
 
     readonly List<TableOperation> tableOperations = new();
 
@@ -116,28 +116,28 @@ public sealed class World
         if (trigger is null) throw new Exception("trigger cannot be null");
 
         var entity = Spawn();
-        AddComponent(entity.Identity, new TriggerSystemList(ListPool<Type>.Get()));
-        AddComponent(entity.Identity, new TriggerLifeTime());
+        AddComponent(entity.Identity, new SystemList(ListPool<Type>.Get()));
+        AddComponent(entity.Identity, new LifeTime());
         AddComponent(entity.Identity, new Trigger<T>(trigger));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(System system, Action<T> action) where T : class
+    public void Receive<T>(ASystem aSystem, Action<T> action) where T : class
     {
-        var systemType = system.GetType();
+        var systemType = aSystem.GetType();
 
         var mask = new Mask();
 
         mask.Has(StorageType.Create<Trigger<T>>(Identity.None));
-        mask.Has(StorageType.Create<TriggerSystemList>(Identity.None));
+        mask.Has(StorageType.Create<SystemList>(Identity.None));
 
         var query = GetQuery(mask,
-            (w, m, t) => new Query<Trigger<T>, TriggerSystemList>(w, m, t));
+            (w, m, t) => new Query<Trigger<T>, SystemList>(w, m, t));
 
         foreach (var table in query.Tables)
         {
             var triggerStorage = table.GetStorage<Trigger<T>>(Identity.None);
-            var systemStorage = table.GetStorage<TriggerSystemList>(Identity.None);
+            var systemStorage = table.GetStorage<SystemList>(Identity.None);
 
             for (var i = 0; i < table.Count; i++)
             {
@@ -511,7 +511,7 @@ public sealed class World
         info.SystemExecutionTimes.Clear();
         info.SystemExecutionTimes.AddRange(SystemExecutionTimes);
 
-        triggerLifeTimeSystem.Run(this);
+        triggerLifeTimeASystem.Run(this);
 
         SystemExecutionTimes.Clear();
     }

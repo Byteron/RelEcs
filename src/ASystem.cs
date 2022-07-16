@@ -4,63 +4,63 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public abstract class System
+public abstract class ASystem
 {
-    internal World World;
+    public World World { get; set; }
     
     public abstract void Run();
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public EntityBuilder Spawn()
+    protected EntityBuilder Spawn()
     {
         return new EntityBuilder(World, World.Spawn().Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public EntityBuilder Amend(Entity entity)
+    protected EntityBuilder Amend(Entity entity)
     {
         return new EntityBuilder(World, entity.Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Despawn(Entity entity)
+    protected void Despawn(Entity entity)
     {
         World.Despawn(entity.Identity);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsAlive(Entity entity)
+    protected bool IsAlive(Entity entity)
     {
         return entity != null && World.IsAlive(entity.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T GetComponent<T>(Entity entity) where T : class
+    protected T GetComponent<T>(Entity entity) where T : class
     {
         return World.GetComponent<T>(entity.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T GetComponent<T>(Entity entity, Entity target) where T : class
+    protected T GetComponent<T>(Entity entity, Entity target) where T : class
     {
         return World.GetComponent<T>(entity.Identity, target.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T GetComponent<T>(Entity entity, Type type) where T : class
+    protected T GetComponent<T>(Entity entity, Type type) where T : class
     {
         var typeIdentity = World.GetTypeIdentity(type);
         return World.GetComponent<T>(entity.Identity, typeIdentity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetComponent<T>(Entity entity, out T component) where T : class
+    protected bool TryGetComponent<T>(Entity entity, out T component) where T : class
     {
         return TryGetComponent(entity, RelEcs.Entity.None, out component);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetComponent<T>(Entity entity, Entity target, out T component) where T : class
+    protected bool TryGetComponent<T>(Entity entity, Entity target, out T component) where T : class
     {
         if (World.HasComponent<T>(entity.Identity, target.Identity))
         {
@@ -73,7 +73,7 @@ public abstract class System
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetComponent<T>(Entity entity, Type type, out T component) where T : class
+    protected bool TryGetComponent<T>(Entity entity, Type type, out T component) where T : class
     {
         var typeIdentity = World.GetTypeIdentity(type);
         if (World.HasComponent<T>(entity.Identity, typeIdentity))
@@ -87,69 +87,69 @@ public abstract class System
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasComponent<T>(Entity entity) where T : class
+    protected bool HasComponent<T>(Entity entity) where T : class
     {
         return World.HasComponent<T>(entity.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasComponent<T>(Entity entity, Entity target) where T : class
+    protected bool HasComponent<T>(Entity entity, Entity target) where T : class
     {
         return World.HasComponent<T>(entity.Identity, target.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasComponent<T>(Entity entity, Type type) where T : class
+    protected bool HasComponent<T>(Entity entity, Type type) where T : class
     {
         var typeIdentity = World.GetTypeIdentity(type);
         return World.HasComponent<T>(entity.Identity, typeIdentity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Entity[] GetTargets<T>(Entity entity) where T : class
+    protected Entity[] GetTargets<T>(Entity entity) where T : class
     {
         return World.GetTargets<T>(entity.Identity);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Send<T>(T trigger) where T : class
+    protected void Send<T>(T trigger) where T : class
     {
         World.Send(trigger);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(Action<T> action) where T : class
+    protected void Receive<T>(Action<T> action) where T : class
     {
         World.Receive(this, action);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddElement<T>(T element) where T : class
+    protected void AddElement<T>(T element) where T : class
     {
         World.AddElement(element);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void ReplaceElement<T>(T element) where T : class
+    protected void ReplaceElement<T>(T element) where T : class
     {
         World.ReplaceElement(element);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddOrReplaceElement<T>(T element) where T : class
+    protected void AddOrReplaceElement<T>(T element) where T : class
     {
         if (World.HasElement<T>()) World.ReplaceElement(element);
         else World.AddElement(element);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T GetElement<T>() where T : class
+    protected T GetElement<T>() where T : class
     {
         return World.GetElement<T>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetElement<T>(out T element) where T : class
+    protected bool TryGetElement<T>(out T element) where T : class
     {
         if (World.HasElement<T>())
         {
@@ -162,32 +162,32 @@ public abstract class System
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasElement<T>() where T : class
+    protected bool HasElement<T>() where T : class
     {
         return World.HasElement<T>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RemoveElement<T>() where T : class
+    protected void RemoveElement<T>() where T : class
     {
         World.RemoveElement<T>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<Entity> Query()
+    protected Query<Entity> Query()
     {
         return new QueryBuilder<Entity>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C> Query<C>()
+    protected Query<C> Query<C>()
         where C : class
     {
         return new QueryBuilder<C>(World).Build();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2> Query<C1, C2>()
+    protected Query<C1, C2> Query<C1, C2>()
         where C1 : class
         where C2 : class
     {
@@ -195,7 +195,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3> Query<C1, C2, C3>()
+    protected Query<C1, C2, C3> Query<C1, C2, C3>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -204,7 +204,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3, C4> Query<C1, C2, C3, C4>()
+    protected Query<C1, C2, C3, C4> Query<C1, C2, C3, C4>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -214,7 +214,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3, C4, C5> Query<C1, C2, C3, C4, C5>()
+    protected Query<C1, C2, C3, C4, C5> Query<C1, C2, C3, C4, C5>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -225,7 +225,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3, C4, C5, C6> Query<C1, C2, C3, C4, C5, C6>()
+    protected Query<C1, C2, C3, C4, C5, C6> Query<C1, C2, C3, C4, C5, C6>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -237,7 +237,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3, C4, C5, C6, C7> Query<C1, C2, C3, C4, C5, C6, C7>()
+    protected Query<C1, C2, C3, C4, C5, C6, C7> Query<C1, C2, C3, C4, C5, C6, C7>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -250,7 +250,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3, C4, C5, C6, C7, C8> Query<C1, C2, C3, C4, C5, C6, C7, C8>()
+    protected Query<C1, C2, C3, C4, C5, C6, C7, C8> Query<C1, C2, C3, C4, C5, C6, C7, C8>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -264,7 +264,7 @@ public abstract class System
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
+    protected Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
         where C1 : class
         where C2 : class
         where C3 : class
@@ -281,12 +281,12 @@ public abstract class System
 
 public sealed class SystemGroup
 {
-    readonly List<System> systems = new();
+    readonly List<ASystem> systems = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SystemGroup Add(System system)
+    public SystemGroup Add(ASystem aSystem)
     {
-        systems.Add(system);
+        systems.Add(aSystem);
         return this;
     }
 
