@@ -277,6 +277,111 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>(World).Build();
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<Entity> QueryBuilder()
+    {
+        return new QueryBuilder<Entity>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C> QueryBuilder<C>()
+        where C : class
+    {
+        return new QueryBuilder<C>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2> QueryBuilder<C1, C2>()
+        where C1 : class
+        where C2 : class
+    {
+        return new QueryBuilder<C1, C2>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3> QueryBuilder<C1, C2, C3>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+    {
+        return new QueryBuilder<C1, C2, C3>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3, C4> QueryBuilder<C1, C2, C3, C4>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+        where C4 : class
+    {
+        return new QueryBuilder<C1, C2, C3, C4>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3, C4, C5> QueryBuilder<C1, C2, C3, C4, C5>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+        where C4 : class
+        where C5 : class
+    {
+        return new QueryBuilder<C1, C2, C3, C4, C5>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3, C4, C5, C6> QueryBuilder<C1, C2, C3, C4, C5, C6>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+        where C4 : class
+        where C5 : class
+        where C6 : class
+    {
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3, C4, C5, C6, C7> QueryBuilder<C1, C2, C3, C4, C5, C6, C7>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+        where C4 : class
+        where C5 : class
+        where C6 : class
+        where C7 : class
+    {
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8> QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+        where C4 : class
+        where C5 : class
+        where C6 : class
+        where C7 : class
+        where C8 : class
+    {
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>(World);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
+        where C1 : class
+        where C2 : class
+        where C3 : class
+        where C4 : class
+        where C5 : class
+        where C6 : class
+        where C7 : class
+        where C8 : class
+        where C9 : class
+    {
+        return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>(World);
+    }
 }
 
 public sealed class SystemGroup

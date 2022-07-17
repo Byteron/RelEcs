@@ -110,7 +110,7 @@ public override void Run()
             
     // You can create more complex, expressive queries through the QueryBuilder.
     // Here, we request every entity that has a Name component, owes money to Bob and does not have the Dead tag.
-    var appleLovers = new QueryBuilder<Entity, Name>(World).Has<Owes>(bob).Not<Dead>().Build();
+    var appleLovers = QueryBuilder<Entity, Name>().Has<Owes>(bob).Not<Dead>().Build();
     
     // Note that we only get the components inside Query<>.
     // Has<T>, Not<T> and Any<T> only filter, but we don't actually get T int he loop.
