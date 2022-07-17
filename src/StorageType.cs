@@ -55,7 +55,7 @@ public struct StorageType : IComparable<StorageType>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
-        return Value.ToString();
+        return IsRelation ? $"{GetHashCode()} {Type.Name}::{Identity}" : $"{GetHashCode()} {Type.Name}";
     }
 
     public static bool operator ==(StorageType left, StorageType right) => left.Equals(right);

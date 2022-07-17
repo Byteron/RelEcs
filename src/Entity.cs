@@ -115,13 +115,6 @@ public readonly struct EntityBuilder
         return this;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Despawn()
-    {
-        World.Despawn(identity);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Entity Id()
     {
         return new Entity(identity);
