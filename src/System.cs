@@ -180,7 +180,7 @@ public abstract class ASystem
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void RemoveAll<T>()
+    protected void RemoveAll<T>() where T : class
     {
         foreach(var entity in QueryBuilder().Has<T>().Build())
         {
@@ -188,8 +188,8 @@ public abstract class ASystem
         }
     }
     
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]]
-    protected void DespawnAllWith<T>()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected void DespawnAllWith<T>() where T : class
     {
         foreach (var entity in QueryBuilder().Has<T>().Build())
         {
