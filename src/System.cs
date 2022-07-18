@@ -172,13 +172,7 @@ public abstract class ASystem
     {
         World.RemoveElement<T>();
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected Query<Entity> Query()
-    {
-        return new QueryBuilder<Entity>(World).Build();
-    }
-    
+  
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void RemoveAll<T>() where T : class
     {
@@ -196,7 +190,14 @@ public abstract class ASystem
             Despawn(entity);
         }
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected Query<Entity> Query()
+    {
+        return new QueryBuilder<Entity>(World).Build();
+    }
+  
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C> Query<C>()
         where C : class
