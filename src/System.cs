@@ -7,9 +7,9 @@ namespace RelEcs;
 public abstract class ASystem
 {
     public World World { get; set; }
-    
+
     public abstract void Run();
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected EntityBuilder Spawn()
     {
@@ -21,13 +21,13 @@ public abstract class ASystem
     {
         return new EntityBuilder(World, entity.Identity);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void Despawn(Entity entity)
     {
         World.Despawn(entity.Identity);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected bool IsAlive(Entity entity)
     {
@@ -118,9 +118,9 @@ public abstract class ASystem
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void Receive<T>(Action<T> action) where T : class
+    protected TriggerQuery<T> Receive<T>() where T : class
     {
-        World.Receive(this, action);
+        return World.Receive<T>(this);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -172,16 +172,16 @@ public abstract class ASystem
     {
         World.RemoveElement<T>();
     }
-  
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void RemoveAll<T>() where T : class
     {
-        foreach(var entity in QueryBuilder().Has<T>().Build())
+        foreach (var entity in QueryBuilder().Has<T>().Build())
         {
             On(entity).Remove<T>();
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void DespawnAllWith<T>() where T : class
     {
@@ -196,7 +196,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<Entity>(World).Build();
     }
-  
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C> Query<C>()
@@ -204,7 +204,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2> Query<C1, C2>()
         where C1 : class
@@ -212,7 +212,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3> Query<C1, C2, C3>()
         where C1 : class
@@ -221,7 +221,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3, C4> Query<C1, C2, C3, C4>()
         where C1 : class
@@ -231,7 +231,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3, C4, C5> Query<C1, C2, C3, C4, C5>()
         where C1 : class
@@ -242,7 +242,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3, C4, C5, C6> Query<C1, C2, C3, C4, C5, C6>()
         where C1 : class
@@ -254,7 +254,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3, C4, C5, C6, C7> Query<C1, C2, C3, C4, C5, C6, C7>()
         where C1 : class
@@ -267,7 +267,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3, C4, C5, C6, C7, C8> Query<C1, C2, C3, C4, C5, C6, C7, C8>()
         where C1 : class
@@ -281,7 +281,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Query<C1, C2, C3, C4, C5, C6, C7, C8, C9> Query<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
         where C1 : class
@@ -296,20 +296,20 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>(World).Build();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<Entity> QueryBuilder()
     {
         return new QueryBuilder<Entity>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C> QueryBuilder<C>()
         where C : class
     {
         return new QueryBuilder<C>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2> QueryBuilder<C1, C2>()
         where C1 : class
@@ -317,7 +317,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3> QueryBuilder<C1, C2, C3>()
         where C1 : class
@@ -326,7 +326,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3, C4> QueryBuilder<C1, C2, C3, C4>()
         where C1 : class
@@ -336,7 +336,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3, C4, C5> QueryBuilder<C1, C2, C3, C4, C5>()
         where C1 : class
@@ -347,7 +347,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3, C4, C5, C6> QueryBuilder<C1, C2, C3, C4, C5, C6>()
         where C1 : class
@@ -359,7 +359,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3, C4, C5, C6, C7> QueryBuilder<C1, C2, C3, C4, C5, C6, C7>()
         where C1 : class
@@ -372,7 +372,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8> QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>()
         where C1 : class
@@ -386,7 +386,7 @@ public abstract class ASystem
     {
         return new QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8>(World);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9> QueryBuilder<C1, C2, C3, C4, C5, C6, C7, C8, C9>()
         where C1 : class

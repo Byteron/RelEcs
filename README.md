@@ -138,10 +138,10 @@ public override void Run()
     Send(new MyTrigger());
     
     // In any system, including the origin system, you can now receive these triggers.
-    Receive((MyTrigger e) =>
+    foreach (var t in Receive<T>())
     {
         Console.WriteLine("It's a trigger!");
-    });
+    }
     
     // Output:
     // It's a trigger!

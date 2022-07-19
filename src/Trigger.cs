@@ -17,9 +17,7 @@ public class Trigger<T>
 internal class SystemList
 {
     public readonly List<Type> List;
-
-    public SystemList() => List = new List<Type>();
-    public SystemList(List<Type> list) => List = list;
+    public SystemList() => List = ListPool<Type>.Get();
 }
 
 internal class LifeTime
@@ -35,11 +33,12 @@ internal class TriggerLifeTimeASystem : ASystem
         foreach (var (entity, systemList, lifeTime) in query)
         {
             lifeTime.Value++;
-
+            Console.WriteLine($"{lifeTime.Value}");
+            
             if (lifeTime.Value < 2) return;
 
             ListPool<Type>.Add(systemList.List);
-
+            Console.WriteLine($"Despawn Trigger");
             Despawn(entity);
         }
     }

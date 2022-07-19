@@ -116,39 +116,36 @@ public sealed class World
         if (trigger is null) throw new Exception("trigger cannot be null");
 
         var entity = Spawn();
-        AddComponent(entity.Identity, new SystemList(ListPool<Type>.Get()));
+        AddComponent(entity.Identity, new SystemList());
         AddComponent(entity.Identity, new LifeTime());
         AddComponent(entity.Identity, new Trigger<T>(trigger));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Receive<T>(ASystem aSystem, Action<T> action) where T : class
+    public TriggerQuery<T> Receive<T>(ASystem system) where T : class
     {
-        var systemType = aSystem.GetType();
-
         var mask = new Mask();
 
         mask.Has(StorageType.Create<Trigger<T>>(Identity.None));
         mask.Has(StorageType.Create<SystemList>(Identity.None));
+        
+        var matchingTables = new List<Table>();
 
-        var query = GetQuery(mask,
-            (w, m, t) => new Query<Trigger<T>, SystemList>(w, m, t));
-
-        foreach (var table in query.Tables)
+        var type = mask.HasTypes[0];
+        if (!tablesByType.TryGetValue(type, out var typeTables))
         {
-            var triggerStorage = table.GetStorage<Trigger<T>>(Identity.None);
-            var systemStorage = table.GetStorage<SystemList>(Identity.None);
-
-            for (var i = 0; i < table.Count; i++)
-            {
-                var systemList = systemStorage[i];
-
-                if (systemList.List.Contains(systemType)) continue;
-
-                systemList.List.Add(systemType);
-                action(triggerStorage[i].Value);
-            }
+            typeTables = new List<Table>();
+            tablesByType[type] = typeTables;
         }
+
+        foreach (var table in typeTables)
+        {
+            if (!IsMaskCompatibleWith(mask, table)) continue;
+
+            matchingTables.Add(table);
+        }
+        
+        return new TriggerQuery<T>(this, mask, matchingTables, system.GetType());
     }
 
     public void AddElement<T>(T element) where T : class
@@ -532,7 +529,9 @@ public sealed class WorldInfo
     public int EntityCount;
     public int UnusedEntityCount;
     public int AllocatedEntityCount;
+
     public int ArchetypeCount;
+
     // public int RelationCount;
     public int ElementCount;
     public int SystemCount;
