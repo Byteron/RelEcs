@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public class Entity
+public class Entity : Object
 {
     public static readonly Entity None = new(Identity.None);
     public static readonly Entity Any = new(Identity.Any);
@@ -47,19 +47,19 @@ public class Entity
 public readonly struct EntityBuilder
 {
     internal readonly World World;
-    readonly Identity identity;
+    readonly Identity _identity;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder(World world, Identity identity)
     {
         World = world;
-        this.identity = identity;
+        _identity = identity;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(Entity target = default) where T : class, new()
     {
-        World.AddComponent<T>(identity, default, target?.Identity ?? Identity.None);
+        World.AddComponent<T>(_identity, default, target?.Identity ?? Identity.None);
         return this;
     }
 
@@ -67,21 +67,21 @@ public readonly struct EntityBuilder
     public EntityBuilder Add<T>(Type type) where T : class, new()
     {
         var typeIdentity = World.GetTypeIdentity(type);
-        World.AddComponent<T>(identity, default, typeIdentity);
+        World.AddComponent<T>(_identity, default, typeIdentity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(T data) where T : class, new()
     {
-        World.AddComponent(identity, data);
+        World.AddComponent(_identity, data);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Add<T>(T data, Entity target) where T : class, new()
     {
-        World.AddComponent(identity, data, target.Identity);
+        World.AddComponent(_identity, data, target.Identity);
         return this;
     }
 
@@ -89,21 +89,21 @@ public readonly struct EntityBuilder
     public EntityBuilder Add<T>(T data, Type type) where T : class, new()
     {
         var typeIdentity = World.GetTypeIdentity(type);
-        World.AddComponent(identity, data, typeIdentity);
+        World.AddComponent(_identity, data, typeIdentity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Remove<T>() where T : class
     {
-        World.RemoveComponent<T>(identity);
+        World.RemoveComponent<T>(_identity);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public EntityBuilder Remove<T>(Entity target) where T : class
     {
-        World.RemoveComponent<T>(identity, target.Identity);
+        World.RemoveComponent<T>(_identity, target.Identity);
         return this;
     }
 
@@ -111,12 +111,12 @@ public readonly struct EntityBuilder
     public EntityBuilder Remove<T>(Type type) where T : class
     {
         var typeIdentity = World.GetTypeIdentity(type);
-        World.RemoveComponent<T>(identity, typeIdentity);
+        World.RemoveComponent<T>(_identity, typeIdentity);
         return this;
     }
 
     public Entity Id()
     {
-        return new Entity(identity);
+        return new Entity(_identity);
     }
 }

@@ -2,5 +2,9 @@
   <PropertyGroup>
     <LangVersion>default</LangVersion>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A lightweight and easy to use entity component system with an effective feature set for making games.</Description>
+    <PackageProjectUrl>https://github.com/Byteron/RelEcs</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Byteron/RelEcs/blob/main/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 </Project>

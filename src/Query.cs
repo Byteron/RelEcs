@@ -62,11 +62,11 @@ public class Query
 public class TriggerQuery<C> : Query
     where C : class
 {
-    readonly Type systemType;
+    readonly Type _systemType;
 
     public TriggerQuery(World world, Mask mask, List<Table> tables, Type systemType) : base(world, mask, tables)
     {
-        this.systemType = systemType;
+        _systemType = systemType;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -77,7 +77,7 @@ public class TriggerQuery<C> : Query
 
     public TriggerEnumerator<C> GetEnumerator()
     {
-        return new TriggerEnumerator<C>(World, Tables, systemType);
+        return new TriggerEnumerator<C>(World, Tables, _systemType);
     }
 }
 
@@ -475,12 +475,12 @@ public class Enumerator : IEnumerator, IDisposable
     protected int TableIndex;
     protected int EntityIndex;
 
-    readonly World world;
+    readonly World _world;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Enumerator(World world, List<Table> tables)
     {
-        this.world = world;
+        _world = world;
         Tables = tables;
 
         world.Lock();
@@ -526,7 +526,7 @@ public class Enumerator : IEnumerator, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
-        world.Unlock();
+        _world.Unlock();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -538,14 +538,14 @@ public class Enumerator : IEnumerator, IDisposable
 
 public class TriggerEnumerator<C> : Enumerator
 {
-    Trigger<C>[] storage;
-    SystemList[] systemLists;
-    readonly Type systemType;
+    Trigger<C>[] _storage;
+    SystemList[] _systemLists;
+    readonly Type _systemType;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TriggerEnumerator(World world, List<Table> tables, Type systemType) : base(world, tables)
     {
-        this.systemType = systemType;
+        _systemType = systemType;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -556,7 +556,7 @@ public class TriggerEnumerator<C> : Enumerator
 
         EntityIndex++;
 
-        while (Tables[TableIndex].Count > EntityIndex && systemLists[EntityIndex].List.Contains(systemType))
+        while (Tables[TableIndex].Count > EntityIndex && _systemLists[EntityIndex].List.Contains(_systemType))
         {
             Console.WriteLine("Skip Trigger");
             EntityIndex++;
@@ -581,8 +581,8 @@ public class TriggerEnumerator<C> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage = Tables[TableIndex].GetStorage<Trigger<C>>(Identity.None);
-        systemLists = Tables[TableIndex].GetStorage<SystemList>(Identity.None);
+        _storage = Tables[TableIndex].GetStorage<Trigger<C>>(Identity.None);
+        _systemLists = Tables[TableIndex].GetStorage<SystemList>(Identity.None);
     }
 
     public C Current
@@ -590,16 +590,16 @@ public class TriggerEnumerator<C> : Enumerator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            Console.WriteLine($"Add {systemType.Name} to TriggerList");
-            systemLists[EntityIndex].List.Add(systemType);
-            return storage[EntityIndex].Value;
+            Console.WriteLine($"Add {_systemType.Name} to TriggerList");
+            _systemLists[EntityIndex].List.Add(_systemType);
+            return _storage[EntityIndex].Value;
         }
     }
 }
 
 public class Enumerator<C> : Enumerator
 {
-    C[] storage;
+    C[] _storage;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -610,20 +610,20 @@ public class Enumerator<C> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage = Tables[TableIndex].GetStorage<C>(Identity.None);
+        _storage = Tables[TableIndex].GetStorage<C>(Identity.None);
     }
 
     public C Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => storage[EntityIndex];
+        get => _storage[EntityIndex];
     }
 }
 
 public class Enumerator<C1, C2> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
+    C1[] _storage1;
+    C2[] _storage2;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -634,22 +634,22 @@ public class Enumerator<C1, C2> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
     }
 
     public (C1, C2) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -660,24 +660,24 @@ public class Enumerator<C1, C2, C3> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
     }
 
     public (C1, C2, C3) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3, C4> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
-    C4[] storage4;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
+    C4[] _storage4;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -688,26 +688,26 @@ public class Enumerator<C1, C2, C3, C4> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
-        storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
     }
 
     public (C1, C2, C3, C4) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex], storage4[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex], _storage4[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3, C4, C5> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
-    C4[] storage4;
-    C5[] storage5;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
+    C4[] _storage4;
+    C5[] _storage5;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -718,29 +718,29 @@ public class Enumerator<C1, C2, C3, C4, C5> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
-        storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
-        storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
+        _storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
     }
 
     public (C1, C2, C3, C4, C5) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex], storage4[EntityIndex],
-            storage5[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex], _storage4[EntityIndex],
+            _storage5[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3, C4, C5, C6> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
-    C4[] storage4;
-    C5[] storage5;
-    C6[] storage6;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
+    C4[] _storage4;
+    C5[] _storage5;
+    C6[] _storage6;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -751,31 +751,31 @@ public class Enumerator<C1, C2, C3, C4, C5, C6> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
-        storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
-        storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
-        storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
+        _storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
+        _storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
     }
 
     public (C1, C2, C3, C4, C5, C6) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex], storage4[EntityIndex],
-            storage5[EntityIndex], storage6[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex], _storage4[EntityIndex],
+            _storage5[EntityIndex], _storage6[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3, C4, C5, C6, C7> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
-    C4[] storage4;
-    C5[] storage5;
-    C6[] storage6;
-    C7[] storage7;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
+    C4[] _storage4;
+    C5[] _storage5;
+    C6[] _storage6;
+    C7[] _storage7;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -786,33 +786,33 @@ public class Enumerator<C1, C2, C3, C4, C5, C6, C7> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
-        storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
-        storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
-        storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
-        storage7 = Tables[TableIndex].GetStorage<C7>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
+        _storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
+        _storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
+        _storage7 = Tables[TableIndex].GetStorage<C7>(Identity.None);
     }
 
     public (C1, C2, C3, C4, C5, C6, C7) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex], storage4[EntityIndex],
-            storage5[EntityIndex], storage6[EntityIndex], storage7[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex], _storage4[EntityIndex],
+            _storage5[EntityIndex], _storage6[EntityIndex], _storage7[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3, C4, C5, C6, C7, C8> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
-    C4[] storage4;
-    C5[] storage5;
-    C6[] storage6;
-    C7[] storage7;
-    C8[] storage8;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
+    C4[] _storage4;
+    C5[] _storage5;
+    C6[] _storage6;
+    C7[] _storage7;
+    C8[] _storage8;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -823,35 +823,35 @@ public class Enumerator<C1, C2, C3, C4, C5, C6, C7, C8> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
-        storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
-        storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
-        storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
-        storage7 = Tables[TableIndex].GetStorage<C7>(Identity.None);
-        storage8 = Tables[TableIndex].GetStorage<C8>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
+        _storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
+        _storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
+        _storage7 = Tables[TableIndex].GetStorage<C7>(Identity.None);
+        _storage8 = Tables[TableIndex].GetStorage<C8>(Identity.None);
     }
 
     public (C1, C2, C3, C4, C5, C6, C7, C8) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex], storage4[EntityIndex],
-            storage5[EntityIndex], storage6[EntityIndex], storage7[EntityIndex], storage8[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex], _storage4[EntityIndex],
+            _storage5[EntityIndex], _storage6[EntityIndex], _storage7[EntityIndex], _storage8[EntityIndex]);
     }
 }
 
 public class Enumerator<C1, C2, C3, C4, C5, C6, C7, C8, C9> : Enumerator
 {
-    C1[] storage1;
-    C2[] storage2;
-    C3[] storage3;
-    C4[] storage4;
-    C5[] storage5;
-    C6[] storage6;
-    C7[] storage7;
-    C8[] storage8;
-    C9[] storage9;
+    C1[] _storage1;
+    C2[] _storage2;
+    C3[] _storage3;
+    C4[] _storage4;
+    C5[] _storage5;
+    C6[] _storage6;
+    C7[] _storage7;
+    C8[] _storage8;
+    C9[] _storage9;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator(World world, List<Table> tables) : base(world, tables)
@@ -862,22 +862,22 @@ public class Enumerator<C1, C2, C3, C4, C5, C6, C7, C8, C9> : Enumerator
     protected override void UpdateStorage()
     {
         if (TableIndex == Tables.Count) return;
-        storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
-        storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
-        storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
-        storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
-        storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
-        storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
-        storage7 = Tables[TableIndex].GetStorage<C7>(Identity.None);
-        storage8 = Tables[TableIndex].GetStorage<C8>(Identity.None);
-        storage9 = Tables[TableIndex].GetStorage<C9>(Identity.None);
+        _storage1 = Tables[TableIndex].GetStorage<C1>(Identity.None);
+        _storage2 = Tables[TableIndex].GetStorage<C2>(Identity.None);
+        _storage3 = Tables[TableIndex].GetStorage<C3>(Identity.None);
+        _storage4 = Tables[TableIndex].GetStorage<C4>(Identity.None);
+        _storage5 = Tables[TableIndex].GetStorage<C5>(Identity.None);
+        _storage6 = Tables[TableIndex].GetStorage<C6>(Identity.None);
+        _storage7 = Tables[TableIndex].GetStorage<C7>(Identity.None);
+        _storage8 = Tables[TableIndex].GetStorage<C8>(Identity.None);
+        _storage9 = Tables[TableIndex].GetStorage<C9>(Identity.None);
     }
 
     public (C1, C2, C3, C4, C5, C6, C7, C8, C9) Current
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (storage1[EntityIndex], storage2[EntityIndex], storage3[EntityIndex], storage4[EntityIndex],
-            storage5[EntityIndex], storage6[EntityIndex], storage7[EntityIndex], storage8[EntityIndex],
-            storage9[EntityIndex]);
+        get => (_storage1[EntityIndex], _storage2[EntityIndex], _storage3[EntityIndex], _storage4[EntityIndex],
+            _storage5[EntityIndex], _storage6[EntityIndex], _storage7[EntityIndex], _storage8[EntityIndex],
+            _storage9[EntityIndex]);
     }
 }

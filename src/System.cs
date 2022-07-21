@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public abstract class ASystem
+public abstract class ASystem : Object
 {
     public World World { get; set; }
 
@@ -56,7 +56,7 @@ public abstract class ASystem
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected bool TryGetComponent<T>(Entity entity, out T component) where T : class
     {
-        return TryGetComponent(entity, RelEcs.Entity.None, out component);
+        return TryGetComponent(entity, Entity.None, out component);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -405,19 +405,19 @@ public abstract class ASystem
 
 public sealed class SystemGroup
 {
-    readonly List<ASystem> systems = new();
+    readonly List<ASystem> _systems = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SystemGroup Add(ASystem aSystem)
     {
-        systems.Add(aSystem);
+        _systems.Add(aSystem);
         return this;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Run(World world)
     {
-        foreach (var system in systems)
+        foreach (var system in _systems)
         {
             system.Run(world);
         }

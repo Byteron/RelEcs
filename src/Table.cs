@@ -18,42 +18,42 @@ public sealed class Table
 
     public readonly SortedSet<StorageType> Types;
 
-    public Identity[] Entities => entities;
-    public Array[] Storages => storages;
+    public Identity[] Entities => _entities;
+    public Array[] Storages => _storages;
 
     public int Count { get; private set; }
     public bool IsEmpty => Count == 0;
 
-    readonly World world;
+    readonly World _world;
 
-    Identity[] entities;
-    readonly Array[] storages;
+    Identity[] _entities;
+    readonly Array[] _storages;
 
-    readonly Dictionary<StorageType, TableEdge> edges = new();
-    readonly Dictionary<StorageType, int> indices = new();
+    readonly Dictionary<StorageType, TableEdge> _edges = new();
+    readonly Dictionary<StorageType, int> _indices = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Table(int id, World world, SortedSet<StorageType> types)
     {
-        this.world = world;
+        _world = world;
 
         Id = id;
         Types = types;
 
-        entities = new Identity[StartCapacity];
+        _entities = new Identity[StartCapacity];
 
         var i = 0;
         foreach (var type in types)
         {
             if (type.IsTag) continue;
-            indices.Add(type, i++);
+            _indices.Add(type, i++);
         }
 
-        storages = new Array[indices.Count];
+        _storages = new Array[_indices.Count];
 
-        foreach (var (type, index) in indices)
+        foreach (var (type, index) in _indices)
         {
-            storages[index] = Array.CreateInstance(type.Type, StartCapacity);
+            _storages[index] = Array.CreateInstance(type.Type, StartCapacity);
         }
     }
 
@@ -61,7 +61,7 @@ public sealed class Table
     public int Add(Identity identity)
     {
         EnsureCapacity(Count + 1);
-        entities[Count] = identity;
+        _entities[Count] = identity;
         return Count++;
     }
 
@@ -74,19 +74,19 @@ public sealed class Table
 
         if (row < Count)
         {
-            entities[row] = entities[Count];
+            _entities[row] = _entities[Count];
 
-            foreach (var storage in storages)
+            foreach (var storage in _storages)
             {
                 Array.Copy(storage, Count, storage, row, 1);
             }
 
-            world.GetEntityMeta(entities[row]).Row = row;
+            _world.GetEntityMeta(_entities[row]).Row = row;
         }
 
-        entities[Count] = default;
+        _entities[Count] = default;
 
-        foreach (var storage in storages)
+        foreach (var storage in _storages)
         {
             Array.Clear(storage, Count, 1);
         }
@@ -95,10 +95,10 @@ public sealed class Table
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TableEdge GetTableEdge(StorageType type)
     {
-        if (edges.TryGetValue(type, out var edge)) return edge;
+        if (_edges.TryGetValue(type, out var edge)) return edge;
 
         edge = new TableEdge();
-        edges[type] = edge;
+        _edges[type] = edge;
 
         return edge;
     }
@@ -114,14 +114,14 @@ public sealed class Table
     public Array GetStorage(StorageType type)
     {
         if (type.IsTag) throw new Exception("Cannot get Storage of Tag Component");
-        return storages[indices[type]];
+        return _storages[_indices[type]];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void EnsureCapacity(int capacity)
     {
         if (capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity), "minCapacity must be positive");
-        if (capacity <= entities.Length) return;
+        if (capacity <= _entities.Length) return;
 
         Resize(Math.Max(capacity, StartCapacity) << 1);
     }
@@ -133,14 +133,14 @@ public sealed class Table
         if (length < Count)
             throw new ArgumentOutOfRangeException(nameof(length), "length cannot be smaller than Count");
 
-        Array.Resize(ref entities, length);
+        Array.Resize(ref _entities, length);
 
-        for (var i = 0; i < storages.Length; i++)
+        for (var i = 0; i < _storages.Length; i++)
         {
-            var elementType = storages[i].GetType().GetElementType()!;
+            var elementType = _storages[i].GetType().GetElementType()!;
             var newStorage = Array.CreateInstance(elementType, length);
-            Array.Copy(storages[i], newStorage, Math.Min(storages[i].Length, length));
-            storages[i] = newStorage;
+            Array.Copy(_storages[i], newStorage, Math.Min(_storages[i].Length, length));
+            _storages[i] = newStorage;
         }
     }
 
@@ -149,12 +149,12 @@ public sealed class Table
     {
         var newRow = newTable.Add(identity);
 
-        foreach (var (type, oldIndex) in oldTable.indices)
+        foreach (var (type, oldIndex) in oldTable._indices)
         {
-            if (!newTable.indices.TryGetValue(type, out var newIndex) || newIndex < 0) continue;
+            if (!newTable._indices.TryGetValue(type, out var newIndex) || newIndex < 0) continue;
 
-            var oldStorage = oldTable.storages[oldIndex];
-            var newStorage = newTable.storages[newIndex];
+            var oldStorage = oldTable._storages[oldIndex];
+            var newStorage = newTable._storages[newIndex];
 
             Array.Copy(oldStorage, oldRow, newStorage, newRow, 1);
         }
