@@ -4,12 +4,18 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public abstract class ASystem : Object
+public interface ISystem
+{
+    World World { get; set; }
+    void Run();
+}
+
+public abstract class System : Object, ISystem
 {
     public World World { get; set; }
 
     public abstract void Run();
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected EntityBuilder Spawn()
     {
@@ -405,10 +411,10 @@ public abstract class ASystem : Object
 
 public sealed class SystemGroup
 {
-    readonly List<ASystem> _systems = new();
+    readonly List<ISystem> _systems = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SystemGroup Add(ASystem aSystem)
+    public SystemGroup Add(ISystem aSystem)
     {
         _systems.Add(aSystem);
         return this;

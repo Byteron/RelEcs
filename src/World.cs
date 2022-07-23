@@ -23,7 +23,7 @@ public sealed class World : Object
 
     internal readonly List<(Type, TimeSpan)> SystemExecutionTimes = new();
 
-    readonly TriggerLifeTimeASystem _triggerLifeTimeASystem = new();
+    readonly TriggerLifeTimeSystem _triggerLifeTimeSystem = new();
 
     readonly List<TableOperation> _tableOperations = new();
 
@@ -122,7 +122,7 @@ public sealed class World : Object
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TriggerQuery<T> Receive<T>(ASystem system) where T : class
+    public TriggerQuery<T> Receive<T>(ISystem system) where T : class
     {
         var mask = new Mask();
 
@@ -508,7 +508,7 @@ public sealed class World : Object
         info.SystemExecutionTimes.Clear();
         info.SystemExecutionTimes.AddRange(SystemExecutionTimes);
 
-        _triggerLifeTimeASystem.Run(this);
+        _triggerLifeTimeSystem.Run(this);
 
         SystemExecutionTimes.Clear();
     }

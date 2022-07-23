@@ -6,7 +6,7 @@ namespace RelEcs;
 public static class SystemExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Run(this ASystem aSystem, World world)
+    public static void Run(this ISystem aSystem, World world)
     {
         var stopWatch = new Stopwatch();
         stopWatch.Start();

@@ -25,7 +25,7 @@ internal class LifeTime
     public int Value;
 }
 
-internal class TriggerLifeTimeASystem : ASystem
+internal class TriggerLifeTimeSystem : System
 {
     public override void Run()
     {
@@ -33,12 +33,10 @@ internal class TriggerLifeTimeASystem : ASystem
         foreach (var (entity, systemList, lifeTime) in query)
         {
             lifeTime.Value++;
-            Console.WriteLine($"{lifeTime.Value}");
             
             if (lifeTime.Value < 2) return;
 
             ListPool<Type>.Add(systemList.List);
-            Console.WriteLine($"Despawn Trigger");
             Despawn(entity);
         }
     }

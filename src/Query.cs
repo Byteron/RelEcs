@@ -551,14 +551,12 @@ public class TriggerEnumerator<C> : Enumerator
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public new bool MoveNext()
     {
-        Console.WriteLine("Move Next Trigger");
         if (TableIndex == Tables.Count) return false;
 
         EntityIndex++;
 
         while (Tables[TableIndex].Count > EntityIndex && _systemLists[EntityIndex].List.Contains(_systemType))
         {
-            Console.WriteLine("Skip Trigger");
             EntityIndex++;
         }
 
@@ -590,7 +588,6 @@ public class TriggerEnumerator<C> : Enumerator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            Console.WriteLine($"Add {_systemType.Name} to TriggerList");
             _systemLists[EntityIndex].List.Add(_systemType);
             return _storage[EntityIndex].Value;
         }
