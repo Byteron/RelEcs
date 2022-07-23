@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace RelEcs;
 
-public class Query
+public class Query : Object
 {
     public readonly List<Table> Tables;
 
