@@ -8,6 +8,13 @@ namespace RelEcs
         void Run(World world);
     }
 
+    public interface ITriggerSystem { }
+    
+    public interface ITriggerSystem<T> : ITriggerSystem
+    {
+        void Run(World world, T trigger);
+    }
+    
     public sealed class SystemGroup
     {
         readonly List<ISystem> _systems = new();
@@ -25,6 +32,7 @@ namespace RelEcs
             foreach (var system in _systems)
             {
                 system.Run(world);
+                world.RunTriggerSystems();
             }
         }
     }

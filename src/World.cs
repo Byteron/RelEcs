@@ -14,6 +14,8 @@ namespace RelEcs
         readonly Archetypes _archetypes = new();
 
         readonly TriggerLifeTimeSystem _triggerLifeTimeSystem = new();
+        readonly Dictionary<StorageType, List<ITriggerSystem>> _triggerSystems = new();
+        private List<Action> _triggerSystemsToRun = new();
 
         public WorldInfo Info => _worldInfo;
 
@@ -237,6 +239,28 @@ namespace RelEcs
             _archetypes.RemoveComponent(type, _world.Identity);
         }
 
+        public void RegisterTriggerSystem<T>(ITriggerSystem<T> system)
+        {
+            var storageType = StorageType.Create<Trigger<T>>();
+            
+            if (!_triggerSystems.TryGetValue(storageType, out var systems))
+            {
+                _triggerSystems[storageType] = new List<ITriggerSystem>();
+            }
+            
+            _triggerSystems[storageType].Add(system);
+        }
+
+        public void RunTriggerSystems()
+        {
+            foreach (var triggerSystem in _triggerSystemsToRun)
+            {
+                triggerSystem();
+            }
+            
+            _triggerSystemsToRun.Clear();
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<T>(T trigger) where T : class
         {
@@ -246,6 +270,14 @@ namespace RelEcs
             _archetypes.AddComponent(StorageType.Create<SystemList>(), entity.Identity, new SystemList());
             _archetypes.AddComponent(StorageType.Create<LifeTime>(), entity.Identity, new LifeTime());
             _archetypes.AddComponent(StorageType.Create<Trigger<T>>(), entity.Identity, new Trigger<T> { Value = trigger });
+
+            if (!_triggerSystems.TryGetValue(StorageType.Create<Trigger<T>>(), out var systems)) return;
+
+            foreach (var system in systems)
+            {
+                var typedSystem = system as ITriggerSystem<T>;
+                _triggerSystemsToRun.Add(() => typedSystem!.Run(this, trigger));
+            }
         }
         
         // TODO: maybe move this into _archetypes

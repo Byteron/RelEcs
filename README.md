@@ -154,6 +154,70 @@ public void Run()
 }
 ```
 
+### TriggerSystems
+
+```csharp
+// Trigger Systems are Systems that can be run for each Trigger that is sent from another System
+// Other Systems receiving triggers will still normally consume the same triggers
+// TriggerSystems are run when invoking World.RunTriggerSystems() or
+// automatically after each System is run in a SystemGroup.
+
+class PrintDespawnEntity : ITriggerSystem<DespawnEntityTrigger>
+{
+    public void Run(World world, DespawnEntityTrigger trigger)
+    {
+        Console.WriteLine($"Entity {trigger.Entity} should be despawned!");
+    }
+}
+
+class PlaySoundOnDespawnSystem : ITriggerSystem<DespawnEntityTrigger>
+{
+    public void Run(World world, DespawnEntityTrigger trigger)
+    {
+        if (world.TryGetComponent<DeathAudioComponent>(trigger.Entity, out var component))
+        {
+            SoundPlayer.Play(component.Clip);
+        }
+    }
+}
+```
+
+```csharp
+// TriggerSystems must be registered through the World
+world.RegisterTriggerSystem(new PrintDespawnEntity());
+world.RegisterTriggerSystem(new PlaySoundOnDespawnSystem());
+
+// sending some triggers
+world.Send(new DespawnEntityTrigger(entity1));
+world.Send(new DespawnEntityTrigger(entity2));
+world.Send(new DespawnEntityTrigger(entity3));
+
+// call World.RunTriggerSystems() to invoke all trigger systems where triggers have been sent
+world.RunTriggerSystems();
+```
+
+```csharp
+// TriggerSystems are automatically invoked by SystemGroups
+
+World world = new World();
+world.RegisterTriggerSystem(new TriggerSystemA());
+world.RegisterTriggerSystem(new TriggerSystemB());
+world.RegisterTriggerSystem(new TriggerSystemC());
+    
+SystemGroup group = new SystemGroup();
+
+group.Add(new SystemSendingTriggerA());
+group.Add(new SystemSendingTriggerB());
+group.Add(new SystemSendingTriggerAAndB());
+
+// Runs SystemSendingTriggerA;
+    // Calls RunTriggerSystems(), invoking TriggerSystemA
+// Runs SystemSendingTriggerB
+    // Calls RunTriggerSystems(), invoking TriggerSystemB
+// Runs SystemSendingTriggerAAndC
+    // Calls RunTriggerSystems(), invoking TriggerSystemA and TriggerSystemC
+group.Run(world);
+```
 ## Creating a World
 
 ```csharp
