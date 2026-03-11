@@ -10,4 +10,7 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
     <PackageVersion>1.5.1</PackageVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="tests\**\*.cs" />
+  </ItemGroup>
 </Project>

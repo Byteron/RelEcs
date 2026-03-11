@@ -39,17 +39,15 @@ namespace RelEcs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Entity? left, Entity? right)
         {
-            if (left is null && right is null) return true;
-            if (left != null && right != null) return left.Equals(right);
-            return false;
+            if (ReferenceEquals(left, right)) return true;
+            if (left is null || right is null) return false;
+            return left.Equals(right);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Entity? left, Entity? right)
         {
-            if (left is null && right is null) return false;
-            if (left != null && right != null) return !left.Equals(right);
-            return true;
+            return !(left == right);
         }
     }
 
